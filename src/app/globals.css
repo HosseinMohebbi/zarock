@@ -1,26 +1,128 @@
+@import 'vazir-font/dist/font-face.css';
 @import "tailwindcss";
+@import "tailwindcss/preflight";
+@tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: 0 0% 100%;
+  --foreground: 0 0% 9%;
+
+  --card: 0 0% 100%;
+  --card-foreground: 222 47% 11%;
+
+  --muted: 210 40% 96%;
+  --muted-foreground: 215 16% 47%;
+
+  --primary: 221 83% 53%;            /* آبی (brand) */
+  --primary-foreground: 0 0% 100%;
+
+  --secondary: 210 40% 96%;
+  --secondary-foreground: 222 47% 11%;
+
+  --accent: 25 95% 53%;              /* نارنجی */
+  --accent-foreground: 0 0% 100%;
+
+  --destructive: 0 72% 51%;
+  --destructive-foreground: 0 0% 100%;
+
+  --border: 214 32% 91%;
+  --input: 214 32% 91%;
+  --ring: 221 83% 53%;
+  --button: 181 61% 15%;
+}
+
+.dark {
+  --background: 222 50% 6%;
+  --foreground: 210 40% 98%;
+
+  --card: 222 50% 7%;
+  --card-foreground: 210 40% 98%;
+
+  --muted: 215 25% 17%;
+  --muted-foreground: 217 20% 65%;
+
+  --primary: 221 83% 60%;
+  --primary-foreground: 0 0% 100%;
+
+  --secondary: 215 25% 17%;
+  --secondary-foreground: 210 40% 98%;
+
+  --accent: 25 95% 60%;
+  --accent-foreground: 0 0% 100%;
+
+  --destructive: 0 72% 45%;
+  --destructive-foreground: 0 0% 100%;
+
+  --border: 215 25% 27%;
+  --input: 215 25% 17%;
+  --ring: 221 83% 60%;  
+  --button: 160 84% 39%;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+    --color-button: hsl(var(--button));
+  /*--font-sans: var(--font-geist-sans);*/
+  /*--font-mono: var(--font-geist-mono);*/
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+@layer base {
+  body { @apply bg-background text-foreground; }
 }
 
+/*body {*/
+/*  background: var(--background);*/
+/*  color: var(--foreground);*/
+/*  font-family: Arial, Helvetica, sans-serif;*/
+/*}*/
+
+/* ensure theme inline provides full hsl() values for Tailwind to consume */
+/*@theme inline {*/
+/*  --color-background: hsl(var(--background));*/
+/*  --color-foreground: hsl(var(--foreground));*/
+/*  --color-primary: hsl(var(--primary));*/
+/*  --color-primary-foreground: hsl(var(--primary-foreground));*/
+/*  !* other color mappings... *!*/
+/*}*/
+
+/* use hsl(...) when applying variables directly */
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: hsl(var(--background));
+  color: hsl(var(--foreground));
+  font-family: Vazir, Arial, Helvetica, sans-serif;
+  text-align: right;
+}
+
+html[dir="rtl"],
+html[dir="rtl"] body {
+  direction: rtl;
+}
+
+input,
+textarea,
+select {
+  direction: rtl;
+  text-align: right;
+  unicode-bidi: plaintext; /* helps mixed-direction content behave better */
+}
+
+::placeholder {             
+  direction: rtl;
+  text-align: right;
 }
