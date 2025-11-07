@@ -1,11 +1,12 @@
 'use client';
 import React, {useState} from 'react';
-import {useRouter} from 'next/navigation';
+import {useRouter} from 'next/navigation'
+import Link from 'next/link';
 import {cn} from '@/utils/cn';
 import Input from '@/app/components/ui/Input';
 import Button from '@/app/components/ui/Button';
 import ThemeToggle from '@/app/components/theme/ThemeToggle';
-import {registerUser, type RegisterResponse} from '@/services/auth'; // ⬅️ سرویس ما
+import {registerUser, type RegisterResponse} from '@/services/auth'; 
 
 type Errors = Partial<{
     username: string;
@@ -85,10 +86,9 @@ export default function SignupPage(): JSX.Element {
 
     return (
         <div>
-            <ThemeToggle/>
             <form onSubmit={handleSubmit} dir="rtl"
                   className="flex flex-col w-full min-h-screen items-center justify-center gap-4 font-sans bg-background text-foreground">
-                <h2 className="text-2xl font-semibold mb-4 text-center">ثبت‌نام</h2>
+                <h2 className="!text-3xl !font-bold mb-4 text-center">ثبت‌نام</h2>
 
                 <Input
                     label="نام کاربری"
@@ -152,10 +152,16 @@ export default function SignupPage(): JSX.Element {
                     <Button
                         type="submit"
                         label={loading ? 'در حال ارسال…' : 'ثبت‌نام'}
-                        customStyle="w-full h-[40px] text-base disabled:opacity-60"
+                        customStyle="w-full h-[40px] text-base disabled:opacity-60 !mt-6"
                         disabled={loading}
                     />
                 </div>
+                <Link
+                    href="/login"
+                    className="text-md"
+                >
+                    حساب دارید؟ وارد شوید
+                </Link>
             </form>
         </div>
     );

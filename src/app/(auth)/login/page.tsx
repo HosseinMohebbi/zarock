@@ -2,6 +2,7 @@
 
 import {useState} from "react";
 import {useRouter} from "next/navigation";
+import Link from "next/link";
 import {cn} from "@/utils/cn";
 import Input from "@/app/components/ui/Input";
 import Button from "@/app/components/ui/Button";
@@ -58,10 +59,8 @@ export default function LoginPage(): JSX.Element {
     };
     
     return (
-        <div>
-            <ThemeToggle/>
-            <div>
-                <form onSubmit={onSubmit} dir="rtl" className="flex flex-col w-full min-h-screen items-center justify-center gap-4 font-sans bg-background text-foreground">
+        <div className="w-full h-screen">
+                <form onSubmit={onSubmit} dir="rtl" className="w-full h-full flex flex-col justify-center items-center gap-4  font-sans bg-background text-foreground">
                     <h2 className="text-2xl font-semibold mb-4 text-center">ورود</h2>
                     <Input
                         label="نام کاربری"
@@ -74,7 +73,6 @@ export default function LoginPage(): JSX.Element {
                     {errors.userName && (
                         <p className="text-sm text-red-500 mt-1">{errors.userName}</p>
                     )}
-                    
                     <Input
                         label="رمز عبور"
                         name="password"
@@ -97,11 +95,16 @@ export default function LoginPage(): JSX.Element {
                             type="submit"
                             label={loading ? "در حال ارسال…" : "ورود"}
                             disabled={loading}
-                            customStyle='p-[6.2px] h-fit w-[100%] h-[40px] text-[22px] hover:bg-green-700'
+                            customStyle='p-[6.2px] h-fit w-[100%] h-[40px] text-[22px] hover:bg-green-700 !mt-6'
                         />
                     </div>
+                        <Link
+                            href="/signup"
+                            className="text-md"
+                        >
+                            حساب کاربری ندارید؟ ثبت نام کنید
+                        </Link>
                 </form>
-            </div>
         </div>
     );
 }

@@ -114,7 +114,6 @@ export default function ProfilePage(): JSX.Element {
 
     return (
         <div>
-            <ThemeToggle/>
             <div>
                 <form onSubmit={handleSubmit} dir="rtl" className="flex flex-col w-full min-h-screen items-center justify-center gap-4 font-sans bg-background text-foreground">
                     <h2 className="text-2xl font-semibold mb-4 text-center">پروفایل</h2>
