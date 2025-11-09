@@ -61,9 +61,9 @@ export default function BusinessPage(): JSX.Element {
     return (
         <div className="w-full min-h-screen flex flex-col">
             {/* Header */}
-            <div className="flex justify-between items-center w-full h-12 px-4">
+            <div className="flex justify-between items-center w-full h-12 !px-4">
                 <button onClick={handleLogout} title="خروج"><MdLogout className="w-8 h-8 text-green-600"/></button>
-                <div className="font-medium">{user.username}</div>
+                <div className="font-medium text-lg">{user.username}</div>
                 <button onClick={handleProfileClick}><MdPerson className="w-8 h-8 text-green-600"/></button>
             </div>
 
