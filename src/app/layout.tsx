@@ -3,6 +3,9 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Providers from "@/app/Providers";
 import ThemeToggle from "@/app/components/theme/ThemeToggle";
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -33,6 +36,17 @@ export default function RootLayout({
           <ThemeToggle />
       </div>
       <Providers>{children}</Providers>
+      <ToastContainer
+          rtl={true}                // راست چین برای فارسی
+          position="top-center"     // موقعیت نمایش
+          autoClose={3000}          // زمان خودکار بسته شدن (میلی‌ثانیه)
+          hideProgressBar={false}   // نوار پیشرفت
+          newestOnTop={false}       // جدیدترین پیام بالای لیست باشه؟
+          closeOnClick               // بسته شدن با کلیک
+          pauseOnHover
+          draggable
+          theme="colored"
+      />
       </body>
     </html>
   );
