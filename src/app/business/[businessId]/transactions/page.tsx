@@ -43,9 +43,18 @@ export default function TransactionsPage(): JSX.Element {
         router.push(`/business/${businessId}/transactions/add`);
     };
 
-    const handleOpenTransaction = (id: string) => {
-        router.push(`/business/${businessId}/transactions/${id}`);
+    const handleOpenTransaction = (t: any) => {
+        if (!t.id) return;
+
+        if (t.transactionType === "Cash") {
+            router.push(`/business/${businessId}/transactions/${t.id}/edit/cash`);
+        } else if (t.transactionType === "Check") {
+            router.push(`/business/${businessId}/transactions/${t.id}/edit/check`);
+        } else {
+            console.warn("نوع تراکنش ناشناخته:", t.transactionType);
+        }
     };
+
 
     useEffect(() => {
         async function loadTransactions() {
@@ -103,7 +112,7 @@ export default function TransactionsPage(): JSX.Element {
                     {transactions.map((t: any) => (
                         <div
                             key={t.id ?? `${t.createdAt}-${Math.random()}`}
-                            onClick={() => t.id && handleOpenTransaction(t.id)}
+                            onClick={() => handleOpenTransaction(t)}
                             className="cursor-pointer flex justify-between items-center p-3 border rounded hover:shadow transition"
                         >
                             <div className='flex'>
@@ -134,6 +143,7 @@ export default function TransactionsPage(): JSX.Element {
                                     </div>
                                 </div>
                             </div>
+                            
                         </div>
                     ))}
                 </div>

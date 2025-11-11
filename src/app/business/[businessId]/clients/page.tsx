@@ -75,7 +75,7 @@ export default function ClientsPage() {
             <div className="flex flex-col items-center gap-4">
                 {clients.map((client) => (
                     <div key={client.id}
-                         className="w-[80%] border rounded-md !p-3 bg-red-500"
+                         className="w-[80%] border rounded-md !p-3 bg-card"
                          onClick={handelEditClient.bind(this, client.id)}
                         // onClick={handelEditClient(client.id)}
                     >

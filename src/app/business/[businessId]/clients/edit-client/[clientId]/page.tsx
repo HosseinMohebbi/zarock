@@ -223,7 +223,8 @@ export default function EditClient() {
                         <Input label="آدرس" name="address" value={address} containerClass="w-[90%] max-w-lg"
                                onChange={(e) => setAddress(e.target.value)}/>
                         <Input label="توضیحات فاکتور" name="invoiceDescription" value={invoiceDescription}
-                               containerClass="w-[90%] max-w-lg" onChange={(e) => setInvoiceDescription(e.target.value)}/>
+                               containerClass="w-[90%] max-w-lg"
+                               onChange={(e) => setInvoiceDescription(e.target.value)}/>
                     </div>
                     <div className="flex flex-col justify-center items-start gap-6">
                         <div className="flex justify-center items-center gap-6">

@@ -64,20 +64,6 @@ export interface AddCashResponse {
     state: "None" | "Pending" | "Completed" | "Canceled"; // مقادیر ممکن رو می‌تونی با داده واقعی تنظیم کنی
 }
 
-export interface AddClientResponse {
-    createdAt: string;
-    updatedAt: string;
-    id: string;
-    fullname: string;
-    nationalCode: string;
-    address: string;
-    credits: number;
-    isJuridicalPerson: boolean;
-    isOwnerClient: boolean;
-    constantDescriptionInvoice: string;
-}
-
-
 
 export interface Client {
     createdAt: string;
@@ -127,8 +113,30 @@ export async function createCheck(
         `/api/Transaction/${businessId}/check`,
         payload,
         {
-            params: { businessId }, // axios به‌صورت ?businessId=... اضافه می‌کند
+            params: { businessId },
         }
+    );
+    return data;
+}
+
+export async function getCheckById(
+    businessId: string,
+    checkId: string
+): Promise<AddCheckResponse> {
+    const { data } = await http.get<AddCheckResponse>(
+        `/api/Transaction/${businessId}/check/${checkId}`
+    );
+    return data;
+}
+
+export async function updateCheck(
+    businessId: string,
+    checkId: string,
+    payload: AddCheckPayload
+): Promise<AddCheckResponse> {
+    const { data } = await http.put<AddCheckResponse>(
+        `/api/Transaction/${businessId}/check/${checkId}`,
+        payload
     );
     return data;
 }
@@ -141,8 +149,30 @@ export async function createCash(
         `/api/Transaction/${businessId}/cash`,
         payload,
         {
-            params: { businessId }, // axios به‌صورت ?businessId=... اضافه می‌کند
+            params: { businessId },
         }
+    );
+    return data;
+}
+
+export async function getCashById(
+    businessId: string,
+    cashId: string
+): Promise<AddCashResponse> {
+    const { data } = await http.get<AddCashResponse>(
+        `/api/Transaction/${businessId}/cash/${cashId}`
+    );
+    return data;
+}
+
+export async function updateCash(
+    businessId: string,
+    cashId: string,
+    payload: AddCashPayload
+): Promise<AddCashResponse> {
+    const { data } = await http.put<AddCashResponse>(
+        `/api/Transaction/${businessId}/cash/${cashId}`,
+        payload
     );
     return data;
 }
