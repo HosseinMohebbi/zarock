@@ -16,6 +16,7 @@ import {
     getBankAccounts
 } from "@/services/client";
 import {http} from "@/utils/api/http";
+import {BankAccountModal} from "@/app/components/ui/modals/BankAccountModal";
 import {MdAdd} from "react-icons/md";
 import {toast} from "react-toastify";
 
@@ -210,24 +211,21 @@ export default function EditClient() {
     }
 
     return (
-        <div className="w-full h-full  py-6 px-4 max-w-2xl mx-auto">
-            <div className="flex items-center justify-between mb-6">
+        <div className="w-full h-full flex flex-col items-center !py-6 px-4 lg:flex-row">
+            <form onSubmit={handleSubmit} className="w-full flex flex-col items-center gap-4 space-y-4">
                 <h1 className="text-xl font-medium">ویرایش اطلاعات مشتری</h1>
-            </div>
-
-            <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="w-full flex flex-col items-center justify-between gap-4">
                     <div className="w-full flex flex-col items-center justify-between gap-4">
-                        <Input label="نام کامل" name="fullName" value={fullName} containerClass="w-[80%]"
+                        <Input label="نام کامل" name="fullName" value={fullName} containerClass="w-[90%] max-w-lg"
                                onChange={(e) => setFullName(e.target.value)}/>
-                        <Input label="کد ملی" name="nationalCode" value={nationalCode} containerClass="w-[80%]"
+                        <Input label="کد ملی" name="nationalCode" value={nationalCode} containerClass="w-[90%] max-w-lg"
                                onChange={(e) => setNationalCode(e.target.value)}/>
-                        <Input label="آدرس" name="address" value={address} containerClass="w-[80%]"
+                        <Input label="آدرس" name="address" value={address} containerClass="w-[90%] max-w-lg"
                                onChange={(e) => setAddress(e.target.value)}/>
                         <Input label="توضیحات فاکتور" name="invoiceDescription" value={invoiceDescription}
-                               containerClass="w-[80%]" onChange={(e) => setInvoiceDescription(e.target.value)}/>
+                               containerClass="w-[90%] max-w-lg" onChange={(e) => setInvoiceDescription(e.target.value)}/>
                     </div>
-                    <div className="w-[80%] flex flex-col justify-center items-start gap-6">
+                    <div className="flex flex-col justify-center items-start gap-6">
                         <div className="flex justify-center items-center gap-6">
                             <label className="flex items-center gap-2">
                                 <input
@@ -262,7 +260,7 @@ export default function EditClient() {
                 </div>
                 <div className="flex gap-4 mt-6">
                     <Button type="submit" label="ویرایش" disabled={loading}
-                            customStyle="bg-green-600 hover:bg-green-700"/>
+                            customStyle="w-32 h-1/3 bg-green-600 hover:bg-green-700"/>
                     <Button type="button" onClick={() => router.push(`/${businessId}/clients`)}
                             customStyle="bg-gray-500 hover:bg-gray-600">
                         انصراف
@@ -272,50 +270,52 @@ export default function EditClient() {
                 {error && <div className="text-red-600 mt-4">{error}</div>}
                 {/*{success && <div className="text-green-600 mt-4">{success}</div>}*/}
             </form>
-
-            <h3 className="text-md font-medium mt-8 mb-3">حساب‌های بانکی</h3>
-            {accountsLoading ? (
-                <div>در حال بارگذاری حساب‌ها...</div>
-            ) : accountsError ? (
-                <div className="text-red-600">{accountsError}</div>
-            ) : bankAccounts.length === 0 ? (
-                <div className="text-sm text-zinc-500">حساب بانکی ثبت نشده است.</div>
-            ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    {bankAccounts.map((acc) => {
-                        const logo = logos.find(l => l.name?.toLowerCase() === acc.bankName?.toLowerCase());
-                        return (
-                            <Card
-                                key={acc.id}
-                                title={acc.bankName}
-                                icon={logo?.url ? <img src={logo.url} alt={logo.name}
-                                                       className="w-8 h-8 object-contain rounded-sm"/> : <div
-                                    className="w-8 h-8 flex items-center justify-center bg-gray-200 rounded-sm text-xs">{acc.bankName?.slice(0, 2)}</div>}
-                            >
-                                <div className="text-sm text-gray-700 leading-6">
-                                    <div>شماره حساب: <span className="font-medium">{acc.accountNumber}</span></div>
-                                    <div>شماره کارت: <span className="font-medium">{acc.cardNumber}</span></div>
-                                    <div>شماره شبا: <span className="font-medium">{acc.shaBaCode}</span></div>
-                                </div>
-                                <div className="flex justify-end mt-3">
-                                    <button onClick={() => handleEditAccount(acc)}
-                                            className="px-3 py-1 text-sm rounded-md bg-blue-600 text-white hover:bg-blue-700">
-                                        ویرایش
-                                    </button>
-                                </div>
-                            </Card>
-                        );
-                    })}
+            <div className="w-full flex flex-col items-center justify-between gap-4 !mt-8">
+                <div className="w-[80%] flex justify-between items-center">
+                    <h3 className="text-md font-medium mt-8 mb-3">حساب‌های بانکی</h3>
+                    <div className="mt-6">
+                        <Button label={<MdAdd className="w-8 h-8 inline mr-1"/>} type="button"
+                                onClick={handleAddNewAccount}
+                                customStyle="bg-green-600 hover:bg-green-700">
+                            <MdAdd className="w-8 h-8 inline mr-1"/>
+                        </Button>
+                    </div>
                 </div>
-            )}
-
-            <div className="mt-6">
-                <Button label="افزودن حساب بانکی" type="button" onClick={handleAddNewAccount}
-                        customStyle="bg-green-600 hover:bg-green-700">
-                    <MdAdd className="inline mr-1"/> افزودن حساب بانکی
-                </Button>
+                {accountsLoading ? (
+                    <div>در حال بارگذاری حساب‌ها...</div>
+                ) : accountsError ? (
+                    <div className="text-red-600">{accountsError}</div>
+                ) : bankAccounts.length === 0 ? (
+                    <div className="text-sm text-zinc-500">حساب بانکی ثبت نشده است.</div>
+                ) : (
+                    <div className="w-[80%] flex flex-col items-center gap-4 overflow-y-scroll">
+                        {bankAccounts.map((acc) => {
+                            const logo = logos.find(l => l.name?.toLowerCase() === acc.bankName?.toLowerCase());
+                            return (
+                                <Card
+                                    key={acc.id}
+                                    title={acc.bankName}
+                                    icon={logo?.url ? <img src={logo.url} alt={logo.name}
+                                                           className="w-8 h-8 object-contain rounded-sm"/> : <div
+                                        className="w-8 h-8 flex items-center justify-center bg-gray-200 rounded-sm text-xs">{acc.bankName?.slice(0, 2)}</div>}
+                                >
+                                    <div className="text-sm text-gray-700 leading-6">
+                                        <div>شماره حساب: <span className="font-medium">{acc.accountNumber}</span></div>
+                                        <div>شماره کارت: <span className="font-medium">{acc.cardNumber}</span></div>
+                                        <div>شماره شبا: <span className="font-medium">{acc.shaBaCode}</span></div>
+                                    </div>
+                                    <div className="flex justify-end mt-3">
+                                        <button onClick={() => handleEditAccount(acc)}
+                                                className="px-3 py-1 text-sm rounded-md bg-blue-600 text-white hover:bg-blue-700">
+                                            ویرایش
+                                        </button>
+                                    </div>
+                                </Card>
+                            );
+                        })}
+                    </div>
+                )}
             </div>
-
             {/* ---------------- مدال حساب بانکی ---------------- */}
             {modalOpen && (
                 <BankAccountModal
@@ -330,91 +330,3 @@ export default function EditClient() {
     );
 }
 
-// ---------------- مدال حساب بانکی ----------------
-interface BankAccountModalProps {
-    open: boolean;
-    onClose: () => void;
-    onSubmit: (data: { selectedBank: BankLogo; accountNumber: string; cardNumber: string; shaBaCode: string }) => void;
-    editingAccount: BankAccountResponse | null;
-    logos: BankLogo[];
-}
-
-function BankAccountModal({open, onClose, onSubmit, editingAccount, logos}: BankAccountModalProps) {
-    const [accountNumber, setAccountNumber] = useState(editingAccount?.accountNumber || "");
-    const [cardNumber, setCardNumber] = useState(editingAccount?.cardNumber || "");
-    const [shaBaCode, setShaBaCode] = useState(editingAccount?.shaBaCode || "");
-    const [selectedBank, setSelectedBank] = useState<BankLogo | null>(editingAccount ? logos.find(l => l.name === editingAccount.bankName) || logos[0] : logos[0]);
-    const [dropdownOpen, setDropdownOpen] = useState(false);
-
-    useEffect(() => {
-        if (editingAccount) {
-            setAccountNumber(editingAccount.accountNumber || "");
-            setCardNumber(editingAccount.cardNumber || "");
-            setShaBaCode(editingAccount.shaBaCode || "");
-            const matched = logos.find(l => l.name === editingAccount.bankName);
-            if (matched) setSelectedBank(matched);
-        } else {
-            setAccountNumber("");
-            setCardNumber("");
-            setShaBaCode("");
-            setSelectedBank(logos[0]);
-        }
-    }, [editingAccount, logos]);
-
-    const handleSubmit = () => {
-        if (!selectedBank) return;
-        onSubmit({selectedBank, accountNumber, cardNumber, shaBaCode});
-    };
-
-    return (
-        <Modal open={open} onClose={onClose} onSubmit={handleSubmit}
-               modalTitle={editingAccount ? "ویرایش حساب" : "افزودن حساب"}>
-            <div className="space-y-3 mt-4">
-                <div>
-                    <label className="block text-sm font-medium mb-2">بانک</label>
-                    <div className="relative">
-                        <button
-                            type="button"
-                            onClick={() => setDropdownOpen(!dropdownOpen)}
-                            className="w-full px-3 py-2 border rounded-md flex justify-between items-center"
-                        >
-                            {selectedBank?.name || "انتخاب بانک"}
-                            <span className={`${dropdownOpen ? "rotate-180" : ""} transition-transform`}>▼</span>
-                        </button>
-
-                        {dropdownOpen && (
-                            <ul className="absolute bg-white border mt-1 w-full z-10 max-h-48 overflow-auto text-right">
-                                {logos.map(l => (
-                                    <li key={l.name}>
-                                        <button
-                                            type="button"
-                                            onClick={() => {
-                                                setSelectedBank(l);
-                                                setDropdownOpen(false);
-                                            }}
-                                            className="w-full flex items-center gap-2 justify-start !px-3 !py-1 hover:bg-gray-100 d"
-
-                                        >
-                                            {l.url && (
-                                                <img
-                                                    src={l.url}
-                                                    alt={l.name}
-                                                    className="w-6 h-6 object-contain rounded-sm"
-                                                />
-                                            )}
-                                            <span>{l.name}</span>
-                                        </button>
-                                    </li>
-                                ))}
-                            </ul>
-                        )}
-                    </div>
-
-                </div>
-                <Input label="شماره حساب" value={accountNumber} onChange={e => setAccountNumber(e.target.value)}/>
-                <Input label="شماره کارت" value={cardNumber} onChange={e => setCardNumber(e.target.value)}/>
-                <Input label="شماره شبا" value={shaBaCode} onChange={e => setShaBaCode(e.target.value)}/>
-            </div>
-        </Modal>
-    );
-}

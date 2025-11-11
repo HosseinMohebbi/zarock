@@ -83,7 +83,7 @@ export async function updateClient(
     return data;
 }
 
-export async function getََAllClients(params: { page: number; pageSize: number }, BusinessId): Promise<Client[]> {
+export async function getAllClients(params: { page: number; pageSize: number }, BusinessId): Promise<Client[]> {
     const { page, pageSize } = params;
     const { data } = await http.get<Client[]>(`/api/client/${BusinessId}/all`, {
         params: { page, pageSize }, // axios به‌صورت ?page=..&pageSize=.. اضافه می‌کند
