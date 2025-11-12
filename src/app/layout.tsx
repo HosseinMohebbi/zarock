@@ -5,6 +5,7 @@ import Providers from "@/app/Providers";
 import ThemeToggle from "@/app/components/theme/ThemeToggle";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import HumburgerMenu from "@/app/components/ui/HamburgerMenu";
 
 
 const geistSans = Geist({
@@ -32,9 +33,10 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-      <div className="fixed left-4 z-50">
-          <ThemeToggle />
-      </div>
+      <HumburgerMenu />
+      {/*<div className="fixed left-4 z-50">*/}
+      {/*    <ThemeToggle />*/}
+      {/*</div>*/}
       <Providers>{children}</Providers>
       <ToastContainer
           rtl={true}                // راست چین برای فارسی

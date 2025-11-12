@@ -73,7 +73,7 @@ export default function Client() {
         try {
             await createClient(businessId, payload);
             // بعد از موفقیت می‌تونید ریدایرکت کنید
-            router.push(`/clients/${businessId}`);
+            router.push(`/business/${businessId}/clients`);
         } catch (err: any) {
             setError(err?.message ?? 'خطای سرور');
         } finally {

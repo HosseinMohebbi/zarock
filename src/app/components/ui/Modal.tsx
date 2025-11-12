@@ -42,7 +42,7 @@ export default function Modal({ open, onClose, onSubmit, children, ariaLabel = '
         >
             <div
                 ref={dialogRef}
-                className=" w-[92%] max-w-lg flex flex-col bg-background text-foreground  rounded-lg !p-6 shadow-lg outline-none"
+                className=" w-[92%] max-w-lg flex flex-col bg-card text-foreground  rounded-lg !p-6 shadow-lg outline-none"
                 onClick={(e) => e.stopPropagation()}
                 role="dialog"
                 aria-modal="true"
