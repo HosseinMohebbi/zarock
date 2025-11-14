@@ -25,7 +25,7 @@ export default function Input({
             {label && (
                 <label
                     htmlFor={name}
-                    className={cn('!mb-1 text-sm text-foreground font-medium', labelClass)}
+                    className={cn('!mb-1 text-lg text-foreground font-medium', labelClass)}
                 >
                     {label}
                 </label>
@@ -34,7 +34,7 @@ export default function Input({
                 id={name}
                 name={name}
                 className={cn(
-                    'text-base !px-3 outline-2 outline-border !rounded-lg shadow-[0px_2px_2px_0px_#0000001A] focus:outline-3 dir-rtl',
+                    'h-10 text-base !px-3 outline-2 outline-border !rounded-lg shadow-[0px_2px_2px_0px_#0000001A] focus:outline-3 dir-rtl',
                     inputClass
                 )}
                 {...props}

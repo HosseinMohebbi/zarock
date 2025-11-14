@@ -56,59 +56,15 @@ export async function getAllItems(params: { page: number; pageSize: number }, bu
     return data;
 }
 
-export async function updateCheck(
+export async function updateItem(
     businessId: string,
-    checkId: string,
-    payload: AddCheckPayload
-): Promise<AddCheckResponse> {
-    const { data } = await http.put<AddCheckResponse>(
-        `/api/Transaction/${businessId}/check/${checkId}`,
+    itemId: string,
+    payload: AddItemPayload
+): Promise<AddItemResponse> {
+    const { data } = await http.put<AddItemResponse>(
+        `/api/Item/${businessId}/${itemId}`,
         payload
     );
-    return data;
-}
-
-export async function createCash(
-    businessId: string,
-    payload: AddCashPayload
-): Promise<AddCashResponse> {
-    const { data } = await http.post<AddCashResponse>(
-        `/api/Transaction/${businessId}/cash`,
-        payload,
-        {
-            params: { businessId },
-        }
-    );
-    return data;
-}
-
-export async function getCashById(
-    businessId: string,
-    cashId: string
-): Promise<AddCashResponse> {
-    const { data } = await http.get<AddCashResponse>(
-        `/api/Transaction/${businessId}/cash/${cashId}`
-    );
-    return data;
-}
-
-export async function updateCash(
-    businessId: string,
-    cashId: string,
-    payload: AddCashPayload
-): Promise<AddCashResponse> {
-    const { data } = await http.put<AddCashResponse>(
-        `/api/Transaction/${businessId}/cash/${cashId}`,
-        payload
-    );
-    return data;
-}
-
-export async function getAllTransactions(params: { page: number; pageSize: number }, businessId): Promise<getTransactionResponse[]> {
-    const { page, pageSize } = params;
-    const { data } = await http.get<getTransactionResponse[]>(`/api/Transaction/${businessId}/all`, {
-        params: { page, pageSize }, // axios به‌صورت ?page=..&pageSize=.. اضافه می‌کند
-    });
     return data;
 }
 
