@@ -50,7 +50,7 @@ export default function ItemsPage(): JSX.Element {
 
     const handleOpenItem = (itemId: any) => {
         if (!itemId) return;
-        
+
         router.push(`/business/${businessId}/items/edit-item/${itemId}`);
     };
 
