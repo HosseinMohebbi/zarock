@@ -6,6 +6,8 @@ import Button from "@/app/components/ui/Button";
 
 interface ModalProps {
     open: boolean;
+    confirmButtonTitle?: string;
+    cancelButtonTitle?: string;
     onClose: () => void;
     onSubmit?: () => void;
     children?: React.ReactNode;
@@ -13,7 +15,7 @@ interface ModalProps {
     modalTitle?: string;
 }
 
-export default function Modal({ open, onClose, onSubmit, children, ariaLabel = 'Modal', modalTitle }: ModalProps) {
+export default function Modal({ open, confirmButtonTitle, cancelButtonTitle, onClose, onSubmit, children, ariaLabel = 'Modal', modalTitle }: ModalProps) {
     const dialogRef = useRef<HTMLDivElement | null>(null);
 
     useEffect(() => {
@@ -62,18 +64,18 @@ export default function Modal({ open, onClose, onSubmit, children, ariaLabel = '
 
                 <div>{children}</div>
 
-                <div className="flex justify-start gap-3 mt-4">
+                <div className="flex justify-end gap-3 !mt-4">
                     <Button
                         type="button"
-                        label="افزودن"
-                        onClick={onSubmit}
-                        customStyle="bg-green-600 hover:bg-green-700 !px-4 !py-2 rounded-lg text-white"
+                        label={cancelButtonTitle ?? 'لغو'}
+                        onClick={onClose}
+                        customStyle="bg-gray-400 hover:bg-gray-500 !px-4 !py-2 rounded-lg"
                     />
                     <Button
                         type="button"
-                        label="لغو"
-                        onClick={onClose}
-                        customStyle="bg-gray-400 hover:bg-gray-500 !px-4 !py-2 rounded-lg"
+                        label={confirmButtonTitle ?? 'افزودن'}
+                        onClick={onSubmit}
+                        customStyle="bg-green-600 hover:bg-green-700 !px-4 !py-2 rounded-lg text-white"
                     />
                 </div>
             </div>

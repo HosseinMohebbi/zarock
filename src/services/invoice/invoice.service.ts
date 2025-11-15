@@ -1,0 +1,76 @@
+import { http } from "@/utils/api/http";
+import {AddInvoicePayload, AddInvoiceResponse, GetAllInvoicesResponse} from "./invoice.types"
+import {Business} from "@/services/business";
+
+export async function createInvoice(
+    businessId: string,
+    payload: AddInvoicePayload
+): Promise<AddInvoiceResponse> {
+    const { data } = await http.post<AddInvoiceResponse>(
+        `/api/Invoice/${businessId}`,
+        payload,
+        {
+            params: { businessId }, // axios به‌صورت ?businessId=... اضافه می‌کند
+        }
+    );
+    return data;
+}
+
+export async function updateClient(
+    businessId: string,
+    clientId: string,
+    payload: AddClientPayload
+): Promise<AddClientResponse> {
+    const { data } = await http.put<AddClientResponse>(
+        `/api/Client/${businessId}/${clientId}`,
+        payload
+    );
+    return data;
+}
+
+export async function getAllInvoice(params: { page: number; pageSize: number }, businessId): Promise<Client[]> {
+    const { page, pageSize } = params;
+    const { data } = await http.get<GetAllInvoicesResponse[]>(`/api/Invoice/${businessId}/all`, {
+        params: { page, pageSize }, // axios به‌صورت ?page=..&pageSize=.. اضافه می‌کند
+    });
+    return data;
+}
+
+export async function getBankLogos(): Promise<BankLogo[]> {
+    const { data } = await http.get<BankLogo[]>(`/api/BankLogo`);
+    return data;
+}
+
+export async function createBankAccount(
+    businessId: string,
+    clientId: string,
+    payload: BankAccountPayload
+): Promise<BankAccountResponse> {
+    const { data } = await http.post<BankAccountResponse>(
+        `/api/Client/${businessId}/BankAccount/${clientId}`,
+        payload
+    );
+    return data;
+}
+
+export async function updateBankAccount(
+    businessId: string,
+    bankAccountId: string,
+    payload: BankAccountPayload
+): Promise<BankAccountResponse> {
+    const { data } = await http.put<BankAccountResponse>(
+        `/api/Client/${businessId}/BankAccount/${bankAccountId}`,
+        payload
+    );
+    return data;
+}
+
+export async function getBankAccounts(
+    businessId: string,
+    clientId: string
+): Promise<BankAccountResponse[]> {
+    const { data } = await http.get<BankAccountResponse[]>(
+        `/api/Client/${businessId}/BankAccount/${clientId}/all`
+    );
+    return data;
+}

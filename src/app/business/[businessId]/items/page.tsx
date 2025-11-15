@@ -44,8 +44,8 @@ export default function ItemsPage(): JSX.Element {
     const businessId = params.businessId ?? "";
     const router = useRouter();
 
-    const handleAddTransaction = () => {
-        router.push(`/business/${businessId}/transactions/add`);
+    const handleAddItem = () => {
+        router.push(`/business/${businessId}/items/add-item`);
     };
 
     const handleOpenItem = (itemId: any) => {
@@ -84,9 +84,9 @@ export default function ItemsPage(): JSX.Element {
             <div className="flex items-center justify-between mt-6 !mb-4 !px-3">
                 <h1 className="text-lg font-semibold text-right">کالا و خدمات</h1>
                 <button
-                    onClick={handleAddTransaction}
+                    onClick={handleAddItem}
                     aria-label="افزودن کالا"
-                    className="inline-flex items-center gap-2 px-3 py-1.5 bg-blue-600 text-white rounded shadow-sm"
+                    className="inline-flex items-center gap-2 px-3 py-1.5 bg-blue-600 text-white rounded shadow-sm cursor-pointer"
                 >
                     <MdAdd className="w-5 h-5"/>
                 </button>

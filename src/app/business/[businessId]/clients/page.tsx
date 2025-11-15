@@ -15,7 +15,7 @@ export default function ClientsPage() {
     const router = useRouter();
 
     const handleAddClientButton = () => {
-        router.push(`/client/add-client/${businessId}`);
+        router.push(`/business/${businessId}/clients/add-client`);
     }
 
     const handelEditClient = (clientId: string) => {

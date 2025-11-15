@@ -39,23 +39,23 @@ export function BankAccountModal({open, onClose, onSubmit, editingAccount, logos
     };
 
     return (
-        <Modal open={open} onClose={onClose} onSubmit={handleSubmit}
+        <Modal open={open} confirmButtonTitle='ویرایش' onClose={onClose} onSubmit={handleSubmit}
                modalTitle={editingAccount ? "ویرایش حساب" : "افزودن حساب"}>
-            <div className="space-y-3 mt-4">
+            <div className="space-y-3 !mt-4">
                 <div>
-                    <label className="block text-sm font-medium mb-2">بانک</label>
+                    <label className="block text-sm font-medium !mb-2">بانک</label>
                     <div className="relative">
                         <button
                             type="button"
                             onClick={() => setDropdownOpen(!dropdownOpen)}
-                            className="w-full px-3 py-2 border rounded-md flex justify-between items-center"
+                            className="w-full !px-3 !py-2 border !rounded-md flex justify-between items-center"
                         >
                             {selectedBank?.name || "انتخاب بانک"}
                             <span className={`${dropdownOpen ? "rotate-180" : ""} transition-transform`}>▼</span>
                         </button>
 
                         {dropdownOpen && (
-                            <ul className="absolute bg-background border mt-1 w-full z-10 max-h-48 overflow-auto text-right">
+                            <ul className="absolute bg-card border !mt-1 w-full z-10 max-h-48 overflow-auto text-right">
                                 {logos.map(l => (
                                     <li key={l.name}>
                                         <button
@@ -64,7 +64,7 @@ export function BankAccountModal({open, onClose, onSubmit, editingAccount, logos
                                                 setSelectedBank(l);
                                                 setDropdownOpen(false);
                                             }}
-                                            className="w-full flex items-center gap-2 justify-start !px-3 !py-1 hover:bg-gray-100 d"
+                                            className="w-full flex items-center gap-2 justify-start !px-3 !py-1 hover:bg-gray-100"
 
                                         >
                                             {l.url && (

@@ -4,6 +4,9 @@ export const endpoints = {
         register: `/auth/register`,
         refresh: `/auth/refresh`,
     },
+    client: {
+        getAllClients: `/api/clients`,
+    },
     users: {
         me: `/users/me`,
     },
