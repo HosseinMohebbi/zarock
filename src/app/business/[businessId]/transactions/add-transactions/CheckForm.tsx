@@ -2,7 +2,7 @@
 import { useState } from "react";
 import Input from "@/app/components/ui/Input";
 import Select from "@/app/components/ui/SelectInput";
-import { Client, BankLogo } from "@/services/client";
+import { Client, BankLogo } from "@/services/client/client.types";
 import { createCheck } from "@/services/transaction";
 import type { AddCheckPayload } from "@/services/transaction";
 import DatePicker from "react-multi-date-picker";

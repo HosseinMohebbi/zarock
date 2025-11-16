@@ -2,7 +2,9 @@
 import {useEffect, useState} from "react";
 import ThemeToggle from "@/app/components/theme/ThemeToggle";
 import Card from "@/app/components/ui/Card";
-import {Client as ClientType, getAllClients} from "@/services/client";
+import Input from "@/app/components/ui/Input";
+import {Client as ClientType} from "@/services/client/client.types"
+import {getAllClients, filterClients} from "@/services/client/client.service";
 import {useParams, useRouter} from "next/navigation";
 import {MdPeople, MdPerson, MdLocationPin, MdAccountBalance, MdAdd} from "react-icons/md";
 
@@ -10,10 +12,15 @@ export default function ClientsPage() {
     const [clients, setClients] = useState<ClientType[]>([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [searchPattern, setSearchPattern] = useState('');
     const params = useParams() as { businessId?: string };
     const businessId = params.businessId ?? '';
     const router = useRouter();
+    const [tags, setTags] = useState<string[]>([]); // تگ‌ها برای فیلتر
+    const [page, setPage] = useState(1);
+    const [pageSize, setPageSize] = useState(50); // تعداد آیتم‌ها در هر صفحه
 
+    console.log(clients);
     const handleAddClientButton = () => {
         router.push(`/business/${businessId}/clients/add-client`);
     }
@@ -22,194 +29,109 @@ export default function ClientsPage() {
         router.push(`/business/${businessId}/clients/edit-client/${clientId}`);
     }
 
-    useEffect(() => {
-        async function loadClients() {
-            setLoading(true);
-            setError(null);
-            try {
-                const data = await getAllClients(
-                    {page: 1, pageSize: 50},
-                    businessId
-                );
-                setClients(data);
-            } catch (err: any) {
-                console.error("Failed to load clients:", err);
-                if (err?.response?.status === 401) {
-                    router.push('/login');
-                    return;
-                }
-                setError(err?.response?.data?.message ?? err?.message ?? "خطای نامشخص");
-            } finally {
-                setLoading(false);
-            }
-        }
 
-        if (businessId) {
-            loadClients();
-        } else {
-            setError("شناسه کسب‌وکار نامعتبر است.");
+    const handleSearch = async () => {
+        setLoading(true);
+        setError(null);
+        try {
+            const data = await filterClients(businessId, {
+                page,
+                pageSize,
+                pattern: searchPattern,
+                tags,
+            });
+            setClients(data ?? []);
+        } catch (err: any) {
+            console.error("Failed to load items:", err);
+            if (err?.response?.status === 401) {
+                router.push("/login");
+                return;
+            }
+            setError(err?.response?.data?.message ?? err?.message ?? "خطای نامشخص");
+        } finally {
+            setLoading(false);
         }
-    }, [businessId, router]);
+    };
+
+    useEffect(() => {
+        if (businessId) handleSearch();  // بارگذاری آیتم‌ها به‌هنگام تغییر در businessId یا فیلترها
+    }, [businessId, searchPattern, tags, page, pageSize]);
 
     return (
-        // والد اصلی به صورت یک ستون تمام‌صفحه تا هدر ثابت بمونه و محتوا (لیست) فقط خودش اسکرول کنه
-        <div className="w-full h-screen !p-6 bg-background text-foreground font-sans flex flex-col">
-            {/* هدر (ثابت) */}
-            <div className="flex items-center justify-between gap-2 !my-6 z-10">
-                <div className="flex items-center gap-2">
-                    <MdPeople className="w-8 h-8 text-green-600"/>
-                    <h1 className="text-2xl font-bold">لیست مشتریان</h1>
-                </div>
+        <div className="!p-4 !pt-6 flex flex-col gap-2">
+            {/* هدر */}
+            <div className="flex items-center justify-between gap-4 !px-3">
+                <h1 className="text-lg !font-semibold text-right">لیست مشتریان</h1>
                 <div
-                    className="flex justify-center items-center w-12 h-12 !rounded-full border b"
-                    onClick={handleAddClientButton}>
+                    className="flex justify-center items-center w-12 h-12 !rounded-full border border-gray-300 cursor-pointer"
+                    onClick={handleAddClientButton}
+                >
                     <MdAdd className="w-8 h-8 text-green-600"/>
                 </div>
             </div>
 
-            {/* وضعیت بارگذاری / خطا (اختیاری می‌توانید اینها را هم داخل یک بخش هدر نشان دهید) */}
-            {loading && <div className="text-sm text-gray-500">در حال بارگذاری...</div>}
-            {error && <div className="text-sm text-red-500 mb-4">{error}</div>}
+            {/* جستجو */}
+            <div className="!mb-4 !px-3 flex gap-4">
+                <Input
+                    type="text"
+                    placeholder="جستجو بر اساس نام یا گروه"
+                    value={searchPattern}
+                    onChange={(e) => setSearchPattern(e.target.value)}
+                />
+            </div>
+
+            {/* وضعیت بارگذاری یا خطا */}
+            {loading && <div className="text-center !py-4">در حال بارگذاری...</div>}
+            {error && <div className="text-center text-red-500 !py-4">{error}</div>}
+
+            {/* لیست مشتریان */}
             {!loading && !error && clients.length === 0 && (
-                <div className="text-sm text-gray-600">مشتری‌ای یافت نشد.</div>
+                <div className="!py-6 text-center text-gray-500">مشتری‌ای یافت نشد.</div>
             )}
 
-            {/* لیست اسکرول‌ایبل: این بخش ارتفاع باقی‌مانده را می‌گیرد و فقط خودش اسکرول می‌کند */}
-            <div className="flex justify-center flex-1 overflow-auto w-full">
-                <div className="w-[80%] mx-auto flex flex-col md:flex-row md:flex-wrap items-center gap-4 py-3">
-                    {clients.map((client) => (
-                        <Card key={client.id}
-                              customStyle="w-full border rounded-md !p-3 bg-card"
-                              onClick={handelEditClient.bind(this, client.id)}
-                        >
-                            <div className="flex flex-col justify-start items-start gap-4">
-                                <div className="flex justify-start items-center gap-2">
-                                    <MdPerson className="w-8 h-8 text-green-600"/>
-                                    <div className="text-lg font-medium">{client.fullname}</div>
-                                    <div
-                                        className="text-lg font-medium">{client.isJuridicalPerson ? "(حقوقی)" : "(حقیقی)"}</div>
-                                </div>
-                                <div className="flex justify-start items-center gap-2">
-                                    <MdLocationPin className="w-8 h-8 text-green-600"/>
-                                    <div className="text-sm text-muted-foreground">{client.address}</div>
-                                </div>
-                                <div className="flex justify-start items-center gap-2">
-                                    <MdAccountBalance className="w-8 h-8 text-green-600"/>
-                                    <div className="text-lg text-gray-600">{client.credits.toLocaleString()} تومان</div>
-                                </div>
+            <div
+                className="overflow-y-auto !px-3 !py-3 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+                style={{maxHeight: 'calc(100vh - 250px)'}}
+            >
+                {clients.map((client) => (
+                    <Card
+                        key={client.id}
+                        customStyle="w-full border !rounded-md !p-4 bg-card cursor-pointer"
+                        onClick={() => handelEditClient(client.id)}
+                    >
+                        <div className="flex flex-col gap-3">
+                            <div className="flex items-center gap-2">
+                                <MdPerson className="w-8 h-8 text-green-600"/>
+                                <span className="text-lg font-medium">{client.fullname}</span>
                             </div>
-                        </Card>
-                    ))}
-                </div>
+                            <div className="flex items-center gap-2">
+                                <MdLocationPin className="w-8 h-8 text-green-600 flex-shrink-0"/>
+                                <span
+                                    className="text-sm text-gray-600 truncate"
+                                    style={{
+                                        whiteSpace: 'nowrap',
+                                        overflow: 'hidden',
+                                        textOverflow: 'ellipsis',
+                                        flexGrow: 1,  // متن آدرس می‌تونه فضای باقی‌مونده رو پر کنه
+                                    }}
+                                >
+        {client.address}
+    </span>
+                            </div>
+                            {/*<div className="flex items-center gap-2">*/}
+                            {/*    <MdLocationPin className="w-8 h-8 text-green-600" />*/}
+                            {/*    <span className="text-sm text-gray-600">{client.address}</span>*/}
+                            {/*</div>*/}
+                            <div className="flex items-center gap-2">
+                                <MdAccountBalance className="w-8 h-8 text-green-600"/>
+                                <span className="text-lg text-gray-600">
+                                    {client.credits.toLocaleString()} تومان
+                                </span>
+                            </div>
+                        </div>
+                    </Card>
+                ))}
             </div>
         </div>
     );
 }
-// 'use client';
-// import {useEffect, useState} from "react";
-// import ThemeToggle from "@/app/components/theme/ThemeToggle";
-// import Card from "@/app/components/ui/Card";
-// import {Client as ClientType, getAllClients} from "@/services/client";
-// import {useParams, useRouter} from "next/navigation";
-// import {MdPeople, MdPerson, MdLocationPin, MdAccountBalance, MdAdd} from "react-icons/md";
-//
-//
-// export default function ClientsPage() {
-//     const [clients, setClients] = useState<ClientType[]>([]);
-//     const [loading, setLoading] = useState(false);
-//     const [error, setError] = useState<string | null>(null);
-//     const params = useParams() as { businessId?: string };
-//     const businessId = params.businessId ?? '';
-//     const router = useRouter();
-//
-//     const handleAddClientButton = () => {
-//         router.push(`/client/add-client/${businessId}`);
-//     }
-//
-//     const handelEditClient = (clientId: string) => {
-//         router.push(`/business/${businessId}/clients/edit-client//${clientId}`);
-//     }
-//
-//     // const handelEditClient = (id: string) => {
-//     //     router.push(`/client/edit-client/${businessId}`);
-//     // }
-//
-//     useEffect(() => {
-//         async function loadClients() {
-//             setLoading(true);
-//             setError(null);
-//             try {
-//                 // استفاده از سرویس به جای fetch مستقیم
-//                 const data = await getAllClients(
-//                     {page: 1, pageSize: 50},
-//                     businessId
-//                 );
-//                 setClients(data);
-//             } catch (err: any) {
-//                 console.error("Failed to load clients:", err);
-//                 // اگر خطای 401 بود، کاربر را به صفحه لاگین هدایت کنید
-//                 if (err?.response?.status === 401) {
-//                     router.push('/login');
-//                     return;
-//                 }
-//                 setError(err?.response?.data?.message ?? err?.message ?? "خطای نامشخص");
-//             } finally {
-//                 setLoading(false);
-//             }
-//         }
-//
-//         if (businessId) {
-//             loadClients();
-//         } else {
-//             setError("شناسه کسب‌وکار نامعتبر است.");
-//         }
-//     }, [businessId, router]);
-//
-//     return (
-//         <div className="w-full h-screen !p-6 bg-background text-foreground font-sans">
-//             <div className="flex items-center justify-start gap-2 !my-6">
-//                 <MdPeople className="w-8 h-8 text-green-600"/>
-//                 <h1 className="text-2xl font-bold">لیست مشتریان</h1>
-//             </div>
-//
-//             {loading && <div className="text-sm text-gray-500">در حال بارگذاری...</div>}
-//             {error && <div className="text-sm text-red-500 mb-4">{error}</div>}
-//
-//             {!loading && !error && clients.length === 0 && (
-//                 <div className="text-sm text-gray-600">مشتری‌ای یافت نشد.</div>
-//             )}
-//
-//             <div className="flex flex-col items-center gap-4">
-//                 {clients.map((client) => (
-//                     <Card key={client.id}
-//                          className="w-[80%] border rounded-md !p-3 bg-card"
-//                          onClick={handelEditClient.bind(this, client.id)}
-//                         // onClick={handelEditClient(client.id)}
-//                     >
-//                         <div className="flex flex-col justify-start items-start gap-4">
-//                             <div className="flex justify-start items-center gap-2">
-//                                 <MdPerson className="w-8 h-8 text-green-600"/>
-//                                 <div className="text-lg font-medium">{client.fullname}</div>
-//                                 <div
-//                                     className="text-lg font-medium">{client.isJuridicalPerson ? "(حقوقی)" : "(حقیقی)"}</div>
-//                             </div>
-//                             <div className="flex justify-start items-center gap-2">
-//                                 <MdLocationPin className="w-8 h-8 text-green-600"/>
-//                                 <div className="mt-2 text-lg text-gray-700">{client.address}</div>
-//                             </div>
-//                             <div className="flex justify-start items-center gap-2">
-//                                 <MdAccountBalance className="w-8 h-8 text-green-600"/>
-//                                 <div className="text-lg text-gray-600">{client.credits.toLocaleString()} تومان</div>
-//                             </div>
-//                         </div>
-//                     </Card>
-//                 ))}
-//             </div>
-//             <div
-//                 className="fixed bottom-8 left-4 flex justify-center items-center w-12 h-12  !rounded-full bg-red-300"
-//                 onClick={handleAddClientButton}>
-//                 <MdAdd className="w-8 h-8 text-green-600"/>
-//             </div>
-//         </div>
-//     );
-// }

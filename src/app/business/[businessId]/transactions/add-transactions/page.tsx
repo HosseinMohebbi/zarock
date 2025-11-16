@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect } from "react";
-import { getAllClients, getBankLogos, Client, BankLogo } from "@/services/client";
+import { getAllClients, getBankLogos } from "@/services/client/client.service";
+import { Client, BankLogo } from "@/services/client/client.types";
 import CashForm from "./CashForm";
 import CheckForm from "./CheckForm";
 import { useParams } from "next/navigation";

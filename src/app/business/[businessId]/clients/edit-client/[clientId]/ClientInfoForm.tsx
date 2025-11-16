@@ -6,7 +6,8 @@ import {useRouter} from "next/navigation";
 import Input from "@/app/components/ui/Input";
 import Button from "@/app/components/ui/Button";
 import {http} from "@/utils/api/http";
-import {updateClient, type Client} from "@/services/client";
+import {type Client} from "@/services/client/client.types";
+import {updateClient} from "@/services/client/client.service";
 
 type Props = {
     businessId: string;

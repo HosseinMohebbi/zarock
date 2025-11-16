@@ -4,8 +4,11 @@
 import React, {useState} from 'react'
 import {useParams, useRouter} from 'next/navigation'
 import Input from '@/app/components/ui/Input'
-import {createItem, itemType} from '@/services/item'
+// import {createItem, itemType} from '@/services/item'
+import {itemType} from "@/services/item/item.types";
+import {createItem} from '@/services/item/item.service'
 import Button from "@/app/components/ui/Button";
+import {toast} from "react-toastify";
 
 type FormState = {
     name: string
@@ -40,7 +43,8 @@ export default function AddItemFormPage() {
 
     function validate() {
         const e: Record<string, string> = {}
-        if (!form.name.trim()) e.name = 'نام کالا را وارد کنید'
+        if (!form.group.trim()) e.group = 'این فیلد الزامی است'
+        if (!form.unit.trim()) e.unit = 'این فیلد الزامی است'
         const price = Number(form.defaultUnitPrice)
         if (isNaN(price) || price < 0) e.defaultUnitPrice = 'قیمت معتبر نیست'
         return e
@@ -72,9 +76,10 @@ export default function AddItemFormPage() {
                 description: form.description.trim(),
             }
             await createItem(businessId, payload)
-            setMessage('کالا با موفقیت ایجاد شد')
+            toast.success("آیتم با موفقیت اضافه شد");
+            // setMessage('کالا با موفقیت ایجاد شد')
             // در صورت نیاز به هدایت بعد از ایجاد:
-            // router.push(`/business/${businessId}/items`)
+            router.push(`/business/${businessId}/items`)
             // یا پاک کردن فرم:
             setForm({
                 name: '',
@@ -129,6 +134,7 @@ export default function AddItemFormPage() {
                         name="group"
                         value={form.group}
                         onChange={e => setForm(f => ({...f, group: e.target.value}))}
+                        error={errors.group}
                     />
 
                     {/* زیرگروه */}
@@ -137,7 +143,6 @@ export default function AddItemFormPage() {
                         name="name"
                         value={form.name}
                         onChange={e => setForm(f => ({...f, name: e.target.value}))}
-                        error={errors.name}
                     />
 
                     {/* واحد */}
@@ -146,6 +151,7 @@ export default function AddItemFormPage() {
                         name="unit"
                         value={form.unit}
                         onChange={e => setForm(f => ({...f, unit: e.target.value}))}
+                        error={errors.unit}
                     />
 
                     {/* قیمت واحد */}
@@ -194,9 +200,7 @@ export default function AddItemFormPage() {
                         <label className="text-lg font-medium">تگ‌ها</label>
 
                         <div className="flex gap-2 items-center">
-                            <input
-                                className="text-base !px-3 !py-2 border outline-2 outline-border !rounded-lg flex-1 shadow-sm focus:outline-primary"
-                                placeholder="برای افزودن Enter بزنید یا با کاما جدا کنید"
+                            <Input
                                 value={form.tagInput}
                                 onChange={e => setForm(f => ({...f, tagInput: e.target.value}))}
                                 onKeyDown={e => {
@@ -221,7 +225,7 @@ export default function AddItemFormPage() {
                             {form.tags.map(t => (
                                 <span
                                     key={t}
-                                    className="flex items-center gap-2 bg-gray-100 !px-2 !py-1 rounded text-sm"
+                                    className="flex items-center gap-2 bg-muted text-foreground !px-2 !py-1 !rounded text-sm"
                                 >
                             {t}
                                     <button

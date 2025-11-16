@@ -29,6 +29,7 @@
   --input: 214 32% 91%;
   --ring: 221 83% 53%;
   --button: 181 61% 15%;
+  --danger: 0 75% 50%;
 }
 
 .dark {
@@ -57,6 +58,7 @@
   --input: 215 25% 17%;
   --ring: 221 83% 60%;  
   --button: 160 84% 39%;
+  --danger: 0 75% 50%;
 }
 
 @theme inline {
@@ -77,7 +79,8 @@
   --color-border: hsl(var(--border));
   --color-input: hsl(var(--input));
   --color-ring: hsl(var(--ring));
-    --color-button: hsl(var(--button));
+  --color-button: hsl(var(--button));
+  --color-danger: hsl(var(--danger));
   /*--font-sans: var(--font-geist-sans);*/
   /*--font-mono: var(--font-geist-mono);*/
 }

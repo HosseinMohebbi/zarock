@@ -92,7 +92,7 @@ export default function Select({
 
     return (
         <div ref={rootRef} className={cn('relative w-full text-right', className)}>
-            {label && <label className="block text-sm mb-1 text-gray-600 dark:text-gray-300">{label}</label>}
+            {label && <label className="block text-sm !mb-1 text-foreground">{label}</label>}
 
             <div
                 tabIndex={0}
@@ -103,7 +103,7 @@ export default function Select({
                 aria-label={label ?? 'select'}
                 onKeyDown={handleKeyDown}
                 onClick={handleToggle}
-                className="flex items-center justify-between gap-2 px-3 py-2 border rounded-md shadow-sm bg-white dark:bg-card dark:text-card-foreground border-gray-300 dark:border-zinc-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 cursor-pointer"
+                className="flex items-center justify-between gap-2 !px-3 !py-2 border !rounded-md shadow-sm bg-white dark:bg-card dark:text-card-foreground border-gray-300 dark:border-zinc-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 cursor-pointer"
             >
                 <div className="flex items-center gap-3">
                     {selected?.icon ? (
@@ -130,7 +130,7 @@ export default function Select({
                     id="select-listbox"
                     role="listbox"
                     ref={listRef}
-                    className="absolute z-50 mt-2 w-full max-h-56 overflow-auto rounded-md border bg-white dark:bg-card dark:text-card-foreground border-gray-200 dark:border-zinc-700 shadow-lg py-1"
+                    className="absolute z-50 !mt-2 w-full max-h-56 overflow-auto rounded-md border bg-white dark:bg-card dark:text-card-foreground border-gray-200 dark:border-zinc-700 shadow-lg !py-1"
                 >
                     {options.map((opt, i) => {
                         const isSelected = value === opt.value;
@@ -147,7 +147,7 @@ export default function Select({
                                     handleSelect(i);
                                 }}
                                 className={cn(
-                                    'flex items-center justify-between gap-3 px-3 py-2 cursor-pointer text-sm',
+                                    'flex items-center justify-between gap-3 !px-3 !py-2 cursor-pointer text-sm',
                                     isHighlighted ? 'bg-indigo-50 dark:bg-zinc-700' : 'hover:bg-gray-50 dark:hover:bg-zinc-800'
                                 )}
                                 dir="rtl"

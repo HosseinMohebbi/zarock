@@ -1,17 +1,20 @@
 'use client';
-import React, {useEffect, useState} from "react";
+import {useEffect, useState} from "react";
+import {useParams, useRouter} from 'next/navigation'
 import Button from "@/app/components/ui/Button";
 import Card from "@/app/components/ui/Card";
 import {BankAccountModal} from "@/app/components/ui/modals/BankAccountModal";
+import {BankLogo} from "@/services/client/client.types"
 import {
-    BankLogo,
     getBankLogos,
     createBankAccount,
     updateBankAccount,
-    getBankAccounts
-} from "@/services/client";
-import {MdAdd} from "react-icons/md";
+    getBankAccounts,
+    deleteBankAccount
+} from "@/services/client/client.service";
+import {MdAdd, MdDelete} from "react-icons/md";
 import {toast} from "react-toastify";
+import ConfirmModal from "@/app/components/ui/ConfirmModal";
 
 interface BankAccountResponse {
     id: string;
@@ -27,6 +30,10 @@ type Props = {
 };
 
 export default function ClientBankAccountsForm({businessId, clientId}: Props) {
+    const params = useParams() as { businessId?: string; bankAccountId?: string }
+    const router = useRouter()
+    
+    
     const [logos, setLogos] = useState<BankLogo[]>([]);
     const [bankAccounts, setBankAccounts] = useState<BankAccountResponse[]>([]);
     const [accountsLoading, setAccountsLoading] = useState(true);
@@ -35,6 +42,8 @@ export default function ClientBankAccountsForm({businessId, clientId}: Props) {
     const [editingAccount, setEditingAccount] = useState<BankAccountResponse | null>(null);
     const [modalOpen, setModalOpen] = useState(false);
     const [success, setSuccess] = useState<string | null>(null);
+    const [showConfirm, setShowConfirm] = useState(false)
+    const [selectedBankAccountId, setSelectedBankAccountId] = useState<string | null>(null)
 
     // لود لوگوها و حساب‌های بانکی
     useEffect(() => {
@@ -125,6 +134,19 @@ export default function ClientBankAccountsForm({businessId, clientId}: Props) {
         }
     }
 
+    function handleDelete(accountId: string) {
+        setSelectedBankAccountId(accountId)
+        setShowConfirm(true)
+    }
+
+    async function confirmDelete() {
+        if (!selectedBankAccountId) return;
+
+        await deleteBankAccount(businessId, selectedBankAccountId)
+        await reloadAccounts()
+        setShowConfirm(false)
+    }
+
     return (
         <div className="w-full max-w-lg !mx-auto !p-6 bg-background text-foreground !rounded-lg shadow">
             <div className="flex items-center justify-between !mb-4">
@@ -203,7 +225,12 @@ export default function ClientBankAccountsForm({businessId, clientId}: Props) {
                                         </span>
                                     </div>
                                 </div>
-                                <div className="flex justify-end !mt-3">
+                                <div className="flex justify-end gap-2 !mt-3">
+                                    <Button
+                                        label="حذف"
+                                        onClick={() => handleDelete(acc.id)}
+                                        customStyle="!px-3 !py-1 text-sm !rounded-md !bg-danger text-white hover:bg-blue-700"
+                                    />
                                     <Button
                                         label="ویرایش"
                                         onClick={() => handleEditAccount(acc)}
@@ -215,6 +242,14 @@ export default function ClientBankAccountsForm({businessId, clientId}: Props) {
                     })}
                 </div>
             )}
+
+            <ConfirmModal
+                title="حذف حساب بانکی"
+                isOpen={showConfirm}
+                message="آیا مطمئن هستید که می‌خواهید این حساب بانکی را حذف کنید؟"
+                onConfirm={confirmDelete}
+                onCancel={() => setShowConfirm(false)}
+            />
 
             {/* مدال حساب بانکی */}
             {modalOpen && (

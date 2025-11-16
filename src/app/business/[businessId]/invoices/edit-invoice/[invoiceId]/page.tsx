@@ -1,19 +1,21 @@
 'use client';
 
-import React, {useState, useEffect} from 'react';
-import {useParams, useRouter} from 'next/navigation';
+import React, { useState, useEffect } from 'react';
+import { useParams, useRouter } from 'next/navigation';
 import Input from '@/app/components/ui/Input';
-import {createInvoice} from '@/services/invoice/invoice.service';
 import Button from '@/app/components/ui/Button';
-import Select, {SelectOption} from '@/app/components/ui/SelectInput';
-import {MdAdd, MdMinimize} from "react-icons/md";
-import {getAllClients} from '@/services/client/client.service';
-import {Client} from '@/services/client/client.types';
+import Select from '@/app/components/ui/SelectInput';
+import { MdAdd, MdMinimize } from "react-icons/md";
+import DatePicker from "react-multi-date-picker";
 import persian from "react-date-object/calendars/persian";
 import persian_fa from "react-date-object/locales/persian_fa";
 import dayjs from "dayjs";
 import jalaliday from "jalaliday";
-import DatePicker from "react-multi-date-picker";
+
+import { getAllClients } from '@/services/client/client.service';
+import { Client } from '@/services/client/client.types';
+import { getAllInvoice, updateInvoice } from '@/services/invoice/invoice.service';
+import { AddInvoicePayload } from '@/services/invoice/invoice.types';
 
 dayjs.extend(jalaliday);
 
@@ -31,15 +33,16 @@ type FormState = {
         quantity: string;
         quantityMetric: string;
         price: string;
-        description: string
+        description: string;
     }>;
     showItemForm: boolean;
 };
 
-export default function AddInvoiceFormPage() {
-    const params = useParams() as { businessId?: string };
+export default function EditInvoiceFormPage() {
+    const params = useParams() as { businessId?: string; invoiceId?: string };
     const router = useRouter();
-    const businessId = params?.businessId ?? '';
+    const businessId = params.businessId ?? '';
+    const invoiceId = params.invoiceId ?? '';
 
     const [form, setForm] = useState<FormState>({
         hint: '',
@@ -63,45 +66,81 @@ export default function AddInvoiceFormPage() {
     useEffect(() => {
         async function fetchClients() {
             try {
-                const clientsData = await getAllClients({page: 1, pageSize: 100}, businessId);
+                const clientsData = await getAllClients({ page: 1, pageSize: 100 }, businessId);
                 setClients(clientsData);
-            } catch (error) {
-                console.error(error);
+            } catch (err) {
+                console.error(err);
             }
         }
-
         fetchClients();
     }, [businessId]);
 
-    // Validation
+    // Fetch invoice by finding it in getAllInvoice
+    useEffect(() => {
+        async function fetchInvoice() {
+            if (!businessId || !invoiceId) return;
+
+            try {
+                const invoices = await getAllInvoice({ page: 1, pageSize: 1000 }, businessId);
+                const invoice = invoices.find(inv => inv.id === invoiceId);
+
+                if (!invoice) {
+                    setMessage('فاکتور پیدا نشد');
+                    return;
+                }
+
+                setForm({
+                    hint: invoice.hint || '',
+                    type: invoice.type || 'Invoice',
+                    fromClient: invoice.fromClient.id,
+                    toClient: invoice.toClient.id,
+                    taxPercent: invoice.taxPercent.toString(),
+                    discountPercent: invoice.discountPercent.toString(),
+                    dateTime: invoice.dateTime,
+                    description: invoice.description || '',
+                    invoiceItems: invoice.items.map(i => ({
+                        fullName: i.fullName,
+                        quantity: i.quantity.toString(),
+                        quantityMetric: i.quantityMetric,
+                        price: i.price.toString(),
+                        description: i.description,
+                    })),
+                    showItemForm: invoice.items.length > 0,
+                });
+            } catch (err) {
+                console.error(err);
+                setMessage('خطا در دریافت اطلاعات فاکتور');
+            }
+        }
+        fetchInvoice();
+    }, [businessId, invoiceId]);
+
     function validate() {
         const e: Record<string, string> = {};
         if (!form.fromClient) e.fromClient = 'فروشنده را انتخاب کنید';
         if (!form.toClient) e.toClient = 'خریدار را انتخاب کنید';
-        // if (!form.tax) e.tax = 'مالیات را وارد کنید';
-        // if (!form.discount) e.discount = 'تخفیف را وارد کنید';
         return e;
     }
 
-    // Handle Submit
     async function handleSubmit(ev?: React.FormEvent) {
         ev?.preventDefault();
-        console.log("Form Submitted!", form);
         setMessage(null);
         const v = validate();
         if (Object.keys(v).length) {
             setErrors(v);
             return;
         }
-        if (!businessId) {
-            setMessage('شناسه کسب‌وکار پیدا نشد');
+
+        if (!businessId || !invoiceId) {
+            setMessage('شناسه کسب‌وکار یا فاکتور پیدا نشد');
             return;
         }
 
         setLoading(true);
         setErrors({});
+
         try {
-            const payload = {
+            const payload: AddInvoicePayload = {
                 hint: form.hint,
                 type: form.type,
                 fromClient: form.fromClient,
@@ -113,60 +152,34 @@ export default function AddInvoiceFormPage() {
                 invoiceItems: form.invoiceItems,
             };
 
-            console.log("Payload to send:", payload);
+            await updateInvoice(businessId, invoiceId, payload);
 
-            await createInvoice(businessId, payload);
-
-            console.log("Payload to send:", payload);
-
-            setMessage('فاکتور با موفقیت ایجاد شد');
-            setForm({
-                hint: '',
-                type: 'Invoice',
-                fromClient: '',
-                toClient: '',
-                taxPercent: '',
-                discountPercent: '',
-                dateTime: '',
-                description: '',
-                invoiceItems: [],
-                showItemForm: false,
-            });
+            setMessage('فاکتور با موفقیت ویرایش شد');
             router.push(`/business/${businessId}/invoices`);
         } catch (err: any) {
             console.error(err);
-            setMessage(err?.message ?? 'خطا در ایجاد فاکتور');
+            setMessage(err?.message ?? 'خطا در ویرایش فاکتور');
         } finally {
             setLoading(false);
         }
     }
 
-    // Toggle Item Form
     function toggleItemForm() {
-        setForm((f) => ({...f, showItemForm: !f.showItemForm}));
+        setForm(f => ({ ...f, showItemForm: !f.showItemForm }));
     }
 
-    // Handle Item Change
     function handleItemChange(index: number, field: string, value: string) {
-        setForm((f) => {
+        setForm(f => {
             const invoiceItems = [...f.invoiceItems];
-            invoiceItems[index] = {...invoiceItems[index], [field]: value};
-            return {...f, invoiceItems};
+            invoiceItems[index] = { ...invoiceItems[index], [field]: value };
+            return { ...f, invoiceItems };
         });
     }
-
-    const handleDateChange = (date: Date) => {
-        const formattedDate = date ? dayjs(date).calendar('jalali').toISOString() : '';
-        setForm((f) => ({
-            ...f,
-            date: formattedDate, // ذخیره تاریخ به فرمت شمسی
-        }));
-    };
 
     return (
         <div className="w-full flex justify-center !px-4">
             <div className="w-full max-w-lg mx-auto !p-6 bg-background text-foreground rounded-lg shadow">
-                <h2 className="text-xl font-semibold !mb-4 text-center">ایجاد فاکتور جدید</h2>
+                <h2 className="text-xl font-semibold !mb-4 text-center">ویرایش فاکتور</h2>
 
                 {message && (
                     <div className="!mb-4 text-sm text-center">
@@ -179,17 +192,15 @@ export default function AddInvoiceFormPage() {
                         label="توضیح کوتاه"
                         name="hint"
                         value={form.hint}
-                        onChange={(e) => setForm((f) => ({...f, hint: e.target.value}))}
+                        onChange={(e) => setForm(f => ({ ...f, hint: e.target.value }))}
                     />
+
                     {/* فروشنده */}
                     <Select
                         label="فروشنده"
                         value={form.fromClient}
-                        onChange={(value) => setForm((f) => ({...f, fromClient: value}))}
-                        options={clients.map((client) => ({
-                            value: client.id,
-                            label: client.fullname,
-                        }))}
+                        onChange={value => setForm(f => ({ ...f, fromClient: value }))}
+                        options={clients.map(c => ({ value: c.id, label: c.fullname }))}
                     />
                     {errors.fromClient && <span className="text-red-500 text-sm">{errors.fromClient}</span>}
 
@@ -197,17 +208,13 @@ export default function AddInvoiceFormPage() {
                     <Select
                         label="خریدار"
                         value={form.toClient}
-                        onChange={(value) => setForm((f) => ({...f, toClient: value}))}
-                        options={clients.map((client) => ({
-                            value: client.id,
-                            label: client.fullname,
-                        }))}
+                        onChange={value => setForm(f => ({ ...f, toClient: value }))}
+                        options={clients.map(c => ({ value: c.id, label: c.fullname }))}
                     />
                     {errors.toClient && <span className="text-red-500 text-sm">{errors.toClient}</span>}
 
                     <div className="flex flex-col gap-2">
                         <label className="text-lg font-medium">نوع</label>
-
                         <div className="flex items-center gap-6">
                             <label className="flex items-center gap-2 text-lg">
                                 <input
@@ -215,19 +222,18 @@ export default function AddInvoiceFormPage() {
                                     name="type"
                                     value="PreInvoice"
                                     checked={form.type === 'PreInvoice'}
-                                    onChange={() => setForm(f => ({...f, type: 'PreInvoice'}))}
+                                    onChange={() => setForm(f => ({ ...f, type: 'PreInvoice' }))}
                                     className="accent-primary"
                                 />
                                 <span>پیش فاکتور</span>
                             </label>
-
-                            <label className="flex items-center gap-2">
+                            <label className="flex items-center gap-2 text-lg">
                                 <input
                                     type="radio"
                                     name="type"
                                     value="Invoice"
                                     checked={form.type === 'Invoice'}
-                                    onChange={() => setForm(f => ({...f, type: 'Invoice'}))}
+                                    onChange={() => setForm(f => ({ ...f, type: 'Invoice' }))}
                                     className="accent-primary"
                                 />
                                 <span>فاکتور</span>
@@ -235,114 +241,90 @@ export default function AddInvoiceFormPage() {
                         </div>
                     </div>
 
-                    {/* مالیات */}
                     <Input
                         label="مالیات"
                         name="taxPercent"
                         type="number"
                         value={form.taxPercent}
-                        onChange={(e) => setForm((f) => ({...f, taxPercent: e.target.value}))}
+                        onChange={(e) => setForm(f => ({ ...f, taxPercent: e.target.value }))}
                     />
 
-                    {/* تخفیف */}
                     <Input
                         label="تخفیف"
                         name="discountPercent"
                         type="number"
                         value={form.discountPercent}
-                        onChange={(e) => setForm((f) => ({...f, discountPercent: e.target.value}))}
+                        onChange={(e) => setForm(f => ({ ...f, discountPercent: e.target.value }))}
                     />
 
-                    {/* تاریخ */}
                     <div className="flex items-center gap-2">
                         <label className="label">تاریخ فاکتور </label>
                         <DatePicker
                             calendar={persian}
                             locale={persian_fa}
                             value={form.dateTime ? dayjs(form.dateTime).calendar("jalali").toDate() : dayjs().calendar("jalali").toDate()}
-                            onChange={(date) => setForm((f) => ({
-                                ...f,
-                                dateTime: date ? dayjs(date).toISOString() : ""
-                            }))}
+                            onChange={(date) => setForm(f => ({ ...f, dateTime: date ? dayjs(date).toISOString() : "" }))}
                             className="w-full border rounded-md !px-3 !py-2"
                         />
                     </div>
-                    {/*<Input*/}
-                    {/*    label="تاریخ فاکتور"*/}
-                    {/*    name="date"*/}
-                    {/*    type="date"*/}
-                    {/*    value={form.date}*/}
-                    {/*    onChange={(e) => setForm((f) => ({ ...f, date: e.target.value }))}*/}
-                    {/*/>*/}
 
-                    {/* توضیحات */}
                     <Input
                         label="توضیحات"
                         name="description"
                         value={form.description}
-                        onChange={(e) => setForm((f) => ({...f, description: e.target.value}))}
+                        onChange={(e) => setForm(f => ({ ...f, description: e.target.value }))}
                     />
 
-                    {/* دکمه افزودن آیتم */}
                     <div className="flex justify-center items-center gap-3 !mt-3">
-                        {/*<Button label={<MdAdd className="w-5 h-5"/>} type="button" onClick={toggleItemForm} customStyle="w-8 h-8    rounded-full"/>*/}
                         <button
                             type="button"
                             className="w-8 h-8 flex justify-center items-center !rounded-full !bg-green-400 cursor-pointer"
-                            onClick={toggleItemForm}><MdAdd className="w-5 h-5"/></button>
+                            onClick={toggleItemForm}><MdAdd className="w-5 h-5" />
+                        </button>
                     </div>
 
-                    {/* فرم افزودن آیتم */}
                     {form.showItemForm && (
                         <div className="!p-4 !mt-4 !rounded-lg shadow-md">
                             <div className="flex justify-between items-center">
                                 <h3 className="text-lg font-medium mb-3">افزودن آیتم</h3>
-                                <button type="button" onClick={toggleItemForm}><MdMinimize className="w-5 h-5"/>
-                                </button>
+                                <button type="button" onClick={toggleItemForm}><MdMinimize className="w-5 h-5" /></button>
                             </div>
-                            {/* نوع کالا یا خدمت */}
-                            <Input
-                                label="کالا یا خدمت"
-                                name="fullName"
-                                value={form.invoiceItems[0]?.fullName || ''}
-                                onChange={(e) => handleItemChange(0, 'fullName', e.target.value)}
-                            />
-                            {/* مقدار */}
-                            <Input
-                                label="مقدار"
-                                name="quantity"
-                                type="number"
-                                value={form.invoiceItems[0]?.quantity || ''}
-                                onChange={(e) => handleItemChange(0, 'quantity', e.target.value)}
-                            />
-                            {/* واحد */}
-                            <Input
-                                label="واحد"
-                                name="quantityMetric"
-                                value={form.invoiceItems[0]?.quantityMetric || ''}
-                                onChange={(e) => handleItemChange(0, 'quantityMetric', e.target.value)}
-                            />
-                            {/* قیمت */}
-                            <Input
-                                label="قیمت"
-                                name="price"
-                                type="number"
-                                value={form.invoiceItems[0]?.price || ''}
-                                onChange={(e) => handleItemChange(0, 'price', e.target.value)}
-                            />
-                            {/* توضیحات آیتم */}
-                            <Input
-                                label="توضیحات"
-                                name="itemDescription"
-                                value={form.invoiceItems[0]?.description || ''}
-                                onChange={(e) => handleItemChange(0, 'description', e.target.value)}
-                            />
+                            {form.invoiceItems.map((item, idx) => (
+                                <div key={idx} className="flex flex-col gap-2 mb-3">
+                                    <Input
+                                        label="کالا یا خدمت"
+                                        value={item.fullName}
+                                        onChange={(e) => handleItemChange(idx, 'fullName', e.target.value)}
+                                    />
+                                    <Input
+                                        label="مقدار"
+                                        type="number"
+                                        value={item.quantity}
+                                        onChange={(e) => handleItemChange(idx, 'quantity', e.target.value)}
+                                    />
+                                    <Input
+                                        label="واحد"
+                                        value={item.quantityMetric}
+                                        onChange={(e) => handleItemChange(idx, 'quantityMetric', e.target.value)}
+                                    />
+                                    <Input
+                                        label="قیمت"
+                                        type="number"
+                                        value={item.price}
+                                        onChange={(e) => handleItemChange(idx, 'price', e.target.value)}
+                                    />
+                                    <Input
+                                        label="توضیحات آیتم"
+                                        value={item.description}
+                                        onChange={(e) => handleItemChange(idx, 'description', e.target.value)}
+                                    />
+                                </div>
+                            ))}
                         </div>
                     )}
 
-                    {/* دکمه ارسال فرم */}
                     <div className="flex justify-center mt-6">
-                        <Button label="ایجاد فاکتور" type="submit" loading={loading}/>
+                        <Button label="ویرایش فاکتور" type="submit" loading={loading} />
                     </div>
                 </form>
             </div>

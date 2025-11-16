@@ -1,10 +1,14 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
-import { useParams, useRouter } from 'next/navigation'
+import React, {useState, useEffect} from 'react'
+import {useParams, useRouter} from 'next/navigation'
 import Input from '@/app/components/ui/Input'
 import Button from '@/app/components/ui/Button'
-import { getAllItems, getItemResponse, updateItem, itemType } from '@/services/item'
+import ConfirmModal from '@/app/components/ui/ConfirmModal'
+import {MdDelete} from "react-icons/md";
+import {itemType, getItemResponse} from "@/services/item/item.types";
+import {getAllItems, updateItem, deleteItem} from '@/services/item/item.service'
+import {toast} from "react-toastify";
 
 type FormState = {
     name: string
@@ -37,13 +41,14 @@ export default function EditItemFormPage() {
     const [errors, setErrors] = useState<Record<string, string>>({})
     const [loading, setLoading] = useState(false)
     const [message, setMessage] = useState<string | null>(null)
+    const [showConfirm, setShowConfirm] = useState(false)
 
     useEffect(() => {
         if (!businessId || !itemId) return
 
         async function loadItem() {
             try {
-                const items = await getAllItems({ page: 1, pageSize: 50 }, businessId)
+                const items = await getAllItems({page: 1, pageSize: 50}, businessId)
                 const item = items.find(i => i.id === itemId)
                 if (!item) {
                     setMessage('آیتم یافت نشد')
@@ -62,7 +67,7 @@ export default function EditItemFormPage() {
                 })
             } catch (err: any) {
                 console.error(err)
-                setMessage(err?.message ?? 'خطا در بارگذاری آیتم')
+                toast.error('خطا در بارگذاری آیتم')
             }
         }
 
@@ -71,7 +76,8 @@ export default function EditItemFormPage() {
 
     function validate() {
         const e: Record<string, string> = {}
-        if (!form.name.trim()) e.name = 'نام کالا را وارد کنید'
+        if (!form.group.trim()) e.group = 'این فیلد الزامی است'
+        if (!form.unit.trim()) e.unit = 'این فیلد الزامی است'
         const price = Number(form.defaultUnitPrice)
         if (isNaN(price) || price < 0) e.defaultUnitPrice = 'قیمت معتبر نیست'
         return e
@@ -103,12 +109,11 @@ export default function EditItemFormPage() {
                 description: form.description.trim(),
             }
             await updateItem(businessId, itemId, payload)
-            setMessage('آیتم با موفقیت ویرایش شد')
-            // بعد از موفقیت می‌توان هدایت کرد:
-            // router.push(`/business/${businessId}/items`)
+            toast.success("آیتم با موفقیت ویرایش شد");
+            router.push(`/business/${businessId}/items`)
         } catch (err: any) {
             console.error(err)
-            setMessage(err?.message ?? 'خطا در ویرایش آیتم')
+            toast.error('خطا در ویرایش آیتم')
         } finally {
             setLoading(false)
         }
@@ -118,14 +123,24 @@ export default function EditItemFormPage() {
         const val = form.tagInput.trim()
         if (!val) return
         const newTags = val.split(',').map(t => t.trim()).filter(Boolean)
-        setForm(f => ({ ...f, tags: Array.from(new Set([...f.tags, ...newTags])), tagInput: '' }))
+        setForm(f => ({...f, tags: Array.from(new Set([...f.tags, ...newTags])), tagInput: ''}))
     }
 
     function handleRemoveTag(tag: string) {
-        setForm(f => ({ ...f, tags: f.tags.filter(t => t !== tag) }))
+        setForm(f => ({...f, tags: f.tags.filter(t => t !== tag)}))
     }
 
     function handleCancelForm() {
+        router.push(`/business/${businessId}/items`)
+    }
+
+    function handleDelete() {
+        setShowConfirm(true)
+    }
+
+    async function confirmDelete() {
+        setShowConfirm(false)
+        await deleteItem(businessId, itemId)
         router.push(`/business/${businessId}/items`)
     }
 
@@ -133,7 +148,9 @@ export default function EditItemFormPage() {
         <div className="w-full flex justify-center !px-4">
             <div className="w-full max-w-lg mx-auto !p-6 bg-background text-foreground rounded-lg shadow">
                 <h2 className="text-xl font-semibold !mb-4 text-center">ویرایش کالا / خدمت</h2>
-
+                <div onClick={handleDelete}>
+                    <MdDelete className='w-6 h-6'/>
+                </div>
                 {message && (
                     <div className="!mb-4 text-sm text-center">
             <span className="inline-block !px-3 !py-1 bg-green-100 text-green-800 rounded">
@@ -147,27 +164,28 @@ export default function EditItemFormPage() {
                         label="گروه"
                         name="group"
                         value={form.group}
-                        onChange={e => setForm(f => ({ ...f, group: e.target.value }))}
+                        onChange={e => setForm(f => ({...f, group: e.target.value}))}
+                        error={errors.group}
                     />
                     <Input
                         label="زیرگروه"
                         name="name"
                         value={form.name}
-                        onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
-                        error={errors.name}
+                        onChange={e => setForm(f => ({...f, name: e.target.value}))}
                     />
                     <Input
                         label="واحد"
                         name="unit"
                         value={form.unit}
-                        onChange={e => setForm(f => ({ ...f, unit: e.target.value }))}
+                        onChange={e => setForm(f => ({...f, unit: e.target.value}))}
+                        error={errors.unit}
                     />
                     <Input
                         label="قیمت واحد پیش‌فرض"
                         name="defaultUnitPrice"
                         type="number"
                         value={form.defaultUnitPrice}
-                        onChange={e => setForm(f => ({ ...f, defaultUnitPrice: e.target.value }))}
+                        onChange={e => setForm(f => ({...f, defaultUnitPrice: e.target.value}))}
                         error={errors.defaultUnitPrice}
                     />
 
@@ -180,7 +198,7 @@ export default function EditItemFormPage() {
                                     name="type"
                                     value="Merchandise"
                                     checked={form.type === 'Merchandise'}
-                                    onChange={() => setForm(f => ({ ...f, type: 'Merchandise' }))}
+                                    onChange={() => setForm(f => ({...f, type: 'Merchandise'}))}
                                     className="accent-primary"
                                 />
                                 <span>کالا</span>
@@ -191,7 +209,7 @@ export default function EditItemFormPage() {
                                     name="type"
                                     value="Service"
                                     checked={form.type === 'Service'}
-                                    onChange={() => setForm(f => ({ ...f, type: 'Service' }))}
+                                    onChange={() => setForm(f => ({...f, type: 'Service'}))}
                                     className="accent-primary"
                                 />
                                 <span>خدمت</span>
@@ -202,11 +220,9 @@ export default function EditItemFormPage() {
                     <div className="flex flex-col gap-2">
                         <label className="text-lg font-medium">تگ‌ها</label>
                         <div className="flex gap-2 items-center">
-                            <input
-                                className="text-base !px-3 !py-2 border outline-2 outline-border !rounded-lg flex-1 shadow-sm focus:outline-primary"
-                                placeholder="برای افزودن Enter بزنید یا با کاما جدا کنید"
+                            <Input
                                 value={form.tagInput}
-                                onChange={e => setForm(f => ({ ...f, tagInput: e.target.value }))}
+                                onChange={e => setForm(f => ({...f, tagInput: e.target.value}))}
                                 onKeyDown={e => {
                                     if (e.key === 'Enter') {
                                         e.preventDefault()
@@ -225,7 +241,8 @@ export default function EditItemFormPage() {
                         </div>
                         <div className="flex flex-wrap gap-2 !mt-2">
                             {form.tags.map(t => (
-                                <span key={t} className="flex items-center gap-2 bg-gray-100 !px-2 !py-1 rounded text-sm">
+                                <span key={t}
+                                      className="flex items-center gap-2 bg-muted text-foreground !px-2 !py-1 !rounded text-sm">
                   {t}
                                     <button type="button" onClick={() => handleRemoveTag(t)} className="text-red-500">
                     ×
@@ -240,15 +257,22 @@ export default function EditItemFormPage() {
                         name="description"
                         type="text"
                         value={form.description}
-                        onChange={e => setForm(f => ({ ...f, description: e.target.value }))}
+                        onChange={e => setForm(f => ({...f, description: e.target.value}))}
                     />
 
                     <div className="flex justify-end items-center gap-3 mt-3">
-                        <Button label="لغو" type="button" onClick={handleCancelForm} />
-                        <Button label="ذخیره" type="submit" />
+                        <Button label="لغو" type="button" onClick={handleCancelForm}/>
+                        <Button label="ذخیره" type="submit"/>
                     </div>
                 </form>
             </div>
+            <ConfirmModal
+                title="حذف کالا/خدمت"
+                isOpen={showConfirm}
+                message="آیا مطمئن هستید که می‌خواهید این کالا/خدمت را حذف کنید؟"
+                onConfirm={confirmDelete}
+                onCancel={() => setShowConfirm(false)}
+            />
         </div>
     )
 }

@@ -2,7 +2,7 @@
 import {useEffect, useState} from 'react';
 import Modal from "@/app/components/ui/Modal";
 import Input from "@/app/components/ui/Input";
-import {BankAccountResponse, BankLogo} from "@/services/client";
+import {BankAccountResponse, BankLogo} from "@/services/client/client.types";
 interface BankAccountModalProps {
     open: boolean;
     onClose: () => void;

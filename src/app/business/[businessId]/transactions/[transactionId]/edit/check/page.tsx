@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Input from "@/app/components/ui/Input";
 import Select from "@/app/components/ui/SelectInput";
-import { getAllClients, getBankLogos } from "@/services/client";
+import { getAllClients, getBankLogos } from "@/services/client/client.service";
 import { getCheckById, updateCheck } from "@/services/transaction";
 import DatePicker from "react-multi-date-picker";
 import persian from "react-date-object/calendars/persian";

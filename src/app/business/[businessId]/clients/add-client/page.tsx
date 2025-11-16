@@ -4,10 +4,9 @@ import {useParams, useRouter} from 'next/navigation';
 import {cn} from "@/utils/cn";
 import Input from "@/app/components/ui/Input";
 import Button from "@/app/components/ui/Button";
-import ThemeToggle from "@/app/components/theme/ThemeToggle";
-import {createClient} from "@/services/client";
-// import {createClient} from '@/services/client/client.service'
+import {createClient} from '@/services/client/client.service'
 import {validateClient, FieldErrors} from '@/services/client/client.validation'
+import {toast} from "react-toastify";
 
 
 export default function Client() {
@@ -27,45 +26,7 @@ export default function Client() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState<string | null>(null);
-
-    // const errors = validateClient({fullname, nationalCode, address});
-    // setFieldErrors(errors);
-
-    const validate = (): FieldErrors => {
-        const errors: FieldErrors = {};
-
-        const name = fullName.trim();
-        const nc = nationalCode.trim();
-        const addr = address.trim();
-
-        // فقط حروف فارسی و فاصله
-        const persianNameRegex = /^[\u0600-\u06FF\s]+$/;
-
-        // نام کامل: اجباری + فقط حروف فارسی و فاصله
-        if (!name) {
-            errors.fullName = 'نام کامل الزامی است.';
-        } else if (!persianNameRegex.test(name)) {
-            errors.fullName = 'نام کامل فقط می‌تواند شامل حروف فارسی و فاصله باشد.';
-        }
-
-        // کد ملی: اختیاری، ولی اگر پر شد باید عدد ۱۰ رقمی باشد
-        if (nc) {
-            if (!/^\d{10}$/.test(nc)) {
-                errors.nationalCode = 'کد ملی باید یک عدد ۱۰ رقمی باشد.';
-            }
-        }
-
-        // آدرس: اختیاری، ولی اگر پر شد حداقل ۱۰ کاراکتر
-        if (addr) {
-            if (addr.length < 10) {
-                errors.address = 'آدرس در صورت وارد شدن باید حداقل ۱۰ کاراکتر باشد.';
-            }
-        }
-
-        return errors;
-    };
-
-
+    
     const addTag = () => {
         const t = tagInput.trim();
         if (!t) return;
@@ -86,9 +47,16 @@ export default function Client() {
         setError(null);
         setSuccess(null);
 
-        const v = validate();
-        if (v) {
-            setError(v);
+        // اعتبارسنجی فیلدها
+        const fieldErrs: FieldErrors = validateClient({
+            fullName,
+            nationalCode,
+            address
+        });
+        setFieldErrors(fieldErrs);
+
+        // اگر خطای فیلد داریم، جلوتر نریم
+        if (Object.keys(fieldErrs).length > 0) {
             return;
         }
 
@@ -105,7 +73,9 @@ export default function Client() {
         setLoading(true);
         try {
             await createClient(businessId, payload);
-            // بعد از موفقیت هدایت به لیست اشخاص
+            // setSuccess('شخص با موفقیت اضافه شد');
+            toast.success('شخص با موفقیت اضافه شد')
+            // هدایت به لیست مشتریان
             router.push(`/business/${businessId}/clients`);
         } catch (err: any) {
             setError(err?.message ?? 'خطای سرور');
@@ -113,42 +83,7 @@ export default function Client() {
             setLoading(false);
         }
     };
-    // const handleSubmit = async (e?: React.FormEvent) => {
-    //     console.log('handleAddClick called');
-    //     e?.preventDefault();
-    //     setError(null);
-    //     setSuccess(null);
-    //
-    //     const errors = validateClient({fullName, nationalCode, address});
-    //     setFieldErrors(errors);
-    //
-    //     // اگر هر فیلدی خطا داشت، جلوتر نرو
-    //     if (errors) {
-    //         return;
-    //     }
-    //
-    //     const payload = {
-    //         fullName: fullName.trim(),
-    //         nationalCode: nationalCode.trim(),
-    //         constantDescriptionInvoice: invoiceDescription.trim(),
-    //         isJuridicalPerson,
-    //         isOwnerMember,
-    //         address: address.trim(),
-    //         tags
-    //     };
-    //
-    //     setLoading(true);
-    //     try {
-    //         console.log(businessId, payload)
-    //         // await createClient(businessId, payload);
-    //         // router.push(`/business/${businessId}/clients`);
-    //     } catch (err: any) {
-    //         setError(err?.message ?? 'خطای سرور');
-    //     } finally {
-    //         setLoading(false);
-    //     }
-    // };
-
+    
 
     const handleCancel = () => {
         router.push(`/business/${businessId}/clients`);
