@@ -1,21 +1,22 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import React, {useState, useEffect} from 'react';
+import {useParams, useRouter} from 'next/navigation';
 import Input from '@/app/components/ui/Input';
 import Button from '@/app/components/ui/Button';
 import Select from '@/app/components/ui/SelectInput';
-import { MdAdd, MdMinimize } from "react-icons/md";
+import ConfirmModal from '@/app/components/ui/ConfirmModal';
+import {MdAdd, MdMinimize} from "react-icons/md";
 import DatePicker from "react-multi-date-picker";
 import persian from "react-date-object/calendars/persian";
 import persian_fa from "react-date-object/locales/persian_fa";
 import dayjs from "dayjs";
 import jalaliday from "jalaliday";
 
-import { getAllClients } from '@/services/client/client.service';
-import { Client } from '@/services/client/client.types';
-import { getAllInvoice, updateInvoice } from '@/services/invoice/invoice.service';
-import { AddInvoicePayload } from '@/services/invoice/invoice.types';
+import {getAllClients} from '@/services/client/client.service';
+import {Client} from '@/services/client/client.types';
+import {getAllInvoice, updateInvoice, updateInvoiceArchive} from '@/services/invoice/invoice.service';
+import {AddInvoicePayload} from '@/services/invoice/invoice.types';
 
 dayjs.extend(jalaliday);
 
@@ -36,6 +37,7 @@ type FormState = {
         description: string;
     }>;
     showItemForm: boolean;
+    isArchived: boolean;
 };
 
 export default function EditInvoiceFormPage() {
@@ -55,6 +57,7 @@ export default function EditInvoiceFormPage() {
         description: '',
         invoiceItems: [],
         showItemForm: false,
+        isArchived: false,
     });
 
     const [clients, setClients] = useState<Client[]>([]);
@@ -62,16 +65,37 @@ export default function EditInvoiceFormPage() {
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState<string | null>(null);
 
+    const [showArchiveModal, setShowArchiveModal] = useState(false);
+    const [archiveLoading, setArchiveLoading] = useState(false);
+
+    async function handleArchive() {
+        if (!businessId || !invoiceId) return;
+
+        setArchiveLoading(true);
+
+        try {
+            await updateInvoiceArchive(businessId, invoiceId);
+            setShowArchiveModal(false);
+            router.push(`/business/${businessId}/invoices`);
+        } catch (err) {
+            console.error(err);
+            setMessage("خطا در بایگانی فاکتور");
+        } finally {
+            setArchiveLoading(false);
+        }
+    }
+
     // Fetch clients
     useEffect(() => {
         async function fetchClients() {
             try {
-                const clientsData = await getAllClients({ page: 1, pageSize: 100 }, businessId);
+                const clientsData = await getAllClients({page: 1, pageSize: 100}, businessId);
                 setClients(clientsData);
             } catch (err) {
                 console.error(err);
             }
         }
+
         fetchClients();
     }, [businessId]);
 
@@ -81,7 +105,7 @@ export default function EditInvoiceFormPage() {
             if (!businessId || !invoiceId) return;
 
             try {
-                const invoices = await getAllInvoice({ page: 1, pageSize: 1000 }, businessId);
+                const invoices = await getAllInvoice({page: 1, pageSize: 1000}, businessId);
                 const invoice = invoices.find(inv => inv.id === invoiceId);
 
                 if (!invoice) {
@@ -106,12 +130,15 @@ export default function EditInvoiceFormPage() {
                         description: i.description,
                     })),
                     showItemForm: invoice.items.length > 0,
+                    isArchived: invoice.isArchived ?? false,
+
                 });
             } catch (err) {
                 console.error(err);
                 setMessage('خطا در دریافت اطلاعات فاکتور');
             }
         }
+
         fetchInvoice();
     }, [businessId, invoiceId]);
 
@@ -165,21 +192,41 @@ export default function EditInvoiceFormPage() {
     }
 
     function toggleItemForm() {
-        setForm(f => ({ ...f, showItemForm: !f.showItemForm }));
+        setForm(f => ({...f, showItemForm: !f.showItemForm}));
     }
 
     function handleItemChange(index: number, field: string, value: string) {
         setForm(f => {
             const invoiceItems = [...f.invoiceItems];
-            invoiceItems[index] = { ...invoiceItems[index], [field]: value };
-            return { ...f, invoiceItems };
+            invoiceItems[index] = {...invoiceItems[index], [field]: value};
+            return {...f, invoiceItems};
         });
     }
+
+    function addNewItem() {
+        setForm(f => ({
+            ...f,
+            invoiceItems: [
+                ...f.invoiceItems,
+                {fullName: "", quantity: "", quantityMetric: "", price: "", description: ""}
+            ],
+            showItemForm: true
+        }));
+    }
+
+    function removeItem(index: number) {
+        setForm(f => ({
+            ...f,
+            invoiceItems: f.invoiceItems.filter((_, i) => i !== index)
+        }));
+    }
+
 
     return (
         <div className="w-full flex justify-center !px-4">
             <div className="w-full max-w-lg mx-auto !p-6 bg-background text-foreground rounded-lg shadow">
-                <h2 className="text-xl font-semibold !mb-4 text-center">ویرایش فاکتور</h2>
+                {!form.isArchived ? <h2 className="text-xl font-semibold !mb-4 text-center">ویرایش فاکتور</h2> :
+                    <h2 className="!mb-4 text-center !px-3 !py-1 text-xl !rounded-md bg-yellow-100 text-yellow-700">بایگانی شده</h2>}
 
                 {message && (
                     <div className="!mb-4 text-sm text-center">
@@ -189,27 +236,30 @@ export default function EditInvoiceFormPage() {
 
                 <form onSubmit={handleSubmit} className="flex flex-col gap-5">
                     <Input
+                        disabled={form.isArchived}
                         label="توضیح کوتاه"
                         name="hint"
                         value={form.hint}
-                        onChange={(e) => setForm(f => ({ ...f, hint: e.target.value }))}
+                        onChange={(e) => setForm(f => ({...f, hint: e.target.value}))}
                     />
 
                     {/* فروشنده */}
                     <Select
+                        disabled={form.isArchived}
                         label="فروشنده"
                         value={form.fromClient}
-                        onChange={value => setForm(f => ({ ...f, fromClient: value }))}
-                        options={clients.map(c => ({ value: c.id, label: c.fullname }))}
+                        onChange={value => setForm(f => ({...f, fromClient: value}))}
+                        options={clients.map(c => ({value: c.id, label: c.fullname}))}
                     />
                     {errors.fromClient && <span className="text-red-500 text-sm">{errors.fromClient}</span>}
 
                     {/* خریدار */}
                     <Select
+                        disabled={form.isArchived}
                         label="خریدار"
                         value={form.toClient}
-                        onChange={value => setForm(f => ({ ...f, toClient: value }))}
-                        options={clients.map(c => ({ value: c.id, label: c.fullname }))}
+                        onChange={value => setForm(f => ({...f, toClient: value}))}
+                        options={clients.map(c => ({value: c.id, label: c.fullname}))}
                     />
                     {errors.toClient && <span className="text-red-500 text-sm">{errors.toClient}</span>}
 
@@ -218,22 +268,24 @@ export default function EditInvoiceFormPage() {
                         <div className="flex items-center gap-6">
                             <label className="flex items-center gap-2 text-lg">
                                 <input
+                                    disabled={form.isArchived}
                                     type="radio"
                                     name="type"
                                     value="PreInvoice"
                                     checked={form.type === 'PreInvoice'}
-                                    onChange={() => setForm(f => ({ ...f, type: 'PreInvoice' }))}
+                                    onChange={() => setForm(f => ({...f, type: 'PreInvoice'}))}
                                     className="accent-primary"
                                 />
                                 <span>پیش فاکتور</span>
                             </label>
                             <label className="flex items-center gap-2 text-lg">
                                 <input
+                                    disabled={form.isArchived}
                                     type="radio"
                                     name="type"
                                     value="Invoice"
                                     checked={form.type === 'Invoice'}
-                                    onChange={() => setForm(f => ({ ...f, type: 'Invoice' }))}
+                                    onChange={() => setForm(f => ({...f, type: 'Invoice'}))}
                                     className="accent-primary"
                                 />
                                 <span>فاکتور</span>
@@ -242,92 +294,139 @@ export default function EditInvoiceFormPage() {
                     </div>
 
                     <Input
+                        disabled={form.isArchived}
                         label="مالیات"
                         name="taxPercent"
                         type="number"
                         value={form.taxPercent}
-                        onChange={(e) => setForm(f => ({ ...f, taxPercent: e.target.value }))}
+                        onChange={(e) => setForm(f => ({...f, taxPercent: e.target.value}))}
                     />
 
                     <Input
+                        disabled={form.isArchived}
                         label="تخفیف"
                         name="discountPercent"
                         type="number"
                         value={form.discountPercent}
-                        onChange={(e) => setForm(f => ({ ...f, discountPercent: e.target.value }))}
+                        onChange={(e) => setForm(f => ({...f, discountPercent: e.target.value}))}
                     />
 
                     <div className="flex items-center gap-2">
                         <label className="label">تاریخ فاکتور </label>
                         <DatePicker
+                            disabled={form.isArchived}
                             calendar={persian}
                             locale={persian_fa}
-                            value={form.dateTime ? dayjs(form.dateTime).calendar("jalali").toDate() : dayjs().calendar("jalali").toDate()}
-                            onChange={(date) => setForm(f => ({ ...f, dateTime: date ? dayjs(date).toISOString() : "" }))}
+                            value={form.dateTime ? dayjs(form.dateTime).calendar("jalali").toDate() : new Date()}
+                            onChange={(date) =>
+                                setForm(f => ({
+                                    ...f,
+                                    dateTime: date ? dayjs(date).format('YYYY-MM-DDTHH:mm:ss') : ""
+                                }))
+                            }
                             className="w-full border rounded-md !px-3 !py-2"
                         />
                     </div>
 
                     <Input
+                        disabled={form.isArchived}
                         label="توضیحات"
                         name="description"
                         value={form.description}
-                        onChange={(e) => setForm(f => ({ ...f, description: e.target.value }))}
+                        onChange={(e) => setForm(f => ({...f, description: e.target.value}))}
                     />
+
+                    {form.showItemForm && form.invoiceItems.map((item, idx) => (
+                        <div
+                            key={idx}
+                            className="w-full !p-4 !mt-4 !rounded-lg shadow-md border bg-card  flex flex-col gap-4"
+                        >
+                            <div className="flex justify-between items-center !mb-2">
+                                <h3 className="text-lg font-medium">آیتم {idx + 1}</h3>
+                                <button
+                                    disabled={form.isArchived}
+                                    type="button"
+                                    onClick={() => removeItem(idx)}
+                                    className="text-red-500 hover:text-red-700"
+                                >
+                                    <MdMinimize className="w-6 h-6"/>
+                                </button>
+                            </div>
+
+                            <Input
+                                disabled={form.isArchived}
+                                label="کالا یا خدمت"
+                                name={`fullName-${idx}`}
+                                value={item.fullName}
+                                onChange={(e) => handleItemChange(idx, 'fullName', e.target.value)}
+                            />
+
+                            <Input
+                                disabled={form.isArchived}
+                                label="مقدار"
+                                name={`quantity-${idx}`}
+                                type="number"
+                                value={item.quantity}
+                                onChange={(e) => handleItemChange(idx, 'quantity', e.target.value)}
+                            />
+
+                            <Input
+                                disabled={form.isArchived}
+                                label="واحد"
+                                name={`quantityMetric-${idx}`}
+                                value={item.quantityMetric}
+                                onChange={(e) => handleItemChange(idx, 'quantityMetric', e.target.value)}
+                            />
+
+                            <Input
+                                disabled={form.isArchived}
+                                label="قیمت"
+                                name={`price-${idx}`}
+                                type="number"
+                                value={item.price}
+                                onChange={(e) => handleItemChange(idx, 'price', e.target.value)}
+                            />
+
+                            <Input
+                                disabled={form.isArchived}
+                                label="توضیحات آیتم"
+                                name={`description-${idx}`}
+                                value={item.description}
+                                onChange={(e) => handleItemChange(idx, 'description', e.target.value)}
+                            />
+                        </div>
+                    ))}
 
                     <div className="flex justify-center items-center gap-3 !mt-3">
                         <button
+                            disabled={form.isArchived}
                             type="button"
                             className="w-8 h-8 flex justify-center items-center !rounded-full !bg-green-400 cursor-pointer"
-                            onClick={toggleItemForm}><MdAdd className="w-5 h-5" />
+                            onClick={addNewItem}><MdAdd className="w-5 h-5"/>
                         </button>
                     </div>
 
-                    {form.showItemForm && (
-                        <div className="!p-4 !mt-4 !rounded-lg shadow-md">
-                            <div className="flex justify-between items-center">
-                                <h3 className="text-lg font-medium mb-3">افزودن آیتم</h3>
-                                <button type="button" onClick={toggleItemForm}><MdMinimize className="w-5 h-5" /></button>
-                            </div>
-                            {form.invoiceItems.map((item, idx) => (
-                                <div key={idx} className="flex flex-col gap-2 mb-3">
-                                    <Input
-                                        label="کالا یا خدمت"
-                                        value={item.fullName}
-                                        onChange={(e) => handleItemChange(idx, 'fullName', e.target.value)}
-                                    />
-                                    <Input
-                                        label="مقدار"
-                                        type="number"
-                                        value={item.quantity}
-                                        onChange={(e) => handleItemChange(idx, 'quantity', e.target.value)}
-                                    />
-                                    <Input
-                                        label="واحد"
-                                        value={item.quantityMetric}
-                                        onChange={(e) => handleItemChange(idx, 'quantityMetric', e.target.value)}
-                                    />
-                                    <Input
-                                        label="قیمت"
-                                        type="number"
-                                        value={item.price}
-                                        onChange={(e) => handleItemChange(idx, 'price', e.target.value)}
-                                    />
-                                    <Input
-                                        label="توضیحات آیتم"
-                                        value={item.description}
-                                        onChange={(e) => handleItemChange(idx, 'description', e.target.value)}
-                                    />
-                                </div>
-                            ))}
+                    {!form.isArchived && (
+                        <div className="flex justify-center gap-4 mt-6">
+                            <Button label="ویرایش فاکتور" type="submit" loading={loading}/>
+                            <Button
+                                label="بایگانی فاکتور"
+                                onClick={() => setShowArchiveModal(true)}
+                            />
                         </div>
                     )}
-
-                    <div className="flex justify-center mt-6">
-                        <Button label="ویرایش فاکتور" type="submit" loading={loading} />
-                    </div>
                 </form>
             </div>
+            <ConfirmModal
+                isOpen={showArchiveModal}
+                title="بایگانی فاکتور"
+                message="آیا از بایگانی این فاکتور مطمئن هستید؟"
+                confirmText={archiveLoading ? "در حال بایگانی..." : "بایگانی"}
+                cancelText="لغو"
+                dangerColor="hsl(0, 75%, 50%)"
+                onCancel={() => setShowArchiveModal(false)}
+                onConfirm={handleArchive}
+            />
         </div>
     );
 }

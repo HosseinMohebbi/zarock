@@ -10,8 +10,8 @@ export const endpoints = {
     client: {
         create: (businessId: string) => `/api/Client/${businessId}`,
         update: (businessId: string, clientId: string) => `/api/Client/${businessId}/${clientId}`,
-        getAll: (businessId: string) => `/api/client/${businessId}/all`,
-        filter: (businessId: string) => `/api/client/${businessId}/filter`,
+        getAll: (businessId: string) => `/api/Client/${businessId}/all`,
+        filter: (businessId: string) => `/api/Client/${businessId}/filter`,
     },
     bank: {
         logos: `/api/BankLogo`,
@@ -24,6 +24,7 @@ export const endpoints = {
         create: (businessId: string) => `/api/Invoice/${businessId}`,
         getAll: (businessId: string) => `/api/Invoice/${businessId}/all`,
         updateInvoice: (businessId: string, invoiceId: string) => `/api/Invoice/${businessId}/${invoiceId}`,
+        updateInvoiceArchive: (businessId: string, invoiceId: string) => `/api/Invoice/${businessId}/archive/${invoiceId}`,
         // اگر بعداً نیاز به filter یا جزئیات داشتیم می‌تونیم اضافه کنیم
         // filter: (businessId: string) => `${API_BASE}/api/Invoice/${businessId}/filter`,
         // getById: (businessId: string, invoiceId: string) => `${API_BASE}/api/Invoice/${businessId}/${invoiceId}`,

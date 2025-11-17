@@ -156,7 +156,7 @@ export default function AddItemFormPage() {
 
                     {/* قیمت واحد */}
                     <Input
-                        label="قیمت واحد پیش‌فرض"
+                        label="قیمت واحد"
                         name="defaultUnitPrice"
                         type="number"
                         value={form.defaultUnitPrice}

@@ -155,6 +155,22 @@ export default function AddInvoiceFormPage() {
         });
     }
 
+    function addNewItem() {
+        setForm(f => ({
+            ...f,
+            invoiceItems: [
+                ...f.invoiceItems,
+                {
+                    fullName: "",
+                    quantity: "",
+                    quantityMetric: "",
+                    price: "",
+                    description: ""
+                }
+            ]
+        }));
+    }
+
     const handleDateChange = (date: Date) => {
         const formattedDate = date ? dayjs(date).calendar('jalali').toISOString() : '';
         setForm((f) => ({
@@ -259,22 +275,20 @@ export default function AddInvoiceFormPage() {
                         <DatePicker
                             calendar={persian}
                             locale={persian_fa}
-                            value={form.dateTime ? dayjs(form.dateTime).calendar("jalali").toDate() : dayjs().calendar("jalali").toDate()}
-                            onChange={(date) => setForm((f) => ({
-                                ...f,
-                                dateTime: date ? dayjs(date).toISOString() : ""
-                            }))}
-                            className="w-full border rounded-md !px-3 !py-2"
+                            value={
+                                form.dateTime
+                                    ? dayjs(form.dateTime).toDate()
+                                    : new Date()
+                            }
+                            onChange={(date) =>
+                                setForm((f) => ({
+                                    ...f,
+                                    dateTime: date ? date.toDate().toISOString() : ""
+                                }))
+                            }
+                            className="w-full border rounded-md px-3 py-2"
                         />
                     </div>
-                    {/*<Input*/}
-                    {/*    label="تاریخ فاکتور"*/}
-                    {/*    name="date"*/}
-                    {/*    type="date"*/}
-                    {/*    value={form.date}*/}
-                    {/*    onChange={(e) => setForm((f) => ({ ...f, date: e.target.value }))}*/}
-                    {/*/>*/}
-
                     {/* توضیحات */}
                     <Input
                         label="توضیحات"
@@ -283,62 +297,141 @@ export default function AddInvoiceFormPage() {
                         onChange={(e) => setForm((f) => ({...f, description: e.target.value}))}
                     />
 
+                    {form.invoiceItems.map((item, index) => (
+                        <div
+                            key={index}
+                            className="w-full p-4 mt-4 rounded-lg shadow-md border border-gray-300 bg-white flex flex-col gap-4"
+                        >
+                            <div className="flex justify-between items-center mb-2">
+                                <h3 className="text-lg font-medium">افزودن آیتم {index + 1}</h3>
+
+                                <button
+                                    type="button"
+                                    className="text-red-500 hover:text-red-700"
+                                    onClick={() =>
+                                        setForm(f => ({
+                                            ...f,
+                                            invoiceItems: f.invoiceItems.filter((_, i) => i !== index)
+                                        }))
+                                    }
+                                >
+                                    <MdMinimize className="w-6 h-6" />
+                                </button>
+                            </div>
+
+                            <Input
+                                label="کالا یا خدمت"
+                                name="fullName"
+                                value={item.fullName}
+                                onChange={(e) => handleItemChange(index, 'fullName', e.target.value)}
+                            />
+
+                            <Input
+                                label="مقدار"
+                                name="quantity"
+                                type="number"
+                                value={item.quantity}
+                                onChange={(e) => handleItemChange(index, 'quantity', e.target.value)}
+                            />
+
+                            <Input
+                                label="واحد"
+                                name="quantityMetric"
+                                value={item.quantityMetric}
+                                onChange={(e) => handleItemChange(index, 'quantityMetric', e.target.value)}
+                            />
+
+                            <Input
+                                label="قیمت"
+                                name="price"
+                                type="number"
+                                value={item.price}
+                                onChange={(e) => handleItemChange(index, 'price', e.target.value)}
+                            />
+
+                            <Input
+                                label="توضیحات"
+                                name="itemDescription"
+                                value={item.description}
+                                onChange={(e) => handleItemChange(index, 'description', e.target.value)}
+                            />
+                        </div>
+                    ))}
+
+
+                    {/*{form.invoiceItems.map((item, index) => (*/}
+                    {/*    <div key={index} className="!p-4 !mt-4 !rounded-lg shadow-md">*/}
+                    {/*        <div className="flex justify-between items-center">*/}
+                    {/*            <h3 className="text-lg font-medium mb-3">*/}
+                    {/*                افزودن آیتم {index + 1}*/}
+                    {/*            </h3>*/}
+                    
+                    {/*            /!* دکمه حذف در صورت نیاز *!/*/}
+                    {/*            <button*/}
+                    {/*                type="button"*/}
+                    {/*                onClick={() =>*/}
+                    {/*                    setForm(f => ({*/}
+                    {/*                        ...f,*/}
+                    {/*                        invoiceItems: f.invoiceItems.filter((_, i) => i !== index)*/}
+                    {/*                    }))*/}
+                    {/*                }*/}
+                    {/*            >*/}
+                    {/*                <MdMinimize className="w-5 h-5"/>*/}
+                    {/*            </button>*/}
+                    {/*        </div>*/}
+                    
+                    {/*        /!* کالا یا خدمت *!/*/}
+                    {/*        <Input*/}
+                    {/*            label="کالا یا خدمت"*/}
+                    {/*            name="fullName"*/}
+                    {/*            value={item.fullName}*/}
+                    {/*            onChange={(e) => handleItemChange(index, 'fullName', e.target.value)}*/}
+                    {/*        />*/}
+                    
+                    {/*        /!* مقدار *!/*/}
+                    {/*        <Input*/}
+                    {/*            label="مقدار"*/}
+                    {/*            name="quantity"*/}
+                    {/*            type="number"*/}
+                    {/*            value={item.quantity}*/}
+                    {/*            onChange={(e) => handleItemChange(index, 'quantity', e.target.value)}*/}
+                    {/*        />*/}
+                    
+                    {/*        /!* واحد *!/*/}
+                    {/*        <Input*/}
+                    {/*            label="واحد"*/}
+                    {/*            name="quantityMetric"*/}
+                    {/*            value={item.quantityMetric}*/}
+                    {/*            onChange={(e) => handleItemChange(index, 'quantityMetric', e.target.value)}*/}
+                    {/*        />*/}
+                    
+                    {/*        /!* قیمت *!/*/}
+                    {/*        <Input*/}
+                    {/*            label="قیمت"*/}
+                    {/*            name="price"*/}
+                    {/*            type="number"*/}
+                    {/*            value={item.price}*/}
+                    {/*            onChange={(e) => handleItemChange(index, 'price', e.target.value)}*/}
+                    {/*        />*/}
+                    
+                    {/*        /!* توضیحات آیتم *!/*/}
+                    {/*        <Input*/}
+                    {/*            label="توضیحات"*/}
+                    {/*            name="itemDescription"*/}
+                    {/*            value={item.description}*/}
+                    {/*            onChange={(e) => handleItemChange(index, 'description', e.target.value)}*/}
+                    {/*        />*/}
+                    {/*    </div>*/}
+                    {/*))}*/}
+
                     {/* دکمه افزودن آیتم */}
                     <div className="flex justify-center items-center gap-3 !mt-3">
                         {/*<Button label={<MdAdd className="w-5 h-5"/>} type="button" onClick={toggleItemForm} customStyle="w-8 h-8    rounded-full"/>*/}
                         <button
                             type="button"
                             className="w-8 h-8 flex justify-center items-center !rounded-full !bg-green-400 cursor-pointer"
-                            onClick={toggleItemForm}><MdAdd className="w-5 h-5"/></button>
+                            onClick={addNewItem}><MdAdd className="w-5 h-5"/></button>
                     </div>
-
-                    {/* فرم افزودن آیتم */}
-                    {form.showItemForm && (
-                        <div className="!p-4 !mt-4 !rounded-lg shadow-md">
-                            <div className="flex justify-between items-center">
-                                <h3 className="text-lg font-medium mb-3">افزودن آیتم</h3>
-                                <button type="button" onClick={toggleItemForm}><MdMinimize className="w-5 h-5"/>
-                                </button>
-                            </div>
-                            {/* نوع کالا یا خدمت */}
-                            <Input
-                                label="کالا یا خدمت"
-                                name="fullName"
-                                value={form.invoiceItems[0]?.fullName || ''}
-                                onChange={(e) => handleItemChange(0, 'fullName', e.target.value)}
-                            />
-                            {/* مقدار */}
-                            <Input
-                                label="مقدار"
-                                name="quantity"
-                                type="number"
-                                value={form.invoiceItems[0]?.quantity || ''}
-                                onChange={(e) => handleItemChange(0, 'quantity', e.target.value)}
-                            />
-                            {/* واحد */}
-                            <Input
-                                label="واحد"
-                                name="quantityMetric"
-                                value={form.invoiceItems[0]?.quantityMetric || ''}
-                                onChange={(e) => handleItemChange(0, 'quantityMetric', e.target.value)}
-                            />
-                            {/* قیمت */}
-                            <Input
-                                label="قیمت"
-                                name="price"
-                                type="number"
-                                value={form.invoiceItems[0]?.price || ''}
-                                onChange={(e) => handleItemChange(0, 'price', e.target.value)}
-                            />
-                            {/* توضیحات آیتم */}
-                            <Input
-                                label="توضیحات"
-                                name="itemDescription"
-                                value={form.invoiceItems[0]?.description || ''}
-                                onChange={(e) => handleItemChange(0, 'description', e.target.value)}
-                            />
-                        </div>
-                    )}
 
                     {/* دکمه ارسال فرم */}
                     <div className="flex justify-center mt-6">

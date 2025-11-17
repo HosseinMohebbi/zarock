@@ -26,7 +26,7 @@ export async function updateClient(businessId: string, clientId: string, payload
     return data;
 }
 
-export async function getAllClients(businessId: string, params: { page: number; pageSize: number }): Promise<Client[]> {
+export async function getAllClients(params: { page: number; pageSize: number },businessId: string): Promise<Client[]> {
     const {data} = await http.get<Client[]>(endpoints.client.getAll(businessId), {params});
     return data;
 }

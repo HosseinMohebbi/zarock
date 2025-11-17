@@ -16,8 +16,15 @@ export async function createInvoice(
 
 export async function updateInvoice(businessId: string, invoiceId: string, payload: AddInvoicePayload): Promise<AddInvoiceResponse> {
     const {data} = await http.put<AddInvoiceResponse>(
-        endpoints.client.update(businessId, invoiceId),
+        endpoints.invoice.updateInvoice(businessId, invoiceId),
         payload
+    );
+    return data;
+}
+
+export async function updateInvoiceArchive(businessId: string, invoiceId: string): Promise<AddInvoiceResponse> {
+    const {data} = await http.put<AddInvoiceResponse>(
+        endpoints.invoice.updateInvoiceArchive(businessId, invoiceId),
     );
     return data;
 }

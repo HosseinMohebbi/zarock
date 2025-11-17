@@ -1,6 +1,6 @@
 'use client';
 import { useState, useEffect } from "react";
-import { getAllClients, getBankLogos } from "@/services/client/client.service";
+import {filterClients, getAllClients, getBankLogos} from "@/services/client/client.service";
 import { Client, BankLogo } from "@/services/client/client.types";
 import CashForm from "./CashForm";
 import CheckForm from "./CheckForm";
@@ -19,6 +19,7 @@ export default function AddTransactionPage() {
             setLoadingClients(true);
             try {
                 const data = await getAllClients({ page: 1, pageSize: 200 }, businessId);
+                console.log(data);
                 setClients(data);
             } catch (err) {
                 console.error(err);
