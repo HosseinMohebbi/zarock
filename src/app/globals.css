@@ -30,6 +30,7 @@
   --ring: 221 83% 53%;
   --button: 181 61% 15%;
   --danger: 0 75% 50%;
+  --confirm: 140 65% 45%;
 }
 
 .dark {
@@ -59,6 +60,7 @@
   --ring: 221 83% 60%;  
   --button: 160 84% 39%;
   --danger: 0 75% 50%;
+  --confirm: 140 65% 45%;
 }
 
 @theme inline {
@@ -81,6 +83,7 @@
   --color-ring: hsl(var(--ring));
   --color-button: hsl(var(--button));
   --color-danger: hsl(var(--danger));
+  --color-confirm: hsl(var(--confirm));
   /*--font-sans: var(--font-geist-sans);*/
   /*--font-mono: var(--font-geist-mono);*/
 }

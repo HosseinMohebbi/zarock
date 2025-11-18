@@ -7,7 +7,10 @@ import Input from "@/app/components/ui/Input";
 import Button from "@/app/components/ui/Button";
 import {http} from "@/utils/api/http";
 import {type Client} from "@/services/client/client.types";
-import {updateClient} from "@/services/client/client.service";
+import {updateClient, deleteClient} from "@/services/client/client.service";
+import {MdDelete} from "react-icons/md";
+import {toast} from "react-toastify";
+import ConfirmModal from "@/app/components/ui/ConfirmModal";
 
 type Props = {
     businessId: string;
@@ -28,6 +31,7 @@ export default function ClientInfoForm({businessId, clientId}: Props) {
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState<string | null>(null);
+    const [showConfirm, setShowConfirm] = useState(false)
 
     // لود اطلاعات اولیه مشتری
     useEffect(() => {
@@ -88,11 +92,28 @@ export default function ClientInfoForm({businessId, clientId}: Props) {
         router.push(`/business/${businessId}/clients`);
     };
 
+    function handleDelete() {
+        setShowConfirm(true)
+    }
+
+    async function confirmDelete() {
+        setShowConfirm(false)
+        await deleteClient(businessId, clientId)
+        router.push(`/business/${businessId}/clients`)
+        toast.success("مشتری با موفقیت حذف شد")
+    }
+
     return (
         <div className="w-full max-w-lg !mx-auto !p-6 bg-background text-foreground rounded-lg shadow">
-            <h2 className="text-xl font-semibold !mb-4 text-center">
-                ویرایش اطلاعات مشتری
-            </h2>
+            {/*<h2 className="text-xl font-semibold !mb-4 text-center">*/}
+            {/*    ویرایش اطلاعات مشتری*/}
+            {/*</h2>*/}
+            <div className="relative w-full flex items-start">
+                <div onClick={handleDelete} className="absolute right-0 text-danger cursor-pointer">
+                    <MdDelete className='w-6 h-6'/>
+                </div>
+                <h2 className="!mx-auto text-xl font-semibold !mb-4 text-center">ویرایش اطلاعات مشتری</h2>
+            </div>
 
             {loading ? (
                 <div className="text-center text-sm text-muted-foreground">
@@ -200,6 +221,13 @@ export default function ClientInfoForm({businessId, clientId}: Props) {
                     </form>
                 </>
             )}
+            <ConfirmModal
+                title="حذف مشتری"
+                isOpen={showConfirm}
+                message="آیا مطمئن هستید که می‌خواهید این مشتری را حذف کنید؟"
+                onConfirm={confirmDelete}
+                onCancel={() => setShowConfirm(false)}
+            />
         </div>
     );
 }

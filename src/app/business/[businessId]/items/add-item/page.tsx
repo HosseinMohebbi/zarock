@@ -76,7 +76,7 @@ export default function AddItemFormPage() {
                 description: form.description.trim(),
             }
             await createItem(businessId, payload)
-            toast.success("آیتم با موفقیت اضافه شد");
+            toast.success("کالا با موفقیت اضافه شد");
             // setMessage('کالا با موفقیت ایجاد شد')
             // در صورت نیاز به هدایت بعد از ایجاد:
             router.push(`/business/${businessId}/items`)
@@ -93,6 +93,7 @@ export default function AddItemFormPage() {
             })
         } catch (err: any) {
             console.error(err)
+            toast.error("خطا در افزودن کالا/خدمت")
             setMessage(err?.message ?? 'خطا در ایجاد کالا')
         } finally {
             setLoading(false)

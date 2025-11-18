@@ -102,7 +102,7 @@ export default function InvoicesPage() {
 
             {/* list */}
             <div
-                className="!px-3 !mt-4 grid grid-cols-1 gap-3 overflow-y-auto md:grid-cols-2 !pb-4 lg:grid-cols-3 xl:grid-cols-4"
+                className="!px-3 !mt-4 grid grid-cols-1 gap-3 overflow-y-auto md:grid-cols-2 !pb-4 lg:grid-cols-3 2xl:grid-cols-4"
                 style={{
                     maxHeight: 'calc(100vh - 200px)', // ارتفاع لیست کارت‌ها محدود به 100vh منهای ارتفاع هدر
                     overflowY: 'auto', // فقط خود لیست کارت‌ها اسکرول بخورد
@@ -115,8 +115,9 @@ export default function InvoicesPage() {
                         className="w-full bg-card rounded-lg shadow-sm hover:shadow-md transition overflow-hidden"
                         style={{
                             minWidth: '300px', // حداقل عرض کارت‌ها
-                            maxWidth: '450px', // حداکثر عرض کارت‌ها
+                            
                         }}
+                        onClick={() => handleEditInvoice(inv.id)}
                     >
                         <div className="flex items-stretch h-full">
 
@@ -134,21 +135,20 @@ export default function InvoicesPage() {
                             <div className="flex-1 !p-2">
                                 <div className="flex flex-col gap-4 !p-4">
                                     <div className="flex justify-between text-lg">
-                                        <div className="flex gap-2 text-lg">
+                                        <div className="flex items-center flex-wrap gap-2 text-lg">
                                             <h2>خریدار: </h2>
-                                            <span>{inv.fromClient?.fullname ?? "نامشخص"}</span>
+                                            <span className="text-base">{inv.fromClient?.fullname ?? "نامشخص"}</span>
                                         </div>
-                                        <div className="flex justify-center items-center w-8 h-8 bg-red-400 !rounded-full cursor-pointer" onClick={() => handleEditInvoice(inv.id)}><MdEdit className="w-5 h-5"/></div>
                                     </div>
 
-                                    <div className="flex gap-2 text-lg">
+                                    <div className="flex items-center flex-wrap gap-2 text-lg">
                                         <h2>فروشنده: </h2>
-                                        <span>{inv.toClient?.fullname ?? "نامشخص"}</span>
+                                        <span className="text-base">{inv.toClient?.fullname ?? "نامشخص"}</span>
                                     </div>
 
-                                    <div className="flex gap-2 text-lg">
+                                    <div className="flex items-center gap-2 text-lg">
                                         <h2>تاریخ: </h2>
-                                        <span>{formatJalali(inv.dateTime)}</span>
+                                        <span className="text-base">{formatJalali(inv.dateTime)}</span>
                                     </div>
 
                                     {/* نمایش آیتم‌های فاکتور */}
@@ -166,9 +166,9 @@ export default function InvoicesPage() {
                                     </div>
 
                                     {/* محاسبه قیمت نهایی */}
-                                    <div className="flex gap-2 text-lg mt-4">
+                                    <div className="flex items-center flex-wrap gap-2 text-lg mt-4">
                                         <h2>قیمت نهایی: </h2>
-                                        <span>{Math.ceil(calculateFinalPrice(inv.items, inv.discountPercent, inv.taxPercent)).toLocaleString()} تومان</span>
+                                        <span className="text-base">{Math.ceil(calculateFinalPrice(inv.items, inv.discountPercent, inv.taxPercent)).toLocaleString()} تومان</span>
                                     </div>
                                 </div>
                             </div>

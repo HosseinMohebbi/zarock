@@ -26,7 +26,7 @@ export async function updateClient(businessId: string, clientId: string, payload
     return data;
 }
 
-export async function getAllClients(params: { page: number; pageSize: number },businessId: string): Promise<Client[]> {
+export async function getAllClients(params: { page: number; pageSize: number }, businessId: string): Promise<Client[]> {
     const {data} = await http.get<Client[]>(endpoints.client.getAll(businessId), {params});
     return data;
 }
@@ -52,7 +52,7 @@ export async function getBankLogos(): Promise<BankLogo[]> {
 }
 
 export async function createBankAccount(businessId: string, clientId: string, payload: BankAccountPayload): Promise<BankAccountResponse> {
-    const { data } = await http.post<BankAccountResponse>(
+    const {data} = await http.post<BankAccountResponse>(
         endpoints.bank.createAccount(businessId, clientId),
         payload
     );
@@ -60,7 +60,7 @@ export async function createBankAccount(businessId: string, clientId: string, pa
 }
 
 export async function updateBankAccount(businessId: string, bankAccountId: string, payload: BankAccountPayload): Promise<BankAccountResponse> {
-    const { data } = await http.put<BankAccountResponse>(
+    const {data} = await http.put<BankAccountResponse>(
         endpoints.bank.updateAccount(businessId, bankAccountId),
         payload
     );
@@ -68,7 +68,7 @@ export async function updateBankAccount(businessId: string, bankAccountId: strin
 }
 
 export async function getBankAccounts(businessId: string, clientId: string): Promise<BankAccountResponse[]> {
-    const { data } = await http.get<BankAccountResponse[]>(
+    const {data} = await http.get<BankAccountResponse[]>(
         endpoints.bank.getAccounts(businessId, clientId)
     );
     return data;
@@ -78,4 +78,11 @@ export async function deleteBankAccount(businessId: string, bankAccountId: strin
     await http.delete(
         endpoints.bank.deleteAccount(businessId, bankAccountId)
     );
+}
+
+export async function deleteClient(
+    businessId: string,
+    clientId: string
+): Promise<void> {
+    await http.delete(endpoints.client.deleteClient(businessId, clientId));
 }

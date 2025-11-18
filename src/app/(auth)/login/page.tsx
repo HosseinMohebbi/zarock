@@ -45,7 +45,7 @@ export default function LoginPage(): JSX.Element {
             }
             // ریدایرکت دلخواه:
             await refresh();
-            router.push("/");
+            router.push("/business");
         } catch (err: any) {
             const msg =
                 err?.response?.data?.message ||

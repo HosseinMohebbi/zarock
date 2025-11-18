@@ -96,7 +96,7 @@ export default function ClientsPage() {
                 {clients.map((client) => (
                     <Card
                         key={client.id}
-                        customStyle="w-full border !rounded-md !p-4 bg-card cursor-pointer"
+                        customStyle="w-full max-w-xl border !rounded-md !p-4 bg-card cursor-pointer"
                         onClick={() => handelEditClient(client.id)}
                     >
                         <div className="flex flex-col gap-3">

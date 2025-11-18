@@ -107,7 +107,7 @@ export default function ItemsPage(): JSX.Element {
             <div className="!mb-4 !px-3 flex gap-4">
                 <Input
                     type="text"
-                    placeholder="جستجو بر اساس نام یا گروه"
+                    placeholder="جستجو بر اساس گروه یا زیرگروه"
                     value={searchPattern}
                     onChange={(e) => setSearchPattern(e.target.value)}
                 />

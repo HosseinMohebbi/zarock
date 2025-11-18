@@ -12,6 +12,7 @@ export const endpoints = {
         update: (businessId: string, clientId: string) => `/api/Client/${businessId}/${clientId}`,
         getAll: (businessId: string) => `/api/Client/${businessId}/all`,
         filter: (businessId: string) => `/api/Client/${businessId}/filter`,
+        deleteClient: (businessId: string, clientId: string) => `/api/Client/${businessId}/${clientId}`,
     },
     bank: {
         logos: `/api/BankLogo`,
@@ -29,6 +30,14 @@ export const endpoints = {
         // filter: (businessId: string) => `${API_BASE}/api/Invoice/${businessId}/filter`,
         // getById: (businessId: string, invoiceId: string) => `${API_BASE}/api/Invoice/${businessId}/${invoiceId}`,
     },
+    notification: {
+        createOneTime: (businessId: string) => `/api/Notification/${businessId}/onetime`,
+        getOneTime: (businessId: string) => `/api/Notification/${businessId}/onetime`,
+        createMonthly: (businessId: string) => `/api/Notification/${businessId}/monthly`,
+        getMonthly: (businessId: string) => `/api/Notification/${businessId}/monthly`,
+        createCheck: (businessId: string) => `/api/Notification/${businessId}/check`,
+        getCheck: (businessId: string) => `/api/Notification/${businessId}/check`,
+    }
 };
 
 // export const endpoints = {
