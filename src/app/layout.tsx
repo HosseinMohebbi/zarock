@@ -6,6 +6,7 @@ import ThemeToggle from "@/app/components/theme/ThemeToggle";
 import {ToastContainer} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import HumburgerMenu from "@/app/components/ui/HamburgerMenu";
+import ReduxProvider from "./ReduxProvider"
 
 
 const geistSans = Geist({
@@ -38,7 +39,9 @@ export default function RootLayout({
         {/*    <ThemeToggle />*/}
         {/*</div>*/}
         <div className="!pt-20">
-            <Providers>{children}</Providers>
+            <ReduxProvider>
+                <Providers>{children}</Providers>
+            </ReduxProvider>
         </div>
         <ToastContainer
             rtl={true}                // راست چین برای فارسی
