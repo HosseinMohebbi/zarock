@@ -265,7 +265,7 @@ export default function ClientInfoForm({ businessId, clientId }: Props) {
 
     // Redux client
     const client = useSelector((state: any) => selectClientById(state, clientId));
-
+    
     // Local states (UI state)
     const [fullName, setFullName] = useState('');
     const [nationalCode, setNationalCode] = useState('');

@@ -9,6 +9,8 @@ import {getAllInvoice} from "@/services/invoice/invoice.service";
 import dayjs from "dayjs";
 import jalaliday from "jalaliday";
 import "dayjs/locale/fa";
+import { useDispatch, useSelector } from "react-redux";
+import {fetchInvoices, selectInvoices} from "@/app/store/invoivesSlice";
 
 dayjs.extend(jalaliday);
 
@@ -42,35 +44,46 @@ export default function InvoicesPage() {
     const router = useRouter();
     const businessId = (params as any)?.businessId ?? "";
 
-    const [invoices, setInvoices] = useState<GetAllInvoicesResponse[]>([]);
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
+    // const [invoices, setInvoices] = useState<GetAllInvoicesResponse[]>([]);
+    // const [loading, setLoading] = useState(false);
+    // const [error, setError] = useState<string | null>(null);
+
+    const dispatch = useDispatch<any>();
+    const invoices = useSelector(selectInvoices);
+    const loading = useSelector((s: any) => s.invoices.loading);
+    const error = useSelector((s: any) => s.invoices.error);
 
     useEffect(() => {
-        if (!businessId) return;
-        let mounted = true;
-
-        async function fetchInvoices() {
-            try {
-                setLoading(true);
-                setError(null);
-                const data = await getAllInvoice({page: 1, pageSize: 50}, businessId);
-                console.log(data);
-                if (!mounted) return;
-                setInvoices(data);
-            } catch (err: any) {
-                console.error("Failed to load invoices:", err);
-                setError("خطا در دریافت فاکتورها");
-            } finally {
-                if (mounted) setLoading(false);
-            }
+        if (businessId) {
+            dispatch(fetchInvoices({ businessId }));
         }
-
-        fetchInvoices();
-        return () => {
-            mounted = false;
-        };
     }, [businessId]);
+
+    // useEffect(() => {
+    //     if (!businessId) return;
+    //     let mounted = true;
+    //
+    //     async function fetchInvoices() {
+    //         try {
+    //             setLoading(true);
+    //             setError(null);
+    //             const data = await getAllInvoice({page: 1, pageSize: 50}, businessId);
+    //             console.log(data);
+    //             if (!mounted) return;
+    //             setInvoices(data);
+    //         } catch (err: any) {
+    //             console.error("Failed to load invoices:", err);
+    //             setError("خطا در دریافت فاکتورها");
+    //         } finally {
+    //             if (mounted) setLoading(false);
+    //         }
+    //     }
+    //
+    //     fetchInvoices();
+    //     return () => {
+    //         mounted = false;
+    //     };
+    // }, [businessId]);
 
     const handleAddInvoice = () => {
         router.push(`/business/${businessId}/invoices/add-invoice`);
