@@ -11,6 +11,7 @@ export const endpoints = {
         create: (businessId: string) => `/api/Client/${businessId}`,
         update: (businessId: string, clientId: string) => `/api/Client/${businessId}/${clientId}`,
         getAll: (businessId: string) => `/api/Client/${businessId}/all`,
+        getClient: (businessId: string, clientId: string) => `/api/Client/${businessId}/${clientId}`,
         filter: (businessId: string) => `/api/Client/${businessId}/filter`,
         deleteClient: (businessId: string, clientId: string) => `/api/Client/${businessId}/${clientId}`,
     },
