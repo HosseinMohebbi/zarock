@@ -234,6 +234,7 @@ export default function ItemsPage(): JSX.Element {
     const [tags, setTags] = useState<string[]>([]);
     const [page, setPage] = useState(1);
     const [pageSize, setPageSize] = useState(50);
+    
 
     const params = useParams() as { businessId?: string };
     const businessId = params.businessId ?? "";

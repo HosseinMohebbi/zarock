@@ -22,7 +22,7 @@ const Card = ({ title, content, icon, children, customStyle, key, onClick }: Car
             )}
             onClick={onClick}
         >
-            <div className="flex items-center gap-3">
+            <div className="flex flex-col justify-center items-center gap-3">
                 {icon && <div className="w-8 h-8">{icon}</div>}
                 {title && <div className="font-semibold text-lg">{title}</div>}
             </div>

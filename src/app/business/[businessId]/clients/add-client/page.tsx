@@ -145,84 +145,79 @@ export default function Client() {
 
                     {/* توضیحات فاکتور */}
                     <Input
-                        label="توضیحات فاکتور"
+                        label="توضیحات"
                         name="invoiceDescription"
                         value={invoiceDescription}
                         onChange={(e) => setInvoiceDescription(e.target.value)}
                     />
 
-                    {/* تگ‌ها */}
-                    <div className="flex flex-col gap-2">
-                        <label className="text-lg font-medium">تگ‌ها</label>
-
-                        <div className="flex gap-2 items-center">
-                            <input
-                                className="text-base !px-3 !py-2 border outline-2 outline-border !rounded-lg flex-1 shadow-sm focus:outline-primary"
-                                placeholder="برای افزودن Enter بزنید یا با کاما جدا کنید"
-                                value={tagInput}
-                                onChange={e => setTagInput(e.target.value)}
-                                onKeyDown={e => {
-                                    if (e.key === 'Enter') {
-                                        e.preventDefault();
-                                        addTag();
-                                    }
-                                }}
-                                onBlur={addTag}
-                            />
-
-                            <button
-                                type="button"
-                                onClick={addTag}
-                                className="!px-3 !py-2 bg-gray-100 rounded"
-                            >
-                                افزودن
-                            </button>
-                        </div>
-
-                        <div className="flex flex-wrap gap-2 !mt-2">
-                            {tags.map(t => (
-                                <span
-                                    key={t}
-                                    className="flex items-center gap-2 bg-gray-100 !px-2 !py-1 rounded text-sm"
-                                >
-                                    {t}
-                                    <button
-                                        type="button"
-                                        onClick={() => removeTag(t)}
-                                        className="text-red-500"
-                                    >
-                                        ×
-                                    </button>
-                                </span>
-                            ))}
-                        </div>
-                    </div>
-
-                    {/* چک‌باکس‌ها */}
                     <div className="flex flex-col gap-2">
                         <label className="text-lg font-medium">نوع شخص</label>
+
+                        {/* رادیوهای حقیقی/حقوقی */}
                         <div className="flex gap-6">
                             <label className="flex items-center gap-2">
                                 <input
-                                    type="checkbox"
-                                    checked={isJuridicalPerson}
-                                    onChange={(e) => setIsJuridicalPerson(e.target.checked)}
+                                    type="radio"
+                                    name="personType"
+                                    value="real"
+                                    checked={!isJuridicalPerson}
+                                    onChange={() => setIsJuridicalPerson(false)}
                                     className="w-4 h-4 accent-primary"
                                 />
-                                <span>شخص حقوقی؟</span>
+                                <span>شخص حقیقی</span>
                             </label>
 
                             <label className="flex items-center gap-2">
                                 <input
-                                    type="checkbox"
-                                    checked={isOwnerMember}
-                                    onChange={(e) => setIsOwnerMember(e.target.checked)}
+                                    type="radio"
+                                    name="personType"
+                                    value="legal"
+                                    checked={isJuridicalPerson}
+                                    onChange={() => setIsJuridicalPerson(true)}
                                     className="w-4 h-4 accent-primary"
                                 />
-                                <span>عضو مالک هست؟</span>
+                                <span>شخص حقوقی</span>
                             </label>
                         </div>
+
+                        {/* چک باکس عضو مالک */}
+                        <label className="flex items-center gap-2 mt-2">
+                            <input
+                                type="checkbox"
+                                checked={isOwnerMember}
+                                onChange={(e) => setIsOwnerMember(e.target.checked)}
+                                className="w-4 h-4 accent-primary"
+                            />
+                            <span>عضو مالک هست؟</span>
+                        </label>
                     </div>
+
+                    {/* چک‌باکس‌ها */}
+                    {/*<div className="flex flex-col gap-2">*/}
+                    {/*    <label className="text-lg font-medium">نوع شخص</label>*/}
+                    {/*    <div className="flex gap-6">*/}
+                    {/*        <label className="flex items-center gap-2">*/}
+                    {/*            <input*/}
+                    {/*                type="checkbox"*/}
+                    {/*                checked={isJuridicalPerson}*/}
+                    {/*                onChange={(e) => setIsJuridicalPerson(e.target.checked)}*/}
+                    {/*                className="w-4 h-4 accent-primary"*/}
+                    {/*            />*/}
+                    {/*            <span>شخص حقوقی؟</span>*/}
+                    {/*        </label>*/}
+                    
+                    {/*        <label className="flex items-center gap-2">*/}
+                    {/*            <input*/}
+                    {/*                type="checkbox"*/}
+                    {/*                checked={isOwnerMember}*/}
+                    {/*                onChange={(e) => setIsOwnerMember(e.target.checked)}*/}
+                    {/*                className="w-4 h-4 accent-primary"*/}
+                    {/*            />*/}
+                    {/*            <span>عضو مالک هست؟</span>*/}
+                    {/*        </label>*/}
+                    {/*    </div>*/}
+                    {/*</div>*/}
 
                     {/* دکمه‌ها */}
                     <div className="flex justify-end items-center gap-3 !mt-3">

@@ -38,13 +38,13 @@ export default function Modal({ open, confirmButtonTitle, cancelButtonTitle, onC
 
     return (
         <div
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/40"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 !px-4"
             onClick={onClose}
             role="presentation"
         >
             <div
                 ref={dialogRef}
-                className=" w-[92%] max-w-lg flex flex-col bg-card text-foreground  rounded-lg !p-6 shadow-lg outline-none"
+                className="w-full max-w-lg flex flex-col bg-card text-foreground !rounded-lg !p-6 shadow-lg outline-none"
                 onClick={(e) => e.stopPropagation()}
                 role="dialog"
                 aria-modal="true"
@@ -52,14 +52,14 @@ export default function Modal({ open, confirmButtonTitle, cancelButtonTitle, onC
                 tabIndex={-1}
             >
                 <div className="flex justify-between items-center">
+                    <h2 className="">{modalTitle}</h2>
                     <button
                         onClick={onClose}
                         aria-label="close"
-                        className=" top-3 left-3 p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700"
+                        className="!p-1 !rounded hover:bg-gray-100 dark:hover:bg-gray-700"
                     >
-                        <MdClose className="w-8 h-8 text-white" />
+                        <MdClose className="w-8 h-8" />
                     </button>
-                    <h2 className="text-white">{modalTitle}</h2>
                 </div>
 
                 <div>{children}</div>

@@ -6,13 +6,15 @@ import Input from '@/app/components/ui/Input';
 import Button from '@/app/components/ui/Button';
 import { cn } from '@/utils/cn';
 import { addBusiness } from "@/services/business";
+import {createBusiness} from "@/services/business/business.service";
 
 interface CreateBusinessModalProps {
     open: boolean;
     onClose: () => void;
+    onCreated: () => void;
 }
 
-export default function CreateBusinessModal({ open, onClose }: CreateBusinessModalProps) {
+export default function CreateBusinessModal({ open, onClose, onCreated }: CreateBusinessModalProps) {
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
     const [file, setFile] = useState<File | null>(null);
@@ -29,11 +31,12 @@ export default function CreateBusinessModal({ open, onClose }: CreateBusinessMod
         try {
             // setLoading(true);
 
-            const result = await addBusiness({
+            const result = await createBusiness({
                 name,
                 description,
-                logo: file ? file.name : null, // فقط اسم فایل
             });
+
+            await onCreated();
 
             console.log("✅ Business created:", result);
 
@@ -62,7 +65,7 @@ export default function CreateBusinessModal({ open, onClose }: CreateBusinessMod
                     label="نام کسب‌وکار"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    containerClass={cn('w-full !mt-4 text-white')}
+                    containerClass={cn('w-full !mt-4')}
                     inputClass="h-[40px]"
                     required 
                     name={name}                

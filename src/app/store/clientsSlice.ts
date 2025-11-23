@@ -231,6 +231,23 @@ const clientsSlice = createSlice({
             state.clients = [];
             state.selectedClient = null;
         },
+        updateClientField(
+            state,
+            action: PayloadAction<{ clientId: string; field: keyof Client; value: any }>
+        ) {
+            const { clientId, field, value } = action.payload;
+
+            // اگر selectedClient همون مشتریه، آپدیتش کن
+            if (state.selectedClient?.id === clientId) {
+                (state.selectedClient as any)[field] = value;
+            }
+
+            // آپدیت مشتری داخل لیست clients
+            const idx = state.clients.findIndex(c => c.id === clientId);
+            if (idx !== -1) {
+                (state.clients[idx] as any)[field] = value;
+            }
+        },
     },
     extraReducers: (builder) => {
         builder
@@ -302,5 +319,5 @@ export const selectClientById = (state: any, id: string) =>
 export const selectClientsLoading = (state: any) => state.clients.loading;
 export const selectClientsError = (state: any) => state.clients.error;
 
-export const { clearClients } = clientsSlice.actions;
+export const { clearClients, updateClientField  } = clientsSlice.actions;
 export default clientsSlice.reducer;

@@ -7,6 +7,12 @@ export const endpoints = {
         register: `/api/auth/register`,
         refresh: `/api/auth/refresh`,
     },
+    business: {
+        createBusiness: `/api/Business/addBusiness`,
+        getAllBusiness: `/api/Business/all`,
+        getBusinessById: (id: string) => `/api/Business/${id}`,
+        updateBusiness: (id: string) => `/api/Business/${id}`,
+    },
     client: {
         create: (businessId: string) => `/api/Client/${businessId}`,
         update: (businessId: string, clientId: string) => `/api/Client/${businessId}/${clientId}`,
