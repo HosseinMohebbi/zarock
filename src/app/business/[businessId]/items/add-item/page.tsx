@@ -9,6 +9,7 @@ import {itemType} from "@/services/item/item.types";
 import {createItem} from '@/services/item/item.service'
 import Button from "@/app/components/ui/Button";
 import {toast} from "react-toastify";
+import {validate} from "@/services/item/item.validation"
 
 type FormState = {
     name: string
@@ -41,19 +42,19 @@ export default function AddItemFormPage() {
     const [loading, setLoading] = useState(false)
     const [message, setMessage] = useState<string | null>(null)
 
-    function validate() {
-        const e: Record<string, string> = {}
-        if (!form.group.trim()) e.group = 'این فیلد الزامی است'
-        if (!form.unit.trim()) e.unit = 'این فیلد الزامی است'
-        const price = Number(form.defaultUnitPrice)
-        if (isNaN(price) || price < 0) e.defaultUnitPrice = 'قیمت معتبر نیست'
-        return e
-    }
+    // function validate() {
+    //     const e: Record<string, string> = {}
+    //     if (!form.group.trim()) e.group = 'این فیلد الزامی است'
+    //     if (!form.unit.trim()) e.unit = 'این فیلد الزامی است'
+    //     const price = Number(form.defaultUnitPrice)
+    //     if (isNaN(price) || price < 0) e.defaultUnitPrice = 'قیمت معتبر نیست'
+    //     return e
+    // }
 
     async function handleSubmit(ev?: React.FormEvent) {
         ev?.preventDefault()
         setMessage(null)
-        const v = validate()
+        const v = validate(form)
         if (Object.keys(v).length) {
             setErrors(v)
             return
@@ -193,51 +194,6 @@ export default function AddItemFormPage() {
                                 />
                                 <span>خدمت</span>
                             </label>
-                        </div>
-                    </div>
-
-                    {/* تگ‌ها */}
-                    <div className="flex flex-col gap-2">
-                        <label className="text-lg font-medium">تگ‌ها</label>
-
-                        <div className="flex gap-2 items-center">
-                            <Input
-                                value={form.tagInput}
-                                onChange={e => setForm(f => ({...f, tagInput: e.target.value}))}
-                                onKeyDown={e => {
-                                    if (e.key === 'Enter') {
-                                        e.preventDefault()
-                                        handleAddTagFromInput()
-                                    }
-                                }}
-                                onBlur={handleAddTagFromInput}
-                            />
-
-                            <button
-                                type="button"
-                                onClick={handleAddTagFromInput}
-                                className="!px-3 !py-2 bg-gray-100 rounded"
-                            >
-                                افزودن
-                            </button>
-                        </div>
-
-                        <div className="flex flex-wrap gap-2 !mt-2">
-                            {form.tags.map(t => (
-                                <span
-                                    key={t}
-                                    className="flex items-center gap-2 bg-muted text-foreground !px-2 !py-1 !rounded text-sm"
-                                >
-                            {t}
-                                    <button
-                                        type="button"
-                                        onClick={() => handleRemoveTag(t)}
-                                        className="text-red-500"
-                                    >
-                                ×
-                            </button>
-                        </span>
-                            ))}
                         </div>
                     </div>
 

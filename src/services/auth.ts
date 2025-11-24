@@ -57,6 +57,23 @@ export async function loginUser(
     return data;
 }
 
+// export async function loginUser(payload: LoginPayload): Promise<void> {
+//     const res = await fetch("/api/auth/login", {
+//         method: "POST",
+//         headers: { "Content-Type": "application/json" },
+//         body: JSON.stringify(payload),
+//     });
+//
+//     if (!res.ok) {
+//         const data = await res.json();
+//         throw new Error(data.error || "Login failed");
+//     }
+//
+//     // دیگه چیزی برنمی‌گردونیم، چون token داخل cookie ست شده
+//     return;
+// }
+
+
 export async function updateUser(
     // payload: UpdateUserPayload
     payload: Partial<UpdateUserPayload>
@@ -69,3 +86,12 @@ export async function getUser(): Promise<GetUserResponse> {
     const {data} = await http.get<GetUserResponse>("/api/User/user");
     return data;
 }
+
+// export async function getUser(): Promise<GetUserResponse> {
+//     const res = await fetch("/api/auth/me", { method: "GET" });
+//
+//     if (!res.ok) throw new Error("Unauthorized");
+//
+//     return await res.json();
+// }
+

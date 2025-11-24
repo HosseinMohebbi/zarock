@@ -4,7 +4,7 @@ import ThemeToggle from "@/app/components/theme/ThemeToggle";
 import Card from "@/app/components/ui/Card";
 import {useParams, useRouter} from "next/navigation";
 import {MdAdd, MdMoney, MdCheck} from "react-icons/md";
-import {getAllTransactions} from "@/services/transaction";
+import {getAllTransactions} from "@/services/transaction/transaction.service";
 
 import dayjs from "dayjs";
 import jalaliday from "jalaliday";

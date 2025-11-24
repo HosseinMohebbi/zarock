@@ -58,6 +58,29 @@ export default function LoginPage(): JSX.Element {
         }
     };
     
+    // const onSubmit = async (ev: React.FormEvent<HTMLFormElement>) => {
+    //     ev.preventDefault();
+    //     setErrors({});
+    //     const e = validate();
+    //     if (Object.keys(e).length) {
+    //         setErrors(e);
+    //         return;
+    //     }
+    //     setLoading(true);
+    //     try {
+    //         await loginUser({ userName, password }); // بدون res.token
+    //         await refresh(); // می‌گیره کاربر رو از cookie
+    //         router.push("/business");
+    //     } catch (err: any) {
+    //         const msg =
+    //             err?.message ||
+    //             "خطا در ورود";
+    //         setErrors({ server: msg });
+    //     } finally {
+    //         setLoading(false);
+    //     }
+    // };
+    
     return (
         <div className="w-full h-screen">
                 <form onSubmit={onSubmit} dir="rtl" className="w-full h-full flex flex-col justify-center items-center gap-4  font-sans bg-background text-foreground">

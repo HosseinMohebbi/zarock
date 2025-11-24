@@ -17,6 +17,7 @@ interface SelectProps {
     label?: string;
     className?: string;
     disabled?: boolean; // ← اضافه شد
+    error?: string
 }
 
 export default function Select({
@@ -26,6 +27,7 @@ export default function Select({
                                    placeholder = 'انتخاب کنید',
                                    label,
                                    className,
+                                   error,
                                    disabled = false, // ← پیش‌فرض
                                }: SelectProps) {
     const [open, setOpen] = useState(false);
@@ -174,6 +176,7 @@ export default function Select({
                     })}
                 </ul>
             )}
+            {error && <span className="text-xs text-red-500 mt-1">{error}</span>}
         </div>
     );
 }

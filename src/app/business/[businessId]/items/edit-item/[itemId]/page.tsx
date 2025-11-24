@@ -441,21 +441,6 @@ export default function EditItemFormPage() {
                         </div>
                     </div>
 
-                    <div className="flex flex-col gap-2">
-                        <label className="text-lg font-medium">تگ‌ها</label>
-                        <div className="flex gap-2 items-center">
-                            <Input value={form.tagInput} onChange={e => setForm(f => ({ ...f, tagInput: e.target.value }))} onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); handleAddTagFromInput(); } }} onBlur={handleAddTagFromInput} />
-                            <button type="button" onClick={handleAddTagFromInput} className="!px-3 !py-2 bg-gray-100 rounded">افزودن</button>
-                        </div>
-                        <div className="flex flex-wrap gap-2 !mt-2">
-                            {form.tags.map(t => (
-                                <span key={t} className="flex items-center gap-2 bg-muted text-foreground !px-2 !py-1 !rounded text-sm">
-                                    {t} <button type="button" onClick={() => handleRemoveTag(t)} className="text-red-500">×</button>
-                                </span>
-                            ))}
-                        </div>
-                    </div>
-
                     <Input label="توضیحات" name="description" type="text" value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))} />
 
                     <div className="flex justify-end items-center gap-3 mt-3">

@@ -13,6 +13,7 @@ export const http = axios.create({
     baseURL: "", // همون اوریجین فرانت
     headers: { "Content-Type": "application/json", Accept: "application/json" },
     timeout: 15_000,
+    // withCredentials: true,
 });
 
 // اختیاری: افزودن توکن از localStorage در سمت کلاینت

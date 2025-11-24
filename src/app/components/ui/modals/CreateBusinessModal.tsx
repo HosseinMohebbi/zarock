@@ -29,28 +29,51 @@ export default function CreateBusinessModal({ open, onClose, onCreated }: Create
         if (!name.trim() || !description.trim()) return;
 
         try {
-            // setLoading(true);
-
-            const result = await createBusiness({
+            await createBusiness({
                 name,
                 description,
+                logo: file || undefined, // لوگو رو اضافه می‌کنیم
             });
 
             await onCreated();
-
-            console.log("✅ Business created:", result);
-
             setName('');
             setDescription('');
             setFile(null);
             onClose();
         } catch (err) {
-            console.error("❌ Error creating business:", err);
+            console.error(err);
             alert("خطا در ایجاد کسب‌وکار");
-        } finally {
-            // setLoading(false);
         }
     };
+
+
+    // const handleSubmit = async (e: React.FormEvent) => {
+    //     e.preventDefault();
+    //     if (!name.trim() || !description.trim()) return;
+    //
+    //     try {
+    //         // setLoading(true);
+    //
+    //         const result = await createBusiness({
+    //             name,
+    //             description,
+    //         });
+    //
+    //         await onCreated();
+    //
+    //         console.log("✅ Business created:", result);
+    //
+    //         setName('');
+    //         setDescription('');
+    //         setFile(null);
+    //         onClose();
+    //     } catch (err) {
+    //         console.error("❌ Error creating business:", err);
+    //         alert("خطا در ایجاد کسب‌وکار");
+    //     } finally {
+    //         // setLoading(false);
+    //     }
+    // };
 
     return (
         <Modal open={open} onClose={onClose} onSubmit={handleSubmit} ariaLabel="Create Business Modal" modalTitle="ایجاد کسب و کار">

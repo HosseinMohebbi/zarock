@@ -3,8 +3,8 @@ import { useState } from "react";
 import Input from "@/app/components/ui/Input";
 import Select from "@/app/components/ui/SelectInput";
 import { Client } from "@/services/client/client.types";
-import { createCash } from "@/services/transaction";
-import type { AddCashPayload } from "@/services/transaction";
+import { createCash } from "@/services/transaction/transaction.service";
+import { AddCashPayload } from "@/services/transaction/transaction.types";
 import DatePicker from "react-multi-date-picker";
 import persian from "react-date-object/calendars/persian";
 import persian_fa from "react-date-object/locales/persian_fa";
@@ -12,6 +12,7 @@ import dayjs from "dayjs";
 import jalaliday from "jalaliday";
 import { useParams } from "next/navigation";
 import Button from "@/app/components/ui/Button";
+import {cashValidate} from "@/services/transaction/transaction.validation";
 
 dayjs.extend(jalaliday);
 
@@ -22,6 +23,8 @@ interface CashFormProps {
 
 export default function CashForm({ clients, loadingClients }: CashFormProps) {
     const { businessId } = useParams();
+    const [errors, setErrors] = useState<Record<string, string>>({});
+
 
     // ----------------------------
     // ⭐ Single unified form state
@@ -45,9 +48,24 @@ export default function CashForm({ clients, loadingClients }: CashFormProps) {
     };
 
     const handleSave = async () => {
+        const validation  = cashValidate({
+            trackingCode: form.trackingCode,
+            amount: Number(form.amount),
+            date: form.cashDate,
+            fromClient: form.fromClient,
+            toClient: form.toClient,
+            description: form.description,
+            tags: form.tags.split(",")
+        });
+
+        if (Object.keys(validation).length > 0) {
+            setErrors(validation);
+            return;
+        }
+        
         try {
             setSaving(true);
-
+            
             const payload: AddCashPayload = {
                 trackingCode: form.trackingCode,
                 amount: Number(form.amount || 0),
@@ -99,6 +117,7 @@ export default function CashForm({ clients, loadingClients }: CashFormProps) {
                         onChange={(v) => update("fromClient", v)}
                         placeholder={loadingClients ? "در حال بارگذاری..." : "انتخاب کنید"}
                         options={clients.map(c => ({ value: c.id, label: c.fullname }))}
+                        error={errors.fromClient}
                     />
 
                     <Select
@@ -107,6 +126,7 @@ export default function CashForm({ clients, loadingClients }: CashFormProps) {
                         onChange={(v) => update("toClient", v)}
                         placeholder={loadingClients ? "در حال بارگذاری..." : "انتخاب کنید"}
                         options={clients.map(c => ({ value: c.id, label: c.fullname }))}
+                        error={errors.toClient}
                     />
 
                     <Input
