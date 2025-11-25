@@ -5,6 +5,7 @@ import Card from "@/app/components/ui/Card";
 import {useParams, useRouter} from "next/navigation";
 import {MdAdd, MdMoney, MdCheck} from "react-icons/md";
 import {getAllTransactions} from "@/services/transaction/transaction.service";
+import Loader from "@/app/components/ui/Loader"
 
 import dayjs from "dayjs";
 import jalaliday from "jalaliday";
@@ -37,6 +38,7 @@ export default function TransactionsPage(): JSX.Element {
     const [transactions, setTransactions] = useState<any[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
+    const [isFetching, setIsFetching] = useState<boolean>(true);
 
     const params = useParams() as { businessId?: string };
     const businessId = params.businessId ?? "";
@@ -63,6 +65,7 @@ export default function TransactionsPage(): JSX.Element {
             try {
                 const data = await getAllTransactions({page: 1, pageSize: 50}, businessId);
                 setTransactions(data ?? []);
+                setIsFetching(false);
             } catch (err: any) {
                 console.error("Failed to load transactions:", err);
                 if (err?.response?.status === 401) {
@@ -77,6 +80,39 @@ export default function TransactionsPage(): JSX.Element {
 
         if (businessId) loadTransactions();
     }, [businessId, router]);
+
+    if (isFetching) {
+        return (
+            <main className="flex items-center justify-center h-screen">
+                <Loader />
+            </main>
+        );
+    }
+
+    if (error) {
+        return (
+            <main className="flex items-center justify-center h-screen">
+                <div className="text-red-600 text-lg">{error}</div>
+            </main>
+        );
+    }
+
+    if (!loading && !error && transactions.length === 0 && !isFetching) {
+        return (
+            <main className="flex flex-col items-center justify-center h-screen gap-4">
+                <h2 className="text-gray-600 text-xl">
+                    تراکنشی برای نمایش وجود ندارد
+                </h2>
+
+                <button
+                    onClick={handleAddTransaction}
+                    className="px-5 py-2 rounded-lg bg-blue-600 text-white shadow"
+                >
+                    افزودن تراکنش جدید
+                </button>
+            </main>
+        );
+    }
 
     return (
         <main className="!p-4">
@@ -139,12 +175,18 @@ export default function TransactionsPage(): JSX.Element {
                             : t.amount ?? "-"}
                     </span>
                                     </div>
+                                    
+                                    {(t.fromClient?.fullname) && (
+                                        <div className="flex items-center gap-2 text-lg">
+                                            <h2>مبدا:</h2>
+                                            <span className="text-base">{t.fromClient?.fullname ?? "—"}</span> 
+                                        </div>
+                                    )}
 
-
-                                    {/* مبدأ → مقصد */}
-                                    {(t.fromClient?.fullname || t.toClient?.fullname) && (
-                                        <div className="text-base text-gray-700">
-                                            {t.fromClient?.fullname ?? "—"} ← {t.toClient?.fullname ?? "—"}
+                                    {(t.toClient?.fullname) && (
+                                        <div className="flex items-center gap-2 text-lg">
+                                            <h2>مقصد:</h2> 
+                                            <span className="text-base">{t.toClient?.fullname ?? "—"}</span>
                                         </div>
                                     )}
 

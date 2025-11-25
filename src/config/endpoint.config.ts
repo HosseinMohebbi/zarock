@@ -37,6 +37,10 @@ export const endpoints = {
         // filter: (businessId: string) => `${API_BASE}/api/Invoice/${businessId}/filter`,
         // getById: (businessId: string, invoiceId: string) => `${API_BASE}/api/Invoice/${businessId}/${invoiceId}`,
     },
+    project: {
+        create: (businessId: string) => `/api/Project/${businessId}`,
+        getAll: (businessId: string) => `/api/Project/${businessId}/all`,
+    },
     notification: {
         createOneTime: (businessId: string) => `/api/Notification/${businessId}/onetime`,
         getOneTime: (businessId: string) => `/api/Notification/${businessId}/onetime`,
