@@ -5,6 +5,7 @@ import Card from "@/app/components/ui/Card";
 import {useParams, useRouter} from "next/navigation";
 import {MdAdd, MdMoney, MdCheck} from "react-icons/md";
 import {getAllTransactions} from "@/services/transaction/transaction.service";
+import {TransactionType} from "@/services/transaction/transaction.types";
 import Loader from "@/app/components/ui/Loader"
 
 import dayjs from "dayjs";
@@ -32,6 +33,14 @@ const getItemIcon = (type?: string) => {
     if (type === "Check") return <MdCheck size={22}/>;
     if (type === "Cash") return <MdMoney size={22}/>;
     return null;
+};
+
+const checkStateMap: Record<TransactionType, string> = {
+    None: "پاسی",
+    Passed: "پاس",
+    Bounced: "برگشتی",
+    Expended: "خرج شده",
+    Cashed: "نقدی",
 };
 
 export default function TransactionsPage(): JSX.Element {
@@ -84,7 +93,7 @@ export default function TransactionsPage(): JSX.Element {
     if (isFetching) {
         return (
             <main className="flex items-center justify-center h-screen">
-                <Loader />
+                <Loader/>
             </main>
         );
     }
@@ -175,20 +184,30 @@ export default function TransactionsPage(): JSX.Element {
                             : t.amount ?? "-"}
                     </span>
                                     </div>
-                                    
+
                                     {(t.fromClient?.fullname) && (
                                         <div className="flex items-center gap-2 text-lg">
                                             <h2>مبدا:</h2>
-                                            <span className="text-base">{t.fromClient?.fullname ?? "—"}</span> 
+                                            <span className="text-base">{t.fromClient?.fullname ?? "—"}</span>
                                         </div>
                                     )}
 
                                     {(t.toClient?.fullname) && (
                                         <div className="flex items-center gap-2 text-lg">
-                                            <h2>مقصد:</h2> 
+                                            <h2>مقصد:</h2>
                                             <span className="text-base">{t.toClient?.fullname ?? "—"}</span>
                                         </div>
                                     )}
+
+                                    {t.transactionType === "Check" && t.state && (
+                                        <div className="flex items-center gap-2 text-lg">
+                                            <h2>وضعیت:</h2>
+                                            <span className="text-base">
+                                                {checkStateMap[t.state as TransactionType] ?? t.state}
+                                            </span>
+                                        </div>
+                                    )}
+
 
                                     {t.transactionType === "Check" ?
                                         <div className="flex flex-col gap-2 text-lg">

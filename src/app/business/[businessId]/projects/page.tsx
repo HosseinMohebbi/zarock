@@ -9,6 +9,7 @@ import { getAllProjects } from "@/services/project/project.service";
 import { ProjectResponse } from "@/services/project/project.types";
 
 import { useParams } from "next/navigation";
+import {MdAdd} from "react-icons/md";
 
 export default function ProjectsPage() {
     const params = useParams() as { businessId?: string };
@@ -79,35 +80,90 @@ export default function ProjectsPage() {
     // ✅ CONTENT AFTER LOADING
     // ------------------------------
     return (
-        <div className="p-4 flex flex-col gap-4">
+        <main className="!p-4">
 
             {/* HEADER */}
-            <div className="flex justify-between items-center">
-                <h1 className="text-lg font-semibold">لیست پروژه‌ها</h1>
+            <div className="flex items-center justify-between mt-6 !mb-4 !px-3">
+                <h1 className="text-lg !font-semibold text-right">پروژه‌ها</h1>
+
+                <button
+                    // onClick={handleAddProject}
+                    aria-label="افزودن پروژه"
+                    className="inline-flex items-center gap-2 px-3 py-1.5 bg-blue-600 text-white rounded shadow-sm cursor-pointer"
+                >
+                    <MdAdd className="w-5 h-5" />
+                </button>
             </div>
 
-            {/* SEARCH (اگر بعداً فیلتر خواستی اضافه کنیم) */}
-            <Input
-                type="text"
-                placeholder="جستجو در پروژه‌ها..."
-                disabled
-            />
+            {/* SEARCH - غیر فعال (فعلاً فقط ظاهر) */}
+            {/*<div className="!px-3 mb-4">*/}
+            {/*    <Input*/}
+            {/*        type="text"*/}
+            {/*        disabled*/}
+            {/*        placeholder="جستجو در پروژه‌ها (به‌زودی)"*/}
+            {/*    />*/}
+            {/*</div>*/}
 
             {/* PROJECT LIST */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {projects.map((project) => (
-                    <Card
+            <div
+                className="!px-3 !mt-4 grid grid-cols-1 gap-3 overflow-y-auto sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 !pb-4"
+                style={{
+                    maxHeight: 'calc(100vh - 200px)',
+                }}
+            >
+                {projects.map(project => (
+                    <div
                         key={project.id}
-                        customStyle="p-4 border rounded-md cursor-pointer hover:shadow"
+                        // onClick={() => handleOpenProject(project.id)}
+                        className="w-full bg-card rounded-lg shadow-sm hover:shadow-md transition cursor-pointer overflow-hidden"
                     >
-                        <h3 className="font-semibold text-lg">{project.name}</h3>
+                        <div className="flex items-stretch">
 
-                        <p className="text-gray-500 text-sm mt-2">
-                            {project.description || "- بدون توضیحات -"}
-                        </p>
-                    </Card>
+                            {/* ستون راست رنگی */}
+                            {/*<div className="flex flex-col items-center justify-center w-20 bg-blue-500 text-white !p-3 rounded-r-lg">*/}
+                            {/*    <MdWork size={24} />*/}
+                            {/*    <span className="mt-2 text-sm font-semibold">پروژه</span>*/}
+                            {/*</div>*/}
+
+                            {/* محتوای اصلی */}
+                            <div className="flex-1 !p-3">
+                                <div className="flex flex-col gap-4 !p-2">
+
+                                    <div className="flex items-center gap-2 text-lg">
+                                        <h2>نام پروژه: </h2>
+                                        <span className="text-base">{project.name}</span>
+                                    </div>
+
+                                    <div className="flex items-center gap-2 text-lg">
+                                        <h2>کارفرما: </h2>
+                                        <span className="text-base">{project.client.fullname?? "نامشخص"}</span>
+                                    </div>
+
+                                    <div className="flex items-start gap-2 text-lg">
+                                        <h2>توضیحات:</h2>
+                                        <span className="text-base line-clamp-3">
+                                            {project.description || "-"}
+                                        </span>
+                                    </div>
+
+                                    <div className="flex justify-start !mt-1">
+                                        <span className="text-xs text-gray-500">{project.progress}%</span>
+                                    </div>
+                                    {/* نوار پیشرفت — پر شدن از چپ */}
+                                    <div className="w-full bg-gray-200 rounded-full h-2">
+                                        <div
+                                            className="bg-blue-600 h-2 rounded-full"
+                                            style={{ width: `${project.progress}%` }}
+                                        ></div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
                 ))}
             </div>
-        </div>
+        </main>
     );
 }

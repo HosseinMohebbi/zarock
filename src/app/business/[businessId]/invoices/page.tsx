@@ -11,6 +11,7 @@ import jalaliday from "jalaliday";
 import "dayjs/locale/fa";
 import { useDispatch, useSelector } from "react-redux";
 import {fetchInvoices, selectInvoices} from "@/app/store/invoivesSlice";
+import Loader from "@/app/components/ui/Loader";
 
 dayjs.extend(jalaliday);
 
@@ -43,6 +44,7 @@ export default function InvoicesPage() {
     const params = useParams();
     const router = useRouter();
     const businessId = (params as any)?.businessId ?? "";
+    const [isFetching, setIsFetching] = useState(true);
 
     // const [invoices, setInvoices] = useState<GetAllInvoicesResponse[]>([]);
     // const [loading, setLoading] = useState(false);
@@ -55,6 +57,7 @@ export default function InvoicesPage() {
 
     useEffect(() => {
         if (businessId) {
+            setIsFetching(false);
             dispatch(fetchInvoices({ businessId }));
         }
     }, [businessId]);
@@ -92,6 +95,22 @@ export default function InvoicesPage() {
     const handleEditInvoice = (invoiceId: string) => {
         router.push(`/business/${businessId}/invoices/edit-invoice/${invoiceId}`);
     };
+
+    if (isFetching) {
+        return (
+            <div className="flex items-center justify-center h-[70vh]">
+                <Loader />   {/* TailChase */}
+            </div>
+        );
+    }
+
+    if (!loading && !error && invoices.length === 0 && !isFetching) {
+        return (
+            <div className="flex flex-col items-center justify-center h-[70vh] gap-4">
+                <h2 className="text-gray-600 text-xl">هیچ فاکتوری برای نمایش وجود ندارد</h2>
+            </div>
+        );
+    }
 
     return (
         <main className="!p-4">

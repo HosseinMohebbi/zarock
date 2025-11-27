@@ -213,11 +213,11 @@ export default function CheckForm({
                         value={form.state}
                         onChange={(val) => {
                             const map: Record<string, string> = {
-                                "پاسی": "Pending",
-                                "پاس": "Completed",
-                                "برگشتی": "Returned",
-                                "خرج شده": "Used",
-                                "نقدی": "Cash",
+                                "پاسی": "None",
+                                "پاس": "Passed",
+                                "برگشتی": "Bounced",
+                                "خرج شده": "Expended",
+                                "نقدی": "Cashed",
                             };
                             update("state", map[val] || "None");
                         }}

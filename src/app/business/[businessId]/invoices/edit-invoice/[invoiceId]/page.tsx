@@ -16,7 +16,10 @@ import jalaliday from "jalaliday";
 import {getAllClients} from '@/services/client/client.service';
 import {Client} from '@/services/client/client.types';
 import {getAllInvoice, updateInvoice, updateInvoiceArchive} from '@/services/invoice/invoice.service';
-import {AddInvoicePayload} from '@/services/invoice/invoice.types';
+import {AddInvoicePayload, GetAllInvoicesResponse} from '@/services/invoice/invoice.types';
+import {useDispatch, useSelector} from "react-redux";
+import {refetchInvoices, selectInvoiceById} from "@/app/store/invoivesSlice";
+import {toast} from "react-toastify";
 
 dayjs.extend(jalaliday);
 
@@ -45,6 +48,13 @@ export default function EditInvoiceFormPage() {
     const router = useRouter();
     const businessId = params.businessId ?? '';
     const invoiceId = params.invoiceId ?? '';
+
+    const invoiceFromRedux = useSelector((state: any) =>
+        selectInvoiceById(state, invoiceId)
+    );
+
+    const [invoice, setInvoice] = useState<GetAllInvoicesResponse | null>(invoiceFromRedux || null);
+    const dispatch = useDispatch();
 
     const [form, setForm] = useState<FormState>({
         hint: '',
@@ -101,46 +111,82 @@ export default function EditInvoiceFormPage() {
 
     // Fetch invoice by finding it in getAllInvoice
     useEffect(() => {
-        async function fetchInvoice() {
-            if (!businessId || !invoiceId) return;
-
-            try {
-                const invoices = await getAllInvoice({page: 1, pageSize: 1000}, businessId);
-                const invoice = invoices.find(inv => inv.id === invoiceId);
-
-                if (!invoice) {
-                    setMessage('فاکتور پیدا نشد');
-                    return;
-                }
-
-                setForm({
-                    hint: invoice.hint || '',
-                    type: invoice.type || 'Invoice',
-                    fromClient: invoice.fromClient.id,
-                    toClient: invoice.toClient.id,
-                    taxPercent: invoice.taxPercent.toString(),
-                    discountPercent: invoice.discountPercent.toString(),
-                    dateTime: invoice.dateTime,
-                    description: invoice.description || '',
-                    invoiceItems: invoice.items.map(i => ({
-                        fullName: i.fullName,
-                        quantity: i.quantity.toString(),
-                        quantityMetric: i.quantityMetric,
-                        price: i.price.toString(),
-                        description: i.description,
-                    })),
-                    showItemForm: invoice.items.length > 0,
-                    isArchived: invoice.isArchived ?? false,
-
-                });
-            } catch (err) {
-                console.error(err);
-                setMessage('خطا در دریافت اطلاعات فاکتور');
-            }
+        if (!invoice && businessId) {
+            // اگر فاکتور در redux نبود، کل فاکتورها را بگیریم
+            getAllInvoice({ page: 1, pageSize: 1000 }, businessId)
+                .then((all) => {
+                    const found = all.find(inv => inv.id === invoiceId);
+                    setInvoice(found || null);
+                })
+                .catch(err => console.error(err));
         }
+    }, [invoice, businessId, invoiceId]);
 
-        fetchInvoice();
-    }, [businessId, invoiceId]);
+    useEffect(() => {
+        if (invoice) {
+            setForm({
+                hint: invoice.hint || '',
+                type: invoice.type || 'Invoice',
+                fromClient: invoice.fromClient?.id || '',
+                toClient: invoice.toClient?.id || '',
+                taxPercent: invoice.taxPercent?.toString() || '0',
+                discountPercent: invoice.discountPercent?.toString() || '0',
+                dateTime: invoice.dateTime || '',
+                description: invoice.description || '',
+                invoiceItems: invoice.items.map(i => ({
+                    fullName: i.fullName,
+                    quantity: i.quantity.toString(),
+                    quantityMetric: i.quantityMetric,
+                    price: i.price.toString(),
+                    description: i.description,
+                })),
+                showItemForm: invoice.items.length > 0,
+                isArchived: invoice.isArchived ?? false,
+            });
+        }
+    }, [invoice]);
+    
+    // useEffect(() => {
+    //     async function fetchInvoice() {
+    //         if (!businessId || !invoiceId) return;
+    //
+    //         try {
+    //             const invoices = await getAllInvoice({page: 1, pageSize: 1000}, businessId);
+    //             const invoice = invoices.find(inv => inv.id === invoiceId);
+    //
+    //             if (!invoice) {
+    //                 setMessage('فاکتور پیدا نشد');
+    //                 return;
+    //             }
+    //
+    //             setForm({
+    //                 hint: invoice.hint || '',
+    //                 type: invoice.type || 'Invoice',
+    //                 fromClient: invoice.fromClient.id,
+    //                 toClient: invoice.toClient.id,
+    //                 taxPercent: invoice.taxPercent.toString(),
+    //                 discountPercent: invoice.discountPercent.toString(),
+    //                 dateTime: invoice.dateTime,
+    //                 description: invoice.description || '',
+    //                 invoiceItems: invoice.items.map(i => ({
+    //                     fullName: i.fullName,
+    //                     quantity: i.quantity.toString(),
+    //                     quantityMetric: i.quantityMetric,
+    //                     price: i.price.toString(),
+    //                     description: i.description,
+    //                 })),
+    //                 showItemForm: invoice.items.length > 0,
+    //                 isArchived: invoice.isArchived ?? false,
+    //
+    //             });
+    //         } catch (err) {
+    //             console.error(err);
+    //             setMessage('خطا در دریافت اطلاعات فاکتور');
+    //         }
+    //     }
+    //
+    //     fetchInvoice();
+    // }, [businessId, invoiceId]);
 
     function validate() {
         const e: Record<string, string> = {};
@@ -181,10 +227,14 @@ export default function EditInvoiceFormPage() {
 
             await updateInvoice(businessId, invoiceId, payload);
 
-            setMessage('فاکتور با موفقیت ویرایش شد');
+            await dispatch(refetchInvoices({ businessId })).unwrap();
+
+            // setMessage('فاکتور با موفقیت ویرایش شد');
+            toast.success('فاکتور با موفقیت ویرایش شد.')
             router.push(`/business/${businessId}/invoices`);
         } catch (err: any) {
             console.error(err);
+            toast.error('خطا در ویرایش فاکتور!')
             setMessage(err?.message ?? 'خطا در ویرایش فاکتور');
         } finally {
             setLoading(false);

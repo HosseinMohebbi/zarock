@@ -9,11 +9,13 @@ import Select, {SelectOption} from '@/app/components/ui/SelectInput';
 import {MdAdd, MdMinimize} from "react-icons/md";
 import {getAllClients} from '@/services/client/client.service';
 import {Client} from '@/services/client/client.types';
+import {validate} from '@/services/invoice/invoice.validation';
 import persian from "react-date-object/calendars/persian";
 import persian_fa from "react-date-object/locales/persian_fa";
 import dayjs from "dayjs";
 import jalaliday from "jalaliday";
 import DatePicker from "react-multi-date-picker";
+import {toast} from "react-toastify";
 
 dayjs.extend(jalaliday);
 
@@ -73,26 +75,17 @@ export default function AddInvoiceFormPage() {
         fetchClients();
     }, [businessId]);
 
-    // Validation
-    function validate() {
-        const e: Record<string, string> = {};
-        if (!form.fromClient) e.fromClient = 'فروشنده را انتخاب کنید';
-        if (!form.toClient) e.toClient = 'خریدار را انتخاب کنید';
-        // if (!form.tax) e.tax = 'مالیات را وارد کنید';
-        // if (!form.discount) e.discount = 'تخفیف را وارد کنید';
-        return e;
-    }
-
     // Handle Submit
     async function handleSubmit(ev?: React.FormEvent) {
         ev?.preventDefault();
-        console.log("Form Submitted!", form);
         setMessage(null);
-        const v = validate();
+        console.log("Form Submitted!", form);
+        const v = validate(form)
         if (Object.keys(v).length) {
-            setErrors(v);
-            return;
+            setErrors(v)
+            return
         }
+        
         if (!businessId) {
             setMessage('شناسه کسب‌وکار پیدا نشد');
             return;
@@ -119,7 +112,8 @@ export default function AddInvoiceFormPage() {
 
             console.log("Payload to send:", payload);
 
-            setMessage('فاکتور با موفقیت ایجاد شد');
+            // setMessage('فاکتور با موفقیت ایجاد شد');
+            toast.success('فاکتور با موفقیت اضافه شد')
             setForm({
                 hint: '',
                 type: 'Invoice',
@@ -136,6 +130,7 @@ export default function AddInvoiceFormPage() {
         } catch (err: any) {
             console.error(err);
             setMessage(err?.message ?? 'خطا در ایجاد فاکتور');
+            toast.error('خطا در افزودن فاکتور!')
         } finally {
             setLoading(false);
         }

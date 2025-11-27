@@ -382,16 +382,16 @@ export default function EditItemFormPage() {
         }
     }
 
-    function handleAddTagFromInput() {
-        const val = form.tagInput.trim();
-        if (!val) return;
-        const newTags = val.split(',').map(t => t.trim()).filter(Boolean);
-        setForm(f => ({ ...f, tags: Array.from(new Set([...f.tags, ...newTags])), tagInput: '' }));
-    }
-
-    function handleRemoveTag(tag: string) {
-        setForm(f => ({ ...f, tags: f.tags.filter(t => t !== tag) }));
-    }
+    // function handleAddTagFromInput() {
+    //     const val = form.tagInput.trim();
+    //     if (!val) return;
+    //     const newTags = val.split(',').map(t => t.trim()).filter(Boolean);
+    //     setForm(f => ({ ...f, tags: Array.from(new Set([...f.tags, ...newTags])), tagInput: '' }));
+    // }
+    //
+    // function handleRemoveTag(tag: string) {
+    //     setForm(f => ({ ...f, tags: f.tags.filter(t => t !== tag) }));
+    // }
 
     function handleCancelForm() {
         router.push(`/business/${businessId}/items`);

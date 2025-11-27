@@ -1,6 +1,6 @@
-import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
-import { getAllInvoice, updateInvoice, updateInvoiceArchive } from "@/services/invoice/invoice.service";
-import { GetAllInvoicesResponse, AddInvoicePayload } from "@/services/invoice/invoice.types";
+import {createSlice, createAsyncThunk, PayloadAction} from "@reduxjs/toolkit";
+import {getAllInvoice, updateInvoice, updateInvoiceArchive} from "@/services/invoice/invoice.service";
+import {GetAllInvoicesResponse, AddInvoicePayload} from "@/services/invoice/invoice.types";
 
 export interface InvoiceState {
     invoices: GetAllInvoicesResponse[];
@@ -19,10 +19,29 @@ const initialState: InvoiceState = {
 // ---------------------------------------------------------------------
 // 📌 دریافت همه فاکتورها
 // ---------------------------------------------------------------------
+// export const fetchInvoices = createAsyncThunk(
+//     "invoices/fetchInvoices",
+//     async ({ businessId }: { businessId: string }) => {
+//         const data = await getAllInvoice({ page: 1, pageSize: 1000 }, businessId);
+//         return data;
+//     }
+// );
+
 export const fetchInvoices = createAsyncThunk(
     "invoices/fetchInvoices",
-    async ({ businessId }: { businessId: string }) => {
-        const data = await getAllInvoice({ page: 1, pageSize: 1000 }, businessId);
+    async ({businessId}: { businessId: string }, {getState}) => {
+        const state: any = getState();
+        const existingInvoices = state.invoices.invoices;
+
+        if (existingInvoices && existingInvoices.length > 0) {
+            // داده‌ها توی redux موجوده، نیاز به API call نیست
+            console.log("💾 دیتاها از Redux cache خونده شد");
+            return existingInvoices;
+        }
+
+        // داده‌ها موجود نیست -> API call
+        console.log("🌐 دیتاها از API گرفته می‌شود");
+        const data = await getAllInvoice({page: 1, pageSize: 1000}, businessId);
         return data;
     }
 );
@@ -32,8 +51,8 @@ export const fetchInvoices = createAsyncThunk(
 // ---------------------------------------------------------------------
 export const fetchInvoiceById = createAsyncThunk(
     "invoices/fetchInvoiceById",
-    async ({ businessId, invoiceId }: { businessId: string; invoiceId: string }) => {
-        const all = await getAllInvoice({ page: 1, pageSize: 1000 }, businessId);
+    async ({businessId, invoiceId}: { businessId: string; invoiceId: string }) => {
+        const all = await getAllInvoice({page: 1, pageSize: 1000}, businessId);
         const invoice = all.find(i => i.id === invoiceId);
         if (!invoice) throw new Error("فاکتور پیدا نشد");
         return invoice;
@@ -51,7 +70,7 @@ export const updateInvoiceThunk = createAsyncThunk(
                payload,
            }: { businessId: string; invoiceId: string; payload: AddInvoicePayload }) => {
         await updateInvoice(businessId, invoiceId, payload);
-        return { businessId, invoiceId };
+        return {businessId, invoiceId};
     }
 );
 
@@ -60,11 +79,21 @@ export const updateInvoiceThunk = createAsyncThunk(
 // ---------------------------------------------------------------------
 export const archiveInvoiceThunk = createAsyncThunk(
     "invoices/archiveInvoice",
-    async ({ businessId, invoiceId }: { businessId: string; invoiceId: string }) => {
+    async ({businessId, invoiceId}: { businessId: string; invoiceId: string }) => {
         await updateInvoiceArchive(businessId, invoiceId);
         return invoiceId;
     }
 );
+
+export const refetchInvoices = createAsyncThunk(
+    "invoices/refetchInvoices",
+    async ({businessId}: { businessId: string }) => {
+        console.log("🌐 دیتاها از API گرفته می‌شوند (force refresh)");
+        const data = await getAllInvoice({page: 1, pageSize: 1000}, businessId);
+        return data;
+    }
+);
+
 
 const invoiceSlice = createSlice({
     name: "invoices",
@@ -123,7 +152,11 @@ const invoiceSlice = createSlice({
             .addCase(archiveInvoiceThunk.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.error.message ?? "خطا در بایگانی فاکتور";
+            })
+            .addCase(refetchInvoices.fulfilled, (state, action) => {
+                state.invoices = action.payload;
             });
+
     },
 });
 

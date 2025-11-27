@@ -68,6 +68,8 @@ export default function EditCheckPage() {
         }
         loadData();
     }, [businessId, transactionId]);
+    
+    console.log('form', form)
 
     const handleSave = async () => {
         try {
@@ -150,11 +152,11 @@ export default function EditCheckPage() {
                         value={form.state}
                         onChange={(val) => setForm({ ...form, state: val })}
                         options={[
-                            { value: "Pending", label: "پاسی" },
-                            { value: "Completed", label: "پاس" },
-                            { value: "Returned", label: "برگشتی" },
-                            { value: "Used", label: "خرج شده" },
-                            { value: "Cash", label: "نقدی" },
+                            { value: "None", label: "پاسی" },
+                            { value: "Passed", label: "پاس" },
+                            { value: "Bounced", label: "برگشتی" },
+                            { value: "Expended", label: "خرج شده" },
+                            { value: "Cashed", label: "نقدی" },
                         ]}
                     />
 

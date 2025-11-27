@@ -50,7 +50,7 @@ export interface AddCashResponse {
     amount: number;
     document: Document;
     tags: string[];
-    transactionType: "Check" | "Cash" | "Card" | "Other"; // می‌تونی مقادیر واقعی‌اش رو اصلاح کنی
+    transactionType: TransactionType; // می‌تونی مقادیر واقعی‌اش رو اصلاح کنی
     flowType: "None" | "Inflow" | "Outflow"; // همینطور برای نوع جریان
     hasNotification: boolean;
     notificationId: string;
@@ -80,7 +80,7 @@ export interface Document {
     extension: string;
 }
 
-export type TransactionType = "Cash" | "Check" | "Card" | "Other";
+export type TransactionType = "None" | "Passed" | "Bounced" | "Expended" | "Cashed";
 export type FlowType = "None" | "Inflow" | "Outflow";
 export type StateType = "None" | "Pending" | "Completed" | "Canceled";
 

@@ -603,9 +603,11 @@ export default function ClientInfoForm({ businessId, clientId }: Props) {
                 }
             })).unwrap();
 
-            setSuccess("اطلاعات مشتری با موفقیت به‌روزرسانی شد");
+            // setSuccess("اطلاعات شخص با موفقیت به‌روزرسانی شد");
+            toast.success('اطلاعات شخص با موفقیت ویرایش شد.')
             router.push(`/business/${businessId}/clients`);
         } catch (err: any) {
+            toast.error('خطا در ویرایش اطلاعات شخص!')
             setError(err?.message ?? "خطا در به‌روزرسانی اطلاعات مشتری");
         } finally {
             setSaving(false);

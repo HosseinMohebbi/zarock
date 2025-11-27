@@ -79,6 +79,7 @@ export default function Client() {
             router.push(`/business/${businessId}/clients`);
         } catch (err: any) {
             setError(err?.message ?? 'خطای سرور');
+            toast.error('خطا در افزودن شخص!')
         } finally {
             setLoading(false);
         }
