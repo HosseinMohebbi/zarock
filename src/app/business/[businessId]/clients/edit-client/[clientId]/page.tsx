@@ -24,7 +24,7 @@ export default function EditClient() {
     }
 
     return (
-        <div className="w-full flex flex-col items-center !px-4 !py-6">
+        <div className="w-full flex flex-col items-center !px-4 !pb-6 !pt-24">
             <div className="w-full max-w-2xl mx-auto">
                 {/* تب‌ها */}
                 <div className="flex justify-center gap-3 !mb-6">

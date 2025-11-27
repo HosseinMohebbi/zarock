@@ -227,7 +227,7 @@ export default function ClientsPage() {
     }
 
     return (
-        <div className="!p-4 !pt-6 flex flex-col gap-2">
+        <div className="!p-4 !pt-24 flex flex-col gap-2">
             {/* HEADER */}
             <div className="flex items-center justify-between gap-4 !px-3">
                 <h1 className="text-lg !font-semibold text-right">اشخاص</h1>

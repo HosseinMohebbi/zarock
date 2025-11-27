@@ -6,7 +6,9 @@ import ThemeToggle from "@/app/components/theme/ThemeToggle";
 import {ToastContainer} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import HumburgerMenu from "@/app/components/ui/HamburgerMenu";
+import HeaderController from "@/app/components/layout/HeaderController";
 import ReduxProvider from "./ReduxProvider"
+import {UserProvider} from "@/context/UserContext";
 
 
 const geistSans = Geist({
@@ -34,11 +36,13 @@ export default function RootLayout({
         <body
             className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         >
-        <HumburgerMenu/>
+        <UserProvider>
+        {/*<HumburgerMenu/>*/}
+        <HeaderController/>
         {/*<div className="fixed left-4 z-50">*/}
         {/*    <ThemeToggle />*/}
         {/*</div>*/}
-        <div className="!pt-20">
+        <div className="">
             <ReduxProvider>
                 <Providers>{children}</Providers>
             </ReduxProvider>
@@ -54,6 +58,7 @@ export default function RootLayout({
             draggable
             theme="colored"
         />
+        </UserProvider>
         </body>
         </html>
     );

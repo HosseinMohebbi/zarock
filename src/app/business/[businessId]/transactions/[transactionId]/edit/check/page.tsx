@@ -90,7 +90,7 @@ export default function EditCheckPage() {
     if (loading) return <div className="p-4">در حال بارگذاری...</div>;
 
     return (
-        <div className="w-full flex justify-center !px-4">
+        <div className="w-full flex justify-center !px-4 !pt-24">
             <div className="w-full max-w-lg mx-auto !p-6 bg-background text-foreground !rounded-lg shadow">
 
                 <h2 className="text-xl font-semibold !mb-6 text-center">

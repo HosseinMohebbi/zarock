@@ -9,7 +9,7 @@ export interface AddProjectPayload {
     description: string;
 }
 
-export interface ProjectResponse {
+export interface AddProjectResponse {
     createdAt: string;
     updatedAt: string;
     id: string;

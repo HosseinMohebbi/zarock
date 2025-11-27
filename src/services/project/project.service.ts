@@ -1,5 +1,5 @@
 import { http } from "@/utils/api/http";
-import { AddProjectPayload, ProjectResponse } from "./project.types";
+import { AddProjectPayload, AddProjectResponse } from "./project.types";
 import {endpoints} from "@/config/endpoint.config";
 
 // ------------------------------------
@@ -8,8 +8,8 @@ import {endpoints} from "@/config/endpoint.config";
 export async function createProject(
     businessId: string,
     payload: AddProjectPayload
-): Promise<ProjectResponse> {
-    const { data } = await http.post<ProjectResponse>(
+): Promise<AddProjectResponse> {
+    const { data } = await http.post<AddProjectResponse>(
         endpoints.project.create(businessId),
         payload
     );
@@ -23,10 +23,10 @@ export async function createProject(
 export async function getAllProjects(
     params: { page: number; pageSize: number },
     businessId: string
-): Promise<ProjectResponse[]> {
+): Promise<AddProjectResponse[]> {
     const { page, pageSize } = params;
 
-    const { data } = await http.get<ProjectResponse[]>(
+    const { data } = await http.get<AddProjectResponse[]>(
         endpoints.project.getAll(businessId),
         {
             params: { page, pageSize },
@@ -49,10 +49,10 @@ export async function filterProjects(
         pattern: string;  // search text
         tags?: string[];
     }
-): Promise<ProjectResponse[]> {
+): Promise<AddProjectResponse[]> {
     const { page, pageSize, pattern, tags } = params;
 
-    const { data } = await http.post<ProjectResponse[]>(
+    const { data } = await http.post<AddProjectResponse[]>(
         `/api/Project/${businessId}/filter`,
         {
             pattern,

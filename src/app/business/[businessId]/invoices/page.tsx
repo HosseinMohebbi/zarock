@@ -113,7 +113,7 @@ export default function InvoicesPage() {
     }
 
     return (
-        <main className="!p-4">
+        <main className="!p-4 !pt-24">
             {/* header */}
             <div className="flex items-center justify-between mt-6 !mb-4 !px-3">
                 <h1 className="text-lg !font-semibold text-right">فاکتورها</h1>

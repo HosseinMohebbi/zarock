@@ -124,7 +124,7 @@ export default function TransactionsPage(): JSX.Element {
     }
 
     return (
-        <main className="!p-4">
+        <main className="!p-4 !pt-24">
 
             {/* 🔵 HEADER دقیقا مثل صفحه کالاها */}
             <div className="flex items-center justify-between !mt-6 !mb-4 !px-3">

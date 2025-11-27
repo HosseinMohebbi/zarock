@@ -71,7 +71,7 @@ export default function NotificationsPage() {
     // ---------------------------- UI ----------------------------
 
     return (
-        <div className="w-full flex justify-center !px-4">
+        <div className="w-full flex justify-center !px-4 !pt-24">
             <div className="w-full max-w-8xl mx-auto p-6 bg-background text-foreground rounded-lg shadow">
 
                 <h2 className="text-2xl font-semibold text-center mb-10">مدیریت اعلانات</h2>

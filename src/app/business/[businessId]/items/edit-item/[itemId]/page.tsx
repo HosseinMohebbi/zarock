@@ -411,7 +411,7 @@ export default function EditItemFormPage() {
     }
 
     return (
-        <div className="w-full flex justify-center !px-4">
+        <div className="w-full flex justify-center !px-4 !pt-24">
             <div className="w-full max-w-lg mx-auto !p-6 bg-background text-foreground rounded-lg shadow">
                 <div className="relative w-full flex items-start">
                     <div onClick={handleDelete} className="absolute right-0 text-danger cursor-pointer">

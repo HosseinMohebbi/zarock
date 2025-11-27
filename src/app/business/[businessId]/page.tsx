@@ -82,7 +82,7 @@ export default function Home() {
 
 
     return (
-        <div className="w-full h-full">
+        <div className="w-full h-full !pt-16">
             <div
                 className="w-full h-full flex justify-center items-center !p-4 font-sans bg-background text-foreground">
                 <div className="h-auto flex justify-center items-center flex-wrap gap-4 !py-6">

@@ -82,7 +82,7 @@ export default function LoginPage(): JSX.Element {
     // };
     
     return (
-        <div className="w-full h-screen">
+        <div className="w-full h-screen flex justify-center items-center">
                 <form onSubmit={onSubmit} dir="rtl" className="w-full h-full flex flex-col justify-center items-center gap-4  font-sans bg-background text-foreground">
                     <h2 className="text-2xl font-semibold mb-4 text-center">ورود</h2>
                     <Input

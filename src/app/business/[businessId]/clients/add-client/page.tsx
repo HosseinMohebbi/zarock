@@ -91,7 +91,7 @@ export default function Client() {
     };
 
     return (
-        <div className="w-full flex justify-center !px-4">
+        <div className="w-full flex justify-center !px-4 !pt-24">
             <div className="w-full max-w-lg mx-auto !p-6 bg-background text-foreground rounded-lg shadow">
                 <div className="flex items-center justify-between mb-4">
                     <h1 className="text-xl font-semibold text-center w-full">

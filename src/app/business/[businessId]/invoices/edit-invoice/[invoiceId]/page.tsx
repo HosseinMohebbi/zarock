@@ -273,7 +273,7 @@ export default function EditInvoiceFormPage() {
 
 
     return (
-        <div className="w-full flex justify-center !px-4">
+        <div className="w-full flex justify-center !px-4 !pt-24">
             <div className="w-full max-w-lg mx-auto !p-6 bg-background text-foreground rounded-lg shadow">
                 {!form.isArchived ? <h2 className="text-xl font-semibold !mb-4 text-center">ویرایش فاکتور</h2> :
                     <h2 className="!mb-4 text-center !px-3 !py-1 text-xl !rounded-md bg-yellow-100 text-yellow-700">بایگانی شده</h2>}

@@ -44,7 +44,7 @@ export default function AddTransactionPage() {
     }, [businessId]);
 
     return (
-        <div>
+        <div className="!pt-24">
             {/* تب‌ها */}
             <div className="flex justify-center gap-3 !mb-6">
                 <Button
