@@ -196,7 +196,7 @@ export default function ProjectsPage() {
     };
 
     const handleOpenProject = (projectId: any) => {
-        router.push(`/business/${businessId}/projects/${projectId}`);
+        router.push(`/business/${businessId}/projects/edit-project/${projectId}`);
     };
 
     useEffect(() => {

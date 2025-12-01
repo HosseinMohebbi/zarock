@@ -201,6 +201,7 @@ import "dayjs/locale/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchItems, selectItems } from "@/app/store/itemsSlice";
 import Loader from "@/app/components/ui/Loader";
+import {fetchInvoices} from "@/app/store/invoivesSlice";
 
 dayjs.extend(jalaliday);
 
@@ -236,6 +237,8 @@ export default function ItemsPage(): JSX.Element {
     const [page, setPage] = useState(1);
     const [pageSize, setPageSize] = useState(50);
     const [isFetching, setIsFetching] = useState(true);
+    const [filteredItems, setFilteredItems] = useState<getItemResponse[]>([]);
+
 
 
     const params = useParams() as { businessId?: string };
@@ -252,15 +255,51 @@ export default function ItemsPage(): JSX.Element {
     };
 
     useEffect(() => {
-        if (businessId) {
-            setLoading(true);
-            setIsFetching(false);
-            dispatch(fetchItems({ businessId, page, pageSize, pattern: searchPattern, type: typeFilter || undefined, tags }))
-                .unwrap()
-                .catch(err => setError(err))
-                .finally(() => setLoading(false));
+        if (!businessId) return;
+
+        setIsFetching(false);
+        if (items.length > 0) {
+            console.log("💾 دریافت از Redux (بدون API)");
+            return;
         }
-    }, [businessId, page, pageSize, searchPattern, typeFilter, tags]);
+
+        console.log("🌐 دریافت از API");
+        dispatch(fetchItems({ businessId, page, pageSize, pattern: searchPattern, type: typeFilter || undefined, tags }))
+            .unwrap()
+            .catch(err => setError(err))
+            .finally(() => setLoading(false));
+
+    }, [businessId]);
+
+    useEffect(() => {
+        let result = items;
+
+        if (searchPattern.trim() !== "") {
+            const q = searchPattern.trim().toLowerCase();
+            result = result.filter(item =>
+                (item.group ?? "").toLowerCase().includes(q) ||
+                (item.name ?? "").toLowerCase().includes(q)
+            );
+        }
+
+        if (typeFilter) {
+            result = result.filter(item => item.itemType === typeFilter);
+        }
+
+        setFilteredItems(result);
+
+    }, [items, searchPattern, typeFilter]);
+
+    // useEffect(() => {
+    //     if (businessId) {
+    //         setLoading(true);
+    //         setIsFetching(false);
+    //         dispatch(fetchItems({ businessId, page, pageSize, pattern: searchPattern, type: typeFilter || undefined, tags }))
+    //             .unwrap()
+    //             .catch(err => setError(err))
+    //             .finally(() => setLoading(false));
+    //     }
+    // }, [businessId, page, pageSize, searchPattern, typeFilter, tags]);
 
     if (isFetching) {
         return (
@@ -333,16 +372,10 @@ export default function ItemsPage(): JSX.Element {
                     </label>
                 </div>
             </div>
-
-            {/*{loading && <div className="!py-6 text-center">در حال بارگذاری...</div>}*/}
-            {/*{error && <div className="!py-4 text-red-600">{error}</div>}*/}
-            {/*{!loading && !error && (!items || items.length === 0) && (*/}
-            {/*    <div className="py-6 text-center text-gray-500">آیتمی یافت نشد.</div>*/}
-            {/*)}*/}
-
+            
             {/* list */}
             <div className="!px-3 !mt-4 grid grid-cols-1 gap-3 overflow-y-auto sm:grid-cols-2 !pb-4 lg:grid-cols-3 xl:grid-cols-4" style={{ maxHeight: 'calc(100vh - 200px)' }}>
-                {items?.map((item: getItemResponse) => (
+                {filteredItems?.map((item: getItemResponse) => (
                     <div
                         key={item.id}
                         onClick={() => handleOpenItem(item.id)}

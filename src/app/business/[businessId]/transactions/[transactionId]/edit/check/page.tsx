@@ -1,21 +1,26 @@
 'use client';
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Input from "@/app/components/ui/Input";
 import Select from "@/app/components/ui/SelectInput";
 import { getAllClients, getBankLogos } from "@/services/client/client.service";
-import { getCheckById, updateCheck } from "@/services/transaction/transaction.service";
+import {deleteCheck, getCheckById, updateCheck} from "@/services/transaction/transaction.service";
 import DatePicker from "react-multi-date-picker";
 import persian from "react-date-object/calendars/persian";
 import persian_fa from "react-date-object/locales/persian_fa";
 import dayjs from "dayjs";
 import jalaliday from "jalaliday";
 import Button from "@/app/components/ui/Button";
+import {toast} from "react-toastify";
+import {MdDelete} from "react-icons/md";
+import ConfirmModal from "@/app/components/ui/ConfirmModal";
 dayjs.extend(jalaliday);
 
 export default function EditCheckPage() {
     const { businessId, transactionId } = useParams();
+    console.log(businessId, transactionId);
     const router = useRouter();
+    const [showConfirm, setShowConfirm] = useState(false);
 
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
@@ -44,6 +49,8 @@ export default function EditCheckPage() {
                     getAllClients({ page: 1, pageSize: 200 }, businessId),
                     getBankLogos(),
                 ]);
+                
+                console.log(checkData.id);
 
                 setForm({
                     amount: checkData.amount,
@@ -69,7 +76,6 @@ export default function EditCheckPage() {
         loadData();
     }, [businessId, transactionId]);
     
-    console.log('form', form)
 
     const handleSave = async () => {
         try {
@@ -87,15 +93,35 @@ export default function EditCheckPage() {
         }
     };
 
-    if (loading) return <div className="p-4">در حال بارگذاری...</div>;
+    function handleDelete() {
+        setShowConfirm(true);
+    }
+
+    async function confirmDelete() {
+        try {
+            setShowConfirm(false);
+
+            await deleteCheck(businessId, transactionId);
+
+            toast.success("چک با موفقیت حذف شد");
+
+            router.push(`/business/${businessId}/transactions`);
+        } catch (err) {
+            toast.error("حذف چک با خطا مواجه شد");
+            console.error(err);
+        }
+    }
 
     return (
         <div className="w-full flex justify-center !px-4 !pt-24">
             <div className="w-full max-w-lg mx-auto !p-6 bg-background text-foreground !rounded-lg shadow">
 
-                <h2 className="text-xl font-semibold !mb-6 text-center">
-                    ویرایش چک
-                </h2>
+                <div className="relative w-full flex items-start">
+                    <div onClick={handleDelete} className="absolute right-0 text-danger cursor-pointer">
+                        <MdDelete className='w-6 h-6' />
+                    </div>
+                    <h2 className="!mx-auto text-xl font-semibold !mb-4 text-center">ویرایش چک</h2>
+                </div>
 
                 <div className="flex flex-col gap-5">
 
@@ -192,6 +218,7 @@ export default function EditCheckPage() {
 
                 </div>
             </div>
+            <ConfirmModal title="حذف چک" isOpen={showConfirm} message="آیا مطمئن هستید که می‌خواهید تراکنش را حذف کنید؟" onConfirm={confirmDelete} onCancel={() => setShowConfirm(false)} />
         </div>
     );
 }

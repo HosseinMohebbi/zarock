@@ -6,7 +6,7 @@ import Input from '@/app/components/ui/Input';
 import Button from '@/app/components/ui/Button';
 import { cn } from '@/utils/cn';
 import { addBusiness } from "@/services/business";
-import {createBusiness} from "@/services/business/business.service";
+import {createBusinessWithLogo } from "@/services/business/business.service";
 
 interface CreateBusinessModalProps {
     open: boolean;
@@ -24,27 +24,27 @@ export default function CreateBusinessModal({ open, onClose, onCreated }: Create
         if (selected) setFile(selected);
     };
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        if (!name.trim() || !description.trim()) return;
-
-        try {
-            await createBusiness({
-                name,
-                description,
-                logo: file || undefined, // لوگو رو اضافه می‌کنیم
-            });
-
-            await onCreated();
-            setName('');
-            setDescription('');
-            setFile(null);
-            onClose();
-        } catch (err) {
-            console.error(err);
-            alert("خطا در ایجاد کسب‌وکار");
-        }
-    };
+    // const handleSubmit = async (e: React.FormEvent) => {
+    //     e.preventDefault();
+    //     if (!name.trim() || !description.trim()) return;
+    //
+    //     try {
+    //         await createBusiness({
+    //             name,
+    //             description,
+    //             logo: file || undefined, // لوگو رو اضافه می‌کنیم
+    //         });
+    //
+    //         await onCreated();
+    //         setName('');
+    //         setDescription('');
+    //         setFile(null);
+    //         onClose();
+    //     } catch (err) {
+    //         console.error(err);
+    //         alert("خطا در ایجاد کسب‌وکار");
+    //     }
+    // };
 
 
     // const handleSubmit = async (e: React.FormEvent) => {
@@ -74,6 +74,29 @@ export default function CreateBusinessModal({ open, onClose, onCreated }: Create
     //         // setLoading(false);
     //     }
     // };
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!name.trim() || !description.trim()) return;
+
+        try {
+            await createBusinessWithLogo(
+                { name, description },
+                file || undefined
+            );
+
+            await onCreated();
+
+            setName("");
+            setDescription("");
+            setFile(null);
+            onClose();
+        } catch (err) {
+            console.error(err);
+            alert("خطا در ایجاد کسب‌وکار");
+        }
+    };
+
 
     return (
         <Modal open={open} onClose={onClose} onSubmit={handleSubmit} ariaLabel="Create Business Modal" modalTitle="ایجاد کسب و کار">

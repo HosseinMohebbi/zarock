@@ -1,6 +1,6 @@
 import {Client} from "@/services/client/client.types"
-import {getTransactionResponse} from "@/services/transaction/transaction.types"
-import {AddInvoiceResponse} from "@/services/invoice/invoice.types"
+import {AddCheckPayload, getTransactionResponse, AddCashPayload} from "@/services/transaction/transaction.types"
+import {AddInvoiceResponse, GetAllInvoicesResponse} from "@/services/invoice/invoice.types"
 
 export interface AddProjectPayload {
     name: string;
@@ -20,4 +20,17 @@ export interface AddProjectResponse {
     client: Client;           // می‌تونی دقیق‌تر تایپش کنی
     transactions: getTransactionResponse[];   // بعداً می‌تونم برات کاملش کنم
     invoices: AddInvoiceResponse[];
+}
+
+export interface ProjectOverview {
+    createdAt: string; 
+    updatedAt: string; 
+    id: string;
+    name: string;
+    progress: number; 
+    description: string | null;
+    tags: string[];
+    client: Client;
+    transactions: AddCheckPayload | AddCashPayload;
+    invoices: GetAllInvoicesResponse[];
 }

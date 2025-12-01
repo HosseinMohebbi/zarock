@@ -3,7 +3,6 @@ import {useState} from "react";
 import { cn } from "@/utils/cn";
 import Input from "./components/ui/Input";
 import Button from "@/app/components/ui/Button";
-import ThemeToggle from "@/app/components/theme/ThemeToggle";
 import Card from "@/app/components/ui/Card";
 import {Wallet} from "lucide-react"
 import LoginPage from "@/app/(auth)/login/page"

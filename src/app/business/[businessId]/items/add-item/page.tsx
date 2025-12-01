@@ -10,6 +10,8 @@ import {createItem} from '@/services/item/item.service'
 import Button from "@/app/components/ui/Button";
 import {toast} from "react-toastify";
 import {validate} from "@/services/item/item.validation"
+import {useDispatch} from "react-redux";
+import {clearItems} from "@/app/store/itemsSlice";
 
 type FormState = {
     name: string
@@ -26,6 +28,7 @@ export default function AddItemFormPage() {
     const params = useParams() as { businessId?: string }
     const router = useRouter()
     const businessId = params?.businessId ?? ''
+    const dispatch = useDispatch()
 
     const [form, setForm] = useState<FormState>({
         name: '',
@@ -76,7 +79,8 @@ export default function AddItemFormPage() {
                 unit: form.unit.trim(),
                 description: form.description.trim(),
             }
-            await createItem(businessId, payload)
+            await createItem(businessId, payload);
+            dispatch(clearItems());
             toast.success("کالا با موفقیت اضافه شد");
             // setMessage('کالا با موفقیت ایجاد شد')
             // در صورت نیاز به هدایت بعد از ایجاد:

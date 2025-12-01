@@ -2,7 +2,6 @@
 import {useState} from "react";
 import {useRouter, useParams} from "next/navigation";
 import {cn} from "@/utils/cn";
-import ThemeToggle from "@/app/components/theme/ThemeToggle";
 import Card from "@/app/components/ui/Card";
 import {Car, Wallet} from "lucide-react"
 import {

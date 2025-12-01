@@ -1,6 +1,6 @@
 // /store/itemsSlice.ts
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import {filterItems, getAllItems, updateItem} from '@/services/item/item.service';
+import {filterItems, getAllItems, updateItem, deleteItem} from '@/services/item/item.service';
 import { getItemResponse } from '@/services/item/item.types';
 
 interface ItemsState {
@@ -54,6 +54,22 @@ export const updateItemThunk = createAsyncThunk<
     }
 );
 
+// Async thunk برای حذف آیتم
+export const deleteItemThunk = createAsyncThunk<
+    string, // خروجی: فقط id آیتمی که حذف شده
+    { businessId: string; itemId: string }
+>(
+    'items/deleteItem',
+    async ({ businessId, itemId }, { rejectWithValue }) => {
+        try {
+            await deleteItem(businessId, itemId); // ← صدا زدن API حذف
+            return itemId; // ← فقط id را برمی‌گردانیم تا از state حذف کنیم
+        } catch (err: any) {
+            return rejectWithValue(err?.message || 'خطا در حذف آیتم');
+        }
+    }
+);
+
 const itemsSlice = createSlice({
     name: 'items',
     initialState,
@@ -80,6 +96,9 @@ const itemsSlice = createSlice({
                 // آپدیت آیتم در لیست Redux
                 const idx = state.items.findIndex((i) => i.id === action.payload.id);
                 if (idx !== -1) state.items[idx] = action.payload;
+            })
+            .addCase(deleteItemThunk.fulfilled, (state, action: PayloadAction<string>) => {
+                state.items = state.items.filter((i) => i.id !== action.payload);
             });
     },
 });

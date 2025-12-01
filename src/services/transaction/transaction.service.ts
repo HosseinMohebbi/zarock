@@ -6,13 +6,14 @@ import {
     AddCheckResponse,
     getTransactionResponse
 } from "./transaction.types";
+import {endpoints} from "@/config/endpoint.config";
 
 export async function createCheck(
     businessId: string,
     payload: AddCheckPayload
 ): Promise<AddCheckResponse> {
     const { data } = await http.post<AddCheckResponse>(
-        `/api/Transaction/${businessId}/check`,
+        endpoints.transaction.createCheck(businessId),
         payload,
         {
             params: { businessId },
@@ -26,7 +27,7 @@ export async function getCheckById(
     checkId: string
 ): Promise<AddCheckResponse> {
     const { data } = await http.get<AddCheckResponse>(
-        `/api/Transaction/${businessId}/check/${checkId}`
+        endpoints.transaction.getCheckById(businessId, checkId),
     );
     return data;
 }
@@ -37,10 +38,16 @@ export async function updateCheck(
     payload: AddCheckPayload
 ): Promise<AddCheckResponse> {
     const { data } = await http.put<AddCheckResponse>(
-        `/api/Transaction/${businessId}/check/${checkId}`,
+        endpoints.transaction.updateCheck(businessId, checkId),
         payload
     );
     return data;
+}
+
+export async function deleteCheck(businessId: string, checkId: string): Promise<void> {
+    await http.delete(
+        endpoints.transaction.deleteCheck(businessId, checkId)
+    );
 }
 
 export async function createCash(
@@ -48,7 +55,7 @@ export async function createCash(
     payload: AddCashPayload
 ): Promise<AddCashResponse> {
     const { data } = await http.post<AddCashResponse>(
-        `/api/Transaction/${businessId}/cash`,
+        endpoints.transaction.createCash(businessId),
         payload,
         {
             params: { businessId },
@@ -62,7 +69,7 @@ export async function getCashById(
     cashId: string
 ): Promise<AddCashResponse> {
     const { data } = await http.get<AddCashResponse>(
-        `/api/Transaction/${businessId}/cash/${cashId}`
+        endpoints.transaction.getCashById(businessId, cashId),
     );
     return data;
 }
@@ -73,15 +80,21 @@ export async function updateCash(
     payload: AddCashPayload
 ): Promise<AddCashResponse> {
     const { data } = await http.put<AddCashResponse>(
-        `/api/Transaction/${businessId}/cash/${cashId}`,
+        endpoints.transaction.updateCash(businessId, cashId),
         payload
     );
     return data;
 }
 
+export async function deleteCash(businessId: string, cashId: string): Promise<void> {
+    await http.delete(
+        endpoints.transaction.deleteCash(businessId, cashId)
+    );
+}
+
 export async function getAllTransactions(params: { page: number; pageSize: number }, businessId): Promise<getTransactionResponse[]> {
     const { page, pageSize } = params;
-    const { data } = await http.get<getTransactionResponse[]>(`/api/Transaction/${businessId}/all`, {
+    const { data } = await http.get<getTransactionResponse[]>(endpoints.transaction.getAll(businessId), {
         params: { page, pageSize }, // axios به‌صورت ?page=..&pageSize=.. اضافه می‌کند
     });
     return data;

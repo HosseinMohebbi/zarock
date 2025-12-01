@@ -86,6 +86,7 @@ export default function EditInvoiceFormPage() {
         try {
             await updateInvoiceArchive(businessId, invoiceId);
             setShowArchiveModal(false);
+            await dispatch(refetchInvoices({ businessId })).unwrap();
             router.push(`/business/${businessId}/invoices`);
         } catch (err) {
             console.error(err);
@@ -473,7 +474,6 @@ export default function EditInvoiceFormPage() {
                 message="آیا از بایگانی این فاکتور مطمئن هستید؟"
                 confirmText={archiveLoading ? "در حال بایگانی..." : "بایگانی"}
                 cancelText="لغو"
-                dangerColor="hsl(0, 75%, 50%)"
                 onCancel={() => setShowArchiveModal(false)}
                 onConfirm={handleArchive}
             />

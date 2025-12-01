@@ -1,6 +1,5 @@
 'use client';
 import {useEffect, useState} from "react";
-import ThemeToggle from "@/app/components/theme/ThemeToggle";
 import Card from "@/app/components/ui/Card";
 import {useParams, useRouter} from "next/navigation";
 import {MdAdd, MdMoney, MdCheck} from "react-icons/md";
@@ -229,7 +228,7 @@ export default function TransactionsPage(): JSX.Element {
                                     {/* توضیح یا عنوان سند */}
                                     <div className="flex gap-2 text-lg">
                                         <h2>توضیح:</h2>
-                                        <span className="text-base">{t.document?.title ?? t.description ?? ""}</span>
+                                        <span className="text-base">{t.description ?? ""}</span>
                                     </div>
                                 </div>
                             </div>

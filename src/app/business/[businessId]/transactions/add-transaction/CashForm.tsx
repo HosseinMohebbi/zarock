@@ -1,5 +1,5 @@
 'use client';
-import { useState } from "react";
+import React, { useState } from "react";
 import Input from "@/app/components/ui/Input";
 import Select from "@/app/components/ui/SelectInput";
 import { Client } from "@/services/client/client.types";
@@ -10,7 +10,7 @@ import persian from "react-date-object/calendars/persian";
 import persian_fa from "react-date-object/locales/persian_fa";
 import dayjs from "dayjs";
 import jalaliday from "jalaliday";
-import { useParams } from "next/navigation";
+import {useParams, useRouter} from "next/navigation";
 import Button from "@/app/components/ui/Button";
 import {cashValidate} from "@/services/transaction/transaction.validation";
 
@@ -24,6 +24,7 @@ interface CashFormProps {
 export default function CashForm({ clients, loadingClients }: CashFormProps) {
     const { businessId } = useParams();
     const [errors, setErrors] = useState<Record<string, string>>({});
+    const router = useRouter();
 
 
     // ----------------------------
@@ -77,6 +78,7 @@ export default function CashForm({ clients, loadingClients }: CashFormProps) {
             };
 
             await createCash(businessId, payload);
+            router.push(`/business/${businessId}/transactions`);
 
             // reset form
             setForm({
@@ -95,6 +97,10 @@ export default function CashForm({ clients, loadingClients }: CashFormProps) {
             setSaving(false);
         }
     };
+
+    function handleCancelForm() {
+        router.push(`/business/${businessId}/transactions`);
+    }
 
     return (
         <div className="w-full flex justify-center !px-4">
@@ -183,6 +189,7 @@ export default function CashForm({ clients, loadingClients }: CashFormProps) {
                             disabled={saving}
                             customStyle="!px-6 !py-2 bg-indigo-600 text-white !rounded-md"
                         />
+                        <Button label="لغو" type="button" onClick={handleCancelForm}/>
                     </div>
 
                 </div>

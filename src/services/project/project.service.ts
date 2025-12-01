@@ -1,6 +1,8 @@
 import { http } from "@/utils/api/http";
-import { AddProjectPayload, AddProjectResponse } from "./project.types";
+import {AddProjectPayload, AddProjectResponse, ProjectOverview} from "./project.types";
+import {getTransactionResponse, AddCashResponse} from "../../services/transaction/transaction.types"
 import {endpoints} from "@/config/endpoint.config";
+
 
 // ------------------------------------
 // CREATE
@@ -12,6 +14,16 @@ export async function createProject(
     const { data } = await http.post<AddProjectResponse>(
         endpoints.project.create(businessId),
         payload
+    );
+    return data;
+}
+
+export async function getProjectById(
+    businessId: string,
+    projectId: string
+): Promise<ProjectOverview> {
+    const { data } = await http.get<ProjectOverview>(
+        endpoints.project.getProjectById(businessId, projectId),
     );
     return data;
 }
@@ -74,9 +86,9 @@ export async function updateProject(
     businessId: string,
     projectId: string,
     payload: AddProjectPayload
-): Promise<ProjectResponse> {
-    const { data } = await http.put<ProjectResponse>(
-        `/api/Project/${businessId}/${projectId}`,
+): Promise<AddProjectResponse> {
+    const { data } = await http.put<AddProjectResponse>(
+        endpoints.project.updateProject(businessId, projectId),
         payload
     );
 
@@ -92,4 +104,31 @@ export async function deleteProject(
     projectId: string
 ): Promise<void> {
     await http.delete(`/api/Project/${businessId}/${projectId}`);
+}
+
+export async function getProjectTransactions(
+    businessId: string,
+    projectId: string,
+    params: { page: number; pageSize: number }
+): Promise<getTransactionResponse[]> {
+    const { page, pageSize } = params;
+
+    const { data } = await http.get<getTransactionResponse[]>(
+        endpoints.project.getProjectTransactions(businessId, projectId),
+        {
+            params: { page, pageSize },
+        }
+    );
+
+    return data;
+}
+
+export async function assignTransactionToProject(
+    businessId: string,
+    projectId: string,
+    transactionId: string
+): Promise<void> {
+    await http.put(
+        endpoints.project.assignTransactionToProject(businessId, projectId, transactionId),
+    );
 }

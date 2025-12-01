@@ -55,11 +55,25 @@ export default function InvoicesPage() {
     const loading = useSelector((s: any) => s.invoices.loading);
     const error = useSelector((s: any) => s.invoices.error);
 
+    // useEffect(() => {
+    //     if (businessId) {
+    //         setIsFetching(false);
+    //         dispatch(fetchInvoices({ businessId }));
+    //     }
+    // }, [businessId]);
+
     useEffect(() => {
-        if (businessId) {
-            setIsFetching(false);
-            dispatch(fetchInvoices({ businessId }));
+        if (!businessId) return;
+
+        setIsFetching(false);
+        if (invoices.length > 0) {
+            console.log("💾 دریافت از Redux (بدون API)");
+            return;
         }
+
+        console.log("🌐 دریافت از API");
+        dispatch(fetchInvoices({ businessId }));
+
     }, [businessId]);
 
     // useEffect(() => {
@@ -126,11 +140,11 @@ export default function InvoicesPage() {
                 </button>
             </div>
 
-            {loading && <div className="!py-6 text-center">در حال دریافت فاکتورها...</div>}
-            {error && <div className="!py-4 text-red-600">{error}</div>}
-            {!loading && invoices.length === 0 && !error && (
-                <div className="!py-6 text-center text-gray-500">فاکتوری وجود ندارد.</div>
-            )}
+            {/*{loading && <div className="!py-6 text-center">در حال دریافت فاکتورها...</div>}*/}
+            {/*{error && <div className="!py-4 text-red-600">{error}</div>}*/}
+            {/*{!loading && invoices.length === 0 && !error && (*/}
+            {/*    <div className="!py-6 text-center text-gray-500">فاکتوری وجود ندارد.</div>*/}
+            {/*)}*/}
 
             {/* list */}
             <div

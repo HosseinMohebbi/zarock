@@ -2,10 +2,10 @@
 
 import { useState } from "react";
 import { useParams } from "next/navigation";
-import ClientInfoForm from "./ClientInfoForm";
-import ClientTransactions from "./ClientTransactions";
-import ClientInvoices from "./ClientInvoices";
-import ClientDocuments from "./ClientDocuments";
+import DocumentsForm from "./DocumentsForm";
+import TransactionForm from "./TransactionForm";
+import InvoicesForm from "./InvoicesForm";
+import ProjectInfoForm from "./ProjectInfoForm";
 import Button from "@/app/components/ui/Button";
 
 export default function ClientDetailsPage() {
@@ -15,13 +15,13 @@ export default function ClientDetailsPage() {
 
     const [activeTab, setActiveTab] = useState<'info' | 'transactions' | 'invoices' | 'documents'>('info');
 
-    if (!businessId || !clientId) {
-        return (
-            <div className="flex justify-center items-center h-screen">
-                شناسه کسب‌وکار یا مشتری نامعتبر است
-            </div>
-        );
-    }
+    // if (!businessId || !clientId) {
+    //     return (
+    //         <div className="flex justify-center items-center h-screen">
+    //             شناسه کسب‌وکار یا مشتری نامعتبر است
+    //         </div>
+    //     );
+    // }
 
     return (
         <div className="w-full flex flex-col items-center !px-4 !pb-6 !pt-24">
@@ -73,19 +73,19 @@ export default function ClientDetailsPage() {
                 {/* محتوای تب‌ها */}
                 <div className="w-full">
                     <div className={activeTab === 'info' ? 'block' : 'hidden'}>
-                        <ClientInfoForm businessId={businessId} clientId={clientId}/>
+                        <ProjectInfoForm/>
                     </div>
 
                     <div className={activeTab === 'transactions' ? 'block' : 'hidden'}>
-                        <ClientTransactions businessId={businessId} clientId={clientId}/>
+                        <TransactionForm/>
                     </div>
 
                     <div className={activeTab === 'invoices' ? 'block' : 'hidden'}>
-                        <ClientInvoices businessId={businessId} clientId={clientId}/>
+                        <DocumentsForm/>
                     </div>
 
                     <div className={activeTab === 'documents' ? 'block' : 'hidden'}>
-                        <ClientDocuments businessId={businessId} clientId={clientId}/>
+                        <InvoicesForm/>
                     </div>
                 </div>
             </div>

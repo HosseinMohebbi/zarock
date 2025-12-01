@@ -5,7 +5,6 @@ import Link from 'next/link';
 import {cn} from '@/utils/cn';
 import Input from '@/app/components/ui/Input';
 import Button from '@/app/components/ui/Button';
-import ThemeToggle from '@/app/components/theme/ThemeToggle';
 import {registerUser, type RegisterResponse} from '@/services/auth'; 
 
 type Errors = Partial<{

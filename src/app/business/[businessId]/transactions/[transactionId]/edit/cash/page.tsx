@@ -116,27 +116,32 @@
 // }
 
 'use client';
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Input from "@/app/components/ui/Input";
 import Select from "@/app/components/ui/SelectInput";
 import { getAllClients } from "@/services/client/client.service";
-import { getCashById, updateCash } from "@/services/transaction/transaction.service";
+import { getCashById, updateCash, deleteCash } from "@/services/transaction/transaction.service";
 import DatePicker from "react-multi-date-picker";
 import persian from "react-date-object/calendars/persian";
 import persian_fa from "react-date-object/locales/persian_fa";
 import dayjs from "dayjs";
 import jalaliday from "jalaliday";
 import Button from "@/app/components/ui/Button";
+import {MdDelete} from "react-icons/md";
+import {toast} from "react-toastify";
+import ConfirmModal from "@/app/components/ui/ConfirmModal";
 dayjs.extend(jalaliday);
 
 export default function EditCashPage() {
     const { businessId, transactionId } = useParams();
+
     const router = useRouter();
 
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [clients, setClients] = useState([]);
+    const [showConfirm, setShowConfirm] = useState(false);
 
     const [form, setForm] = useState<any>({
         trackingCode: "",
@@ -155,7 +160,7 @@ export default function EditCashPage() {
                     getCashById(businessId, transactionId),
                     getAllClients({ page: 1, pageSize: 200 }, businessId),
                 ]);
-
+                
                 setForm({
                     trackingCode: cashData.trackingCode,
                     amount: cashData.amount,
@@ -191,15 +196,35 @@ export default function EditCashPage() {
         }
     };
 
-    if (loading) return <div className="p-4">در حال بارگذاری...</div>;
+    function handleDelete() {
+        setShowConfirm(true);
+    }
 
+    async function confirmDelete() {
+        try {
+            setShowConfirm(false);
+
+            await deleteCash(businessId, transactionId);
+
+            toast.success("تراکنش با موفقیت حذف شد");
+
+            router.push(`/business/${businessId}/transactions`);
+        } catch (err) {
+            toast.error("حذف تراکنش با خطا مواجه شد");
+            console.error(err);
+        }
+    }
+    
     return (
         <div className="w-full flex justify-center !px-4 !pt-24">
             <div className="w-full max-w-lg mx-auto !p-6 bg-background text-foreground !rounded-lg shadow">
 
-                <h2 className="text-xl font-semibold !mb-6 text-center">
-                    ویرایش تراکنش نقدی
-                </h2>
+                <div className="relative w-full flex items-start">
+                    <div onClick={handleDelete} className="absolute right-0 text-danger cursor-pointer">
+                        <MdDelete className='w-6 h-6' />
+                    </div>
+                    <h2 className="!mx-auto text-xl font-semibold !mb-4 text-center">ویرایش تراکنش نقدی</h2>
+                </div>
 
                 <div className="flex flex-col gap-5">
 
@@ -249,6 +274,7 @@ export default function EditCashPage() {
                     </div>
                 </div>
             </div>
+            <ConfirmModal title="حذف تراکنش" isOpen={showConfirm} message="آیا مطمئن هستید که می‌خواهید تراکنش را حذف کنید؟" onConfirm={confirmDelete} onCancel={() => setShowConfirm(false)} />
         </div>
     );
 }

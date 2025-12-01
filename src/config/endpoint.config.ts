@@ -1,4 +1,6 @@
 // /services/endpoint.config.ts
+import {getCheckById} from "@/services/transaction/transaction.service";
+
 export const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:5000';
 
 export const endpoints = {
@@ -9,9 +11,12 @@ export const endpoints = {
     },
     business: {
         createBusiness: `/api/Business/addBusiness`,
+        uploadBusinessLogo: `/api/Static/attachBusinessLogo`,
         getAllBusiness: `/api/Business/all`,
         getBusinessById: (id: string) => `/api/Business/${id}`,
         updateBusiness: (id: string) => `/api/Business/${id}`,
+        getStatic: (id: string) => `/api/Static/${id}`,
+        deleteBusiness: (id: string) => `/api/Static/${id}`,
     },
     client: {
         create: (businessId: string) => `/api/Client/${businessId}`,
@@ -37,9 +42,24 @@ export const endpoints = {
         // filter: (businessId: string) => `${API_BASE}/api/Invoice/${businessId}/filter`,
         // getById: (businessId: string, invoiceId: string) => `${API_BASE}/api/Invoice/${businessId}/${invoiceId}`,
     },
+    transaction: {
+        createCheck: (businessId: string) => `/api/Transaction/${businessId}/check`,
+        getCheckById: (businessId: string, checkId: string) => `/api/Transaction/${businessId}/check/${checkId}`,
+        updateCheck: (businessId: string, checkId: string) => `/api/Transaction/${businessId}/check/${checkId}`,
+        deleteCheck: (businessId: string, checkId: string) => `/api/Transaction/${businessId}/check/${checkId}`,
+        createCash: (businessId: string) => `/api/Transaction/${businessId}/cash`,
+        getCashById: (businessId: string, cashId: string) => `/api/Transaction/${businessId}/cash/${cashId}`,
+        updateCash: (businessId: string, cashId: string) => `/api/Transaction/${businessId}/cash/${cashId}`,
+        deleteCash: (businessId: string, cashId: string) => `/api/Transaction/${businessId}/cash/${cashId}`,
+        getAll: (businessId: string) => `/api/Transaction/${businessId}/all`
+    },
     project: {
         create: (businessId: string) => `/api/Project/${businessId}`,
         getAll: (businessId: string) => `/api/Project/${businessId}/all`,
+        getProjectById: (businessId: string, projectId: string) => `/api/Project/${businessId}/overview/${projectId}`,
+        updateProject: (businessId: string, projectId: string) => `/api/Project/${businessId}/${projectId}`,
+        assignTransactionToProject: (businessId: string, projectId: string, transactionId: string) => `/api/Project/${businessId}/transaction/${projectId}/attach/${transactionId}`,
+        getProjectTransactions: (businessId: string, projectId: string) => `/api/Project/${businessId}/transaction/${projectId}/all`,
     },
     notification: {
         createOneTime: (businessId: string) => `/api/Notification/${businessId}/onetime`,

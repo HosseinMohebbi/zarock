@@ -5,7 +5,6 @@ import {useRouter} from 'next/navigation';
 import {cn} from '@/utils/cn';
 import Input from '@/app/components/ui/Input';
 import Button from '@/app/components/ui/Button';
-import ThemeToggle from '@/app/components/theme/ThemeToggle';
 import {updateUser, type UpdateUserResponse} from '@/services/auth';
 import {useUser} from '@/context/UserContext';
 

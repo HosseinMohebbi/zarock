@@ -289,7 +289,7 @@ import ConfirmModal from '@/app/components/ui/ConfirmModal';
 import { MdDelete } from "react-icons/md";
 import { toast } from "react-toastify";
 import { useDispatch, useSelector } from 'react-redux';
-import { selectItems, updateItemThunk, clearItems } from '@/app/store/itemsSlice';
+import {selectItems, updateItemThunk, clearItems, deleteItemThunk} from '@/app/store/itemsSlice';
 import { itemType, getItemResponse } from "@/services/item/item.types";
 
 type FormState = {
@@ -404,7 +404,7 @@ export default function EditItemFormPage() {
     async function confirmDelete() {
         setShowConfirm(false);
         // فرض کردیم deleteItemThunk ساخته نشده، می‌توان مستقیماً API صدا زد
-        await fetch(`/api/items/${itemId}`, { method: 'DELETE' });
+        await dispatch(deleteItemThunk({ businessId, itemId })).unwrap();
         dispatch(clearItems());
         router.push(`/business/${businessId}/items`);
         toast.success("کالا/خدمت با موفقیت حذف شد");
@@ -425,7 +425,7 @@ export default function EditItemFormPage() {
                     <Input label="گروه" name="group" value={form.group} onChange={e => setForm(f => ({ ...f, group: e.target.value }))} error={errors.group} />
                     <Input label="زیرگروه" name="name" value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} />
                     <Input label="واحد" name="unit" value={form.unit} onChange={e => setForm(f => ({ ...f, unit: e.target.value }))} error={errors.unit} />
-                    <Input label="قیمت واحد پیش‌فرض" name="defaultUnitPrice" type="number" value={form.defaultUnitPrice} onChange={e => setForm(f => ({ ...f, defaultUnitPrice: e.target.value }))} error={errors.defaultUnitPrice} />
+                    <Input label="قیمت واحد" name="defaultUnitPrice" type="number" value={form.defaultUnitPrice} onChange={e => setForm(f => ({ ...f, defaultUnitPrice: e.target.value }))} error={errors.defaultUnitPrice} />
 
                     <div className="flex flex-col gap-2">
                         <label className="text-lg font-medium">نوع</label>

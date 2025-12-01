@@ -48,3 +48,18 @@ export interface UpdateBusinessPayload {
     name: string;
     description: string;
 }
+
+export interface UploadBusinessLogoResponse {
+    id: string;
+    fileName: string;
+    extension: string;
+    createdAt: string;
+    updatedAt: string;
+}
+
+export interface GetStaticFileResponse {
+    id: string;
+    fileName: string;
+    url: string;
+}
+
