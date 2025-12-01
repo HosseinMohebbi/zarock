@@ -132,3 +132,13 @@ export async function assignTransactionToProject(
         endpoints.project.assignTransactionToProject(businessId, projectId, transactionId),
     );
 }
+
+export async function removeTransactionFromProject(
+    businessId: string,
+    projectId: string,
+    transactionId: string
+): Promise<void> {
+    await http.put(
+        endpoints.project.removeTransactionFromProject(businessId, projectId, transactionId),
+    );
+}

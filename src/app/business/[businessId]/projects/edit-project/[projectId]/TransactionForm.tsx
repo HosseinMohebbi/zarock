@@ -1,19 +1,19 @@
-"use client";
-import React, { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
+'use client';
+import React, {useEffect, useState} from "react";
+import {useParams, useRouter} from "next/navigation";
 import Button from "@/app/components/ui/Button";
-import Select from "@/app/components/ui/SelectInput";
 import {
     getProjectTransactions,
-    assignTransactionToProject,
+    assignTransactionToProject, removeTransactionFromProject,
 } from "@/services/project/project.service";
-import { getAllTransactions } from "@/services/transaction/transaction.service";
-import {MdCheck, MdMoney} from "react-icons/md";
+import {MdCheck, MdMoney, MdDelete} from "react-icons/md";
 import {TransactionType} from "@/services/transaction/transaction.types";
 
 import dayjs from "dayjs";
 import jalaliday from "jalaliday";
 import "dayjs/locale/fa";
+import ConfirmModal from "@/app/components/ui/ConfirmModal";
+import {toast} from "react-toastify";
 
 dayjs.extend(jalaliday);
 
@@ -51,26 +51,21 @@ export default function ProjectTransactionsPage() {
     const businessId = params.businessId;
     const projectId = params.projectId;
 
+    const router = useRouter();
+
     const [loading, setLoading] = useState(true);
     const [linkedTransactions, setLinkedTransactions] = useState<any[]>([]);
-    const [allTransactions, setAllTransactions] = useState<any[]>([]);
-
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [selectedTransaction, setSelectedTransaction] = useState<string>("");
+    const [showConfirm, setShowConfirm] = useState(false);
+    const [transactionToRemove, setTransactionToRemove] = useState<string | null>(null);
 
     // -----------------------------------------------------
-    // Load linked + all transactions
+    // Load linked transactions
     // -----------------------------------------------------
     async function loadData() {
         setLoading(true);
         try {
-            const [linked, all] = await Promise.all([
-                getProjectTransactions(businessId, projectId, { page: 1, pageSize: 50 }),
-                getAllTransactions({ page: 1, pageSize: 100 }, businessId),
-            ]);
-
+            const linked = await getProjectTransactions(businessId, projectId, {page: 1, pageSize: 50});
             setLinkedTransactions(linked);
-            setAllTransactions(all);
         } finally {
             setLoading(false);
         }
@@ -81,38 +76,55 @@ export default function ProjectTransactionsPage() {
     }, []);
 
     // -----------------------------------------------------
-    // Link selected transaction
+    // Navigate to TransactionsPage in select mode
     // -----------------------------------------------------
-    async function handleAttachTransaction() {
-        if (!selectedTransaction) return;
-
-        await assignTransactionToProject(
-            businessId,
-            projectId,
-            selectedTransaction,
-            {} // API چیزی نمی‌خواد
+    const handleAddTransaction = () => {
+        router.push(
+            `/business/${businessId}/transactions?selectMode=1&projectId=${projectId}`
         );
+    };
 
-        setIsModalOpen(false);
-        setSelectedTransaction("");
-
-        await loadData(); // ← آپدیت لحظه‌ای بدون رفرش صفحه
+    function handleOpenConfirmModal(transactionId: string) {
+        // e.stopPropagation();
+        setTransactionToRemove(transactionId)
+        setShowConfirm(true);
     }
 
-    const selectableOptions = allTransactions.map((t) => ({
-        value: t.id,
-        label: `${t.amount} - ${t.transactionType}`,
-    }));
+    async function handleConfirmRemove() {
+        if (!transactionToRemove) return;
+
+        try {
+            await removeTransactionFromProject(
+                businessId,
+                projectId,
+                transactionToRemove
+            );
+
+            // حذف سریع از UI
+            setLinkedTransactions((prev) =>
+                prev.filter((t) => t.id !== transactionToRemove)
+            );
+
+            toast.success("تراکنش با موفقیت حذف شد");
+        } catch (err) {
+            toast.error("خطا در حذف تراکنش");
+            console.error(err);
+        } finally {
+            setShowConfirm(false);
+            setTransactionToRemove(null);
+        }
+    }
+
 
     return (
-        <div className="w-full !px-4 !pt-24">
-            <div className="max-w-2xl mx-auto">
+        <div className="flex justify-center w-full !px-4 !pt-24">
+            <div className="w-full max-w-2xl mx-auto">
                 <div className="flex justify-between items-center !mb-6">
                     <h2 className="text-xl font-semibold">تراکنش‌های لینک‌شده</h2>
 
                     <Button
                         label="+ افزودن"
-                        onClick={() => setIsModalOpen(true)}
+                        onClick={handleAddTransaction}
                     />
                 </div>
 
@@ -126,11 +138,11 @@ export default function ProjectTransactionsPage() {
                         هیچ تراکنشی لینک نشده است.
                     </div>
                 ) : (
-                    <div className="flex flex-col gap-4">
+                    <div className="overflow-y-auto pr-2 flex flex-col items-center gap-4">
                         {linkedTransactions.map((t) => (
                             <div
                                 key={t.id}
-                                className="w-full bg-card !rounded-lg shadow-sm hover:shadow-md transition cursor-pointer overflow-hidden"
+                                className="w-full max-w-sm bg-card !rounded-lg shadow-sm hover:shadow-md transition cursor-pointer overflow-hidden"
                             >
                                 <div className="flex items-stretch">
 
@@ -152,13 +164,21 @@ export default function ProjectTransactionsPage() {
                                         <div className="flex flex-col gap-4 !p-3">
 
                                             {/* مبلغ */}
-                                            <div className="flex items-center gap-2 text-lg">
-                                                <h2>مبلغ:</h2>
-                                                <span className="text-base">
-                        {typeof t.amount === "number"
-                            ? t.amount.toLocaleString() + " تومان"
-                            : t.amount ?? "-"}
-                    </span>
+                                            <div className="flex justify-between items-center">
+                                                <div className="flex items-center gap-2 text-lg">
+                                                    <h2>مبلغ:</h2>
+                                                    <span className="text-base">
+                                                    {typeof t.amount === "number" ? t.amount.toLocaleString() + " تومان" : t.amount ?? "-"}
+                                                </span>
+                                                </div>
+
+                                                <button
+                                                    onClick={() => handleOpenConfirmModal(t.id)}
+                                                    className="cursor-pointer"
+                                                    title="حذف تراکنش"
+                                                >
+                                                    <MdDelete className='w-8 h-8 text-danger'/>
+                                                </button>
                                             </div>
 
                                             {t.fromClient?.fullname && (
@@ -214,35 +234,13 @@ export default function ProjectTransactionsPage() {
                     </div>
                 )}
             </div>
-
-            {/* -------------------------------------------------- */}
-            {/* MODAL: SELECT transaction */}
-            {/* -------------------------------------------------- */}
-            {isModalOpen && (
-                <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
-                    <div className="bg-white dark:bg-card !p-6 !rounded-lg w-full max-w-md shadow-lg">
-                        <h3 className="text-lg font-semibold !mb-4 text-center">
-                            انتخاب تراکنش برای لینک کردن
-                        </h3>
-
-                        <Select
-                            options={selectableOptions}
-                            value={selectedTransaction}
-                            onChange={setSelectedTransaction}
-                            placeholder="یک تراکنش انتخاب کنید"
-                        />
-
-                        <div className="flex justify-end gap-3 !mt-6">
-                            <Button label="انصراف" onClick={() => setIsModalOpen(false)} />
-                            <Button
-                                label="لینک کردن"
-                                onClick={handleAttachTransaction}
-                                disabled={!selectedTransaction}
-                            />
-                        </div>
-                    </div>
-                </div>
-            )}
+            <ConfirmModal
+                isOpen={showConfirm}
+                title="حذف تراکنش"
+                message="آیا از حذف این تراکنش از پروژه مطمئن هستید؟"
+                onCancel={() => setShowConfirm(false)}
+                onConfirm={handleConfirmRemove}
+            />
         </div>
     );
 }

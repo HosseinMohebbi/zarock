@@ -59,6 +59,7 @@ export const endpoints = {
         getProjectById: (businessId: string, projectId: string) => `/api/Project/${businessId}/overview/${projectId}`,
         updateProject: (businessId: string, projectId: string) => `/api/Project/${businessId}/${projectId}`,
         assignTransactionToProject: (businessId: string, projectId: string, transactionId: string) => `/api/Project/${businessId}/transaction/${projectId}/attach/${transactionId}`,
+        removeTransactionFromProject: (businessId: string, projectId: string, transactionId: string) => `/api/Project/${businessId}/transaction/${projectId}/detach/${transactionId}`,
         getProjectTransactions: (businessId: string, projectId: string) => `/api/Project/${businessId}/transaction/${projectId}/all`,
     },
     notification: {
