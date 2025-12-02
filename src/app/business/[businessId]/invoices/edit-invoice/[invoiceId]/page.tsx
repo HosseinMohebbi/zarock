@@ -6,7 +6,7 @@ import Input from '@/app/components/ui/Input';
 import Button from '@/app/components/ui/Button';
 import Select from '@/app/components/ui/SelectInput';
 import ConfirmModal from '@/app/components/ui/ConfirmModal';
-import {MdAdd, MdMinimize} from "react-icons/md";
+import {MdAdd, MdDelete, MdMinimize} from "react-icons/md";
 import DatePicker from "react-multi-date-picker";
 import persian from "react-date-object/calendars/persian";
 import persian_fa from "react-date-object/locales/persian_fa";
@@ -15,7 +15,7 @@ import jalaliday from "jalaliday";
 
 import {getAllClients} from '@/services/client/client.service';
 import {Client} from '@/services/client/client.types';
-import {getAllInvoice, updateInvoice, updateInvoiceArchive} from '@/services/invoice/invoice.service';
+import {getAllInvoice, updateInvoice, updateInvoiceArchive, deleteInvoice} from '@/services/invoice/invoice.service';
 import {AddInvoicePayload, GetAllInvoicesResponse} from '@/services/invoice/invoice.types';
 import {useDispatch, useSelector} from "react-redux";
 import {refetchInvoices, selectInvoiceById} from "@/app/store/invoivesSlice";
@@ -48,6 +48,8 @@ export default function EditInvoiceFormPage() {
     const router = useRouter();
     const businessId = params.businessId ?? '';
     const invoiceId = params.invoiceId ?? '';
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [deleteLoading, setDeleteLoading] = useState(false);
 
     const invoiceFromRedux = useSelector((state: any) =>
         selectInvoiceById(state, invoiceId)
@@ -146,48 +148,28 @@ export default function EditInvoiceFormPage() {
             });
         }
     }, [invoice]);
-    
-    // useEffect(() => {
-    //     async function fetchInvoice() {
-    //         if (!businessId || !invoiceId) return;
-    //
-    //         try {
-    //             const invoices = await getAllInvoice({page: 1, pageSize: 1000}, businessId);
-    //             const invoice = invoices.find(inv => inv.id === invoiceId);
-    //
-    //             if (!invoice) {
-    //                 setMessage('فاکتور پیدا نشد');
-    //                 return;
-    //             }
-    //
-    //             setForm({
-    //                 hint: invoice.hint || '',
-    //                 type: invoice.type || 'Invoice',
-    //                 fromClient: invoice.fromClient.id,
-    //                 toClient: invoice.toClient.id,
-    //                 taxPercent: invoice.taxPercent.toString(),
-    //                 discountPercent: invoice.discountPercent.toString(),
-    //                 dateTime: invoice.dateTime,
-    //                 description: invoice.description || '',
-    //                 invoiceItems: invoice.items.map(i => ({
-    //                     fullName: i.fullName,
-    //                     quantity: i.quantity.toString(),
-    //                     quantityMetric: i.quantityMetric,
-    //                     price: i.price.toString(),
-    //                     description: i.description,
-    //                 })),
-    //                 showItemForm: invoice.items.length > 0,
-    //                 isArchived: invoice.isArchived ?? false,
-    //
-    //             });
-    //         } catch (err) {
-    //             console.error(err);
-    //             setMessage('خطا در دریافت اطلاعات فاکتور');
-    //         }
-    //     }
-    //
-    //     fetchInvoice();
-    // }, [businessId, invoiceId]);
+
+    async function handleDelete() {
+        if (!businessId || !invoiceId) return;
+        setDeleteLoading(true);
+
+        try {
+            await deleteInvoice(businessId, invoiceId);
+
+            // حذف از Redux پس از حذف واقعی
+            await dispatch(refetchInvoices({ businessId })).unwrap();
+
+            toast.success("فاکتور با موفقیت حذف شد.");
+
+            router.push(`/business/${businessId}/invoices`);
+
+        } catch (err) {
+            console.error(err);
+            toast.error("خطا در حذف فاکتور");
+        } finally {
+            setDeleteLoading(false);
+        }
+    }
 
     function validate() {
         const e: Record<string, string> = {};
@@ -276,14 +258,19 @@ export default function EditInvoiceFormPage() {
     return (
         <div className="w-full flex justify-center !px-4 !pt-24">
             <div className="w-full max-w-lg mx-auto !p-6 bg-background text-foreground rounded-lg shadow">
-                {!form.isArchived ? <h2 className="text-xl font-semibold !mb-4 text-center">ویرایش فاکتور</h2> :
-                    <h2 className="!mb-4 text-center !px-3 !py-1 text-xl !rounded-md bg-yellow-100 text-yellow-700">بایگانی شده</h2>}
-
-                {message && (
-                    <div className="!mb-4 text-sm text-center">
-                        <span className="inline-block !px-3 !py-1 bg-green-100 text-green-800 rounded">{message}</span>
+                <div className="relative w-full flex items-start">
+                    <div onClick={() => setShowDeleteModal(true)} className="absolute right-0 text-danger cursor-pointer">
+                        <MdDelete className='w-6 h-6' />
                     </div>
-                )}
+                    {!form.isArchived ? <h2 className="!mx-auto text-xl font-semibold !mb-4 text-center">ویرایش فاکتور</h2> :
+                        <h2 className="!mx-auto !mb-4 text-center !px-3 !py-1 text-xl !rounded-md bg-yellow-100 text-yellow-700">بایگانی شده</h2>}
+
+                    {message && (
+                        <div className="!mb-4 text-sm text-center">
+                            <span className="inline-block !px-3 !py-1 bg-green-100 text-green-800 rounded">{message}</span>
+                        </div>
+                    )}
+                </div>
 
                 <form onSubmit={handleSubmit} className="flex flex-col gap-5">
                     <Input
@@ -476,6 +463,16 @@ export default function EditInvoiceFormPage() {
                 cancelText="لغو"
                 onCancel={() => setShowArchiveModal(false)}
                 onConfirm={handleArchive}
+            />
+            <ConfirmModal
+                isOpen={showDeleteModal}
+                title="حذف فاکتور"
+                message="آیا از حذف این فاکتور مطمئن هستید؟ این عملیات غیر قابل بازگشت است."
+                confirmText={deleteLoading ? "در حال حذف..." : "حذف"}
+                cancelText="لغو"
+                dangerColor="hsl(0, 75%, 50%)"
+                onCancel={() => setShowDeleteModal(false)}
+                onConfirm={handleDelete}
             />
         </div>
     );

@@ -16,6 +16,8 @@ import dayjs from "dayjs";
 import jalaliday from "jalaliday";
 import DatePicker from "react-multi-date-picker";
 import {toast} from "react-toastify";
+import {useDispatch} from "react-redux";
+import {refetchInvoices} from "@/app/store/invoivesSlice";
 
 dayjs.extend(jalaliday);
 
@@ -42,6 +44,7 @@ export default function AddInvoiceFormPage() {
     const params = useParams() as { businessId?: string };
     const router = useRouter();
     const businessId = params?.businessId ?? '';
+    const dispatch = useDispatch();
 
     const [form, setForm] = useState<FormState>({
         hint: '',
@@ -50,7 +53,7 @@ export default function AddInvoiceFormPage() {
         toClient: '',
         taxPercent: '',
         discountPercent: '',
-        dateTime: '',
+        dateTime: new Date().toISOString(),
         description: '',
         invoiceItems: [],
         showItemForm: false,
@@ -109,6 +112,7 @@ export default function AddInvoiceFormPage() {
             console.log("Payload to send:", payload);
 
             await createInvoice(businessId, payload);
+            dispatch(refetchInvoices({ businessId }));
 
             console.log("Payload to send:", payload);
 

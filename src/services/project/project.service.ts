@@ -1,6 +1,7 @@
 import { http } from "@/utils/api/http";
 import {AddProjectPayload, AddProjectResponse, ProjectOverview} from "./project.types";
 import {getTransactionResponse, AddCashResponse} from "../../services/transaction/transaction.types"
+import {GetAllInvoicesResponse} from "../../services/invoice/invoice.types"
 import {endpoints} from "@/config/endpoint.config";
 
 
@@ -140,5 +141,42 @@ export async function removeTransactionFromProject(
 ): Promise<void> {
     await http.put(
         endpoints.project.removeTransactionFromProject(businessId, projectId, transactionId),
+    );
+}
+
+export async function getProjectInvoices(
+    businessId: string,
+    projectId: string,
+    params: { page: number; pageSize: number }
+): Promise<GetAllInvoicesResponse[]> {
+    const { page, pageSize } = params;
+
+    const { data } = await http.get<GetAllInvoicesResponse[]>(
+        endpoints.project.getInvoiceTransactions(businessId, projectId),
+        {
+            params: { page, pageSize },
+        }
+    );
+
+    return data;
+}
+
+export async function assignInvoiceToProject(
+    businessId: string,
+    projectId: string,
+    invoiceId: string
+): Promise<void> {
+    await http.put(
+        endpoints.project.assignInvoiceToProject(businessId, projectId, invoiceId),
+    );
+}
+
+export async function removeInvoiceFromProject(
+    businessId: string,
+    projectId: string,
+    invoiceId: string
+): Promise<void> {
+    await http.put(
+        endpoints.project.removeInvoiceFromProject(businessId, projectId, invoiceId),
     );
 }

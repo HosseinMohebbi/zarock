@@ -81,11 +81,11 @@ export default function ClientDetailsPage() {
                     </div>
 
                     <div className={activeTab === 'invoices' ? 'block' : 'hidden'}>
-                        <DocumentsForm/>
+                        <InvoicesForm/>
                     </div>
 
                     <div className={activeTab === 'documents' ? 'block' : 'hidden'}>
-                        <InvoicesForm/>
+                        <DocumentsForm/>
                     </div>
                 </div>
             </div>

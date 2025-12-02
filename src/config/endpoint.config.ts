@@ -33,11 +33,18 @@ export const endpoints = {
         getAccounts: (businessId: string, clientId: string) => `/api/Client/${businessId}/BankAccount/${clientId}/all`,
         deleteAccount: (businessId: string, bankAccountId: string) => `/api/Client/${businessId}/BankAccount/${bankAccountId}`,
     },
+    item: {
+        createItem: (businessId: string) => `/api/Item/${businessId}`,
+        updateItem: (businessId: string, itemId: string) => `/api/Item/${businessId}/${itemId}`,
+        getAllItems: (businessId: string) => `/api/Item/${businessId}/all`,
+        deleteItem: (businessId: string, itemId: string) => `/api/Item/${businessId}/${itemId}`,
+    },
     invoice: {
         create: (businessId: string) => `/api/Invoice/${businessId}`,
         getAll: (businessId: string) => `/api/Invoice/${businessId}/all`,
         updateInvoice: (businessId: string, invoiceId: string) => `/api/Invoice/${businessId}/${invoiceId}`,
         updateInvoiceArchive: (businessId: string, invoiceId: string) => `/api/Invoice/${businessId}/archive/${invoiceId}`,
+        deleteInvoice: (businessId: string, invoiceId: string) => `/api/Invoice/${businessId}/${invoiceId}`,
         // اگر بعداً نیاز به filter یا جزئیات داشتیم می‌تونیم اضافه کنیم
         // filter: (businessId: string) => `${API_BASE}/api/Invoice/${businessId}/filter`,
         // getById: (businessId: string, invoiceId: string) => `${API_BASE}/api/Invoice/${businessId}/${invoiceId}`,
@@ -61,6 +68,9 @@ export const endpoints = {
         assignTransactionToProject: (businessId: string, projectId: string, transactionId: string) => `/api/Project/${businessId}/transaction/${projectId}/attach/${transactionId}`,
         removeTransactionFromProject: (businessId: string, projectId: string, transactionId: string) => `/api/Project/${businessId}/transaction/${projectId}/detach/${transactionId}`,
         getProjectTransactions: (businessId: string, projectId: string) => `/api/Project/${businessId}/transaction/${projectId}/all`,
+        assignInvoiceToProject: (businessId: string, projectId: string, invoiceId: string) => `/api/Project/${businessId}/invoice/${projectId}/attach/${invoiceId}`,
+        removeInvoiceFromProject: (businessId: string, projectId: string, invoiceId: string) => `/api/Project/${businessId}/invoice/${projectId}/detach/${invoiceId}`,
+        getInvoiceTransactions: (businessId: string, projectId: string) => `/api/Project/${businessId}/invoice/${projectId}/all`,
     },
     notification: {
         createOneTime: (businessId: string) => `/api/Notification/${businessId}/onetime`,

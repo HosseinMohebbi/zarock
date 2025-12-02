@@ -1,12 +1,13 @@
 import { http } from "@/utils/api/http";
 import {AddItemPayload, AddItemResponse, getItemResponse} from "./item.types"
+import {endpoints} from "@/config/endpoint.config";
 
 export async function createItem(
     businessId: string,
     payload: AddItemPayload
 ): Promise<AddItemResponse> {
     const { data } = await http.post<AddItemResponse>(
-        `/api/Item/${businessId}`,
+        endpoints.item.createItem(businessId),
         payload,
         {
             params: { businessId },
@@ -17,7 +18,7 @@ export async function createItem(
 
 export async function getAllItems(params: { page: number; pageSize: number }, businessId): Promise<getItemResponse[]> {
     const { page, pageSize } = params;
-    const { data } = await http.get<getItemResponse[]>(`/api/Item/${businessId}/all`, {
+    const { data } = await http.get<getItemResponse[]>(endpoints.item.getAllItems(businessId), {
         params: { page, pageSize }, // axios به‌صورت ?page=..&pageSize=.. اضافه می‌کند
     });
     return data;
@@ -54,7 +55,7 @@ export async function updateItem(
     payload: AddItemPayload
 ): Promise<AddItemResponse> {
     const { data } = await http.put<AddItemResponse>(
-        `/api/Item/${businessId}/${itemId}`,
+        endpoints.item.updateItem(businessId, itemId),
         payload
     );
     return data;
@@ -64,5 +65,5 @@ export async function deleteItem(
     businessId: string,
     itemId: string
 ): Promise<void> {
-    await http.delete(`/api/Item/${businessId}/${itemId}`);
+    await http.delete(endpoints.item.deleteItem(businessId, itemId));
 }

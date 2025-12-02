@@ -41,3 +41,10 @@ export async function getAllInvoice(
     return data;
 }
 
+export async function deleteInvoice(
+    businessId: string,
+    invoiceId: string
+): Promise<void> {
+    await http.delete(endpoints.invoice.deleteInvoice(businessId, invoiceId));
+}
+
