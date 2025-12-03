@@ -1,83 +1,215 @@
-'use client'
+'use client';
 
-import React, { useState } from 'react'
-import { useParams, useRouter } from 'next/navigation'
-import Input from '@/app/components/ui/Input'
-import Button from "@/app/components/ui/Button"
+import React, { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
+import Button from "@/app/components/ui/Button";
+import ConfirmModal from "@/app/components/ui/ConfirmModal";
+import { toast } from "react-toastify";
+import { MdDelete, MdImage } from "react-icons/md";
 
-export default function DocumentsForm() {
-    const params = useParams() as { businessId?: string }
-    const router = useRouter()
-    const businessId = params?.businessId ?? ''
+import {
+    getProjectDocumentsWithFiles,
+    uploadProjectDocument,
+    deleteProjectDocument,
+} from "@/services/project/project.service";
 
-    // حالت اولیه فرم (بدون لاجیک)
-    const [form, setForm] = useState({
-        name: '',
-        client: '',
-        description: '',
-        progress: '',
-    })
+// تاریخ جلالی
+import dayjs from "dayjs";
+import jalaliday from "jalaliday";
+import "dayjs/locale/fa";
+dayjs.extend(jalaliday);
 
-    const [errors, setErrors] = useState<Record<string, string>>({})
+function formatJalali(input?: string | number | Date) {
+    const d = dayjs(input);
+    if (!d.isValid()) return "";
+    return d.calendar("jalali").locale("fa").format("YYYY/MM/DD");
+}
 
-    function handleCancelForm() {
-        router.push(`/business/${businessId}/projects`)
+export default function ProjectDocumentsPage() {
+    const params = useParams() as { businessId: string; projectId: string };
+    const projectId = params.projectId;
+
+    const [loading, setLoading] = useState(true);
+    const [documents, setDocuments] = useState<any[]>([]);
+    const [showConfirm, setShowConfirm] = useState(false);
+    const [docToRemove, setDocToRemove] = useState<string | null>(null);
+    const [uploading, setUploading] = useState(false);
+
+    // -----------------------------------
+    // بارگذاری اسناد + URL فایل ها
+    async function loadData() {
+        setLoading(true);
+        try {
+            const docs = await getProjectDocumentsWithFiles(projectId, {
+                page: 1,
+                pageSize: 50
+            });
+
+            setDocuments(docs);
+        } catch (err) {
+            console.error(err);
+            toast.error("خطا در بارگذاری اسناد");
+        } finally {
+            setLoading(false);
+        }
     }
 
-    function handleSubmit(ev?: React.FormEvent) {
-        ev?.preventDefault()
-        // لاجیک بعداً اضافه می‌شود
+    useEffect(() => {
+        loadData();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    // -----------------------------------
+    // آپلود سند جدید
+    async function handleUploadDocument(evt: React.ChangeEvent<HTMLInputElement>) {
+        const file = evt.target.files?.[0];
+        if (!file) return;
+
+        setUploading(true);
+        try {
+            await uploadProjectDocument(projectId, file);
+
+            toast.success("سند با موفقیت آپلود شد");
+
+            await loadData();
+        } catch (err) {
+            console.error(err);
+            toast.error("خطا در آپلود سند");
+        } finally {
+            evt.target.value = "";
+            setUploading(false);
+        }
     }
+
+    // -----------------------------------
+    // باز کردن مودال حذف سند
+    function handleOpenConfirmModal(id: string) {
+        setDocToRemove(id);
+        setShowConfirm(true);
+    }
+
+    // -----------------------------------
+    // حذف سند
+    async function handleConfirmRemove() {
+        if (!docToRemove) return;
+
+        try {
+            await deleteProjectDocument(docToRemove);
+
+            setDocuments(prev => prev.filter(doc => doc.id !== docToRemove));
+
+            toast.success("سند حذف شد");
+        } catch (err) {
+            console.error(err);
+            toast.error("خطا در حذف سند");
+        } finally {
+            setShowConfirm(false);
+            setDocToRemove(null);
+        }
+    }
+
+    // -----------------------------------
 
     return (
-        <div className="w-full flex justify-center !px-4 !pt-24">
-            <div className="w-full max-w-lg mx-auto !p-6 bg-background text-foreground rounded-lg shadow">
-                <h2 className="text-xl font-semibold !mb-4 text-center">ایجاد پروژه جدید</h2>
+        <div className="flex justify-center w-full !px-4 !pt-24">
+            <div className="w-full max-w-2xl !mx-auto">
 
-                <form onSubmit={handleSubmit} className="flex flex-col gap-5">
-                    {/* نام پروژه */}
-                    <Input
-                        label="نام پروژه"
-                        name="name"
-                        value={form.name}
-                        onChange={e => setForm(f => ({...f, name: e.target.value}))}
-                        error={errors.name}
+                {/* HEADER */}
+                <div className="flex justify-between items-center !mb-6">
+                    <h2 className="text-xl font-semibold">مدارک پروژه</h2>
+
+                    <button
+                        type="button"
+                        onClick={() => document.getElementById("project-doc-upload")?.click()}
+                        disabled={uploading}
+                        className="flex gap-2 justify-center items-center bg-cyan-400 text-white text-[20px] font-bold rounded-lg py-[5px] px-[26px]"
+                    >
+                        {uploading ? "در حال آپلود..." : "+ افزودن سند"}
+                    </button>
+
+                    <input
+                        id="project-doc-upload"
+                        type="file"
+                        accept="image/*,application/pdf"
+                        onChange={handleUploadDocument}
+                        className="hidden"
                     />
+                </div>
 
-                    {/* مشتری */}
-                    <Input
-                        label="کارفرما"
-                        name="client"
-                        value={form.client}
-                        onChange={e => setForm(f => ({...f, client: e.target.value}))}
-                        error={errors.client}
-                    />
 
-                    <Input
-                        label="پیشرفت"
-                        name="progress"
-                        type="number"
-                        value={form.progress}
-                        onChange={e => setForm(f => ({...f, progress: e.target.value}))}
-                        error={errors.progress}
-                    />
 
-                    {/* توضیحات */}
-                    <Input
-                        label="توضیحات"
-                        name="description"
-                        value={form.description}
-                        onChange={e => setForm(f => ({...f, description: e.target.value}))}
-                        error={errors.description}
-                    />
-
-                    {/* دکمه‌ها */}
-                    <div className="flex justify-end items-center gap-3 !mt-3">
-                        <Button label="لغو" type="button" onClick={handleCancelForm}/>
-                        <Button label="افزودن" type="submit"/>
+                {/* LIST */}
+                {loading ? (
+                    <div className="text-center !py-10">در حال بارگذاری...</div>
+                ) : documents.length === 0 ? (
+                    <div className="!p-4 text-center text-gray-500 border !rounded-lg">
+                        هنوز هیچ سندی آپلود نشده است.
                     </div>
-                </form>
+                ) : (
+                    <div className="flex flex-col items-center !px-3 gap-3 !pb-4 overflow-y-auto">
+                        {documents.map((doc) => (
+                            <div
+                                key={doc.id}
+                                className="w-full max-w-sm bg-card !p-4 !rounded-lg shadow-sm hover:shadow-md transition overflow-hidden cursor-pointer"
+                            >
+                                {/* عکس یا PDF */}
+                                <div className="w-full h-40 bg-gray-100 flex items-center justify-center overflow-hidden !rounded-lg">
+                                    {doc.url ? (
+                                        doc.extension?.toLowerCase() === ".pdf" ? (
+                                            <a
+                                                href={doc.url}
+                                                target="_blank"
+                                                className="text-blue-600 underline"
+                                            >
+                                                مشاهده PDF
+                                            </a>
+                                        ) : (
+                                            <img
+                                                src={doc.url}
+                                                className="w-full h-full object-cover"
+                                                alt={doc.fileName}
+                                            />
+                                        )
+                                    ) : (
+                                        <MdImage className="text-gray-400 w-10 h-10" />
+                                    )}
+                                </div>
+
+                                {/* INFO */}
+                                <div className="!p-3 flex flex-col gap-2">
+
+                                    <div className="flex justify-between items-center">
+                                        <div className="font-bold text-lg">
+                                            {doc.fileName}
+                                            {doc.extension}
+                                        </div>
+
+                                        <button
+                                            className="cursor-pointer"
+                                            onClick={() => handleOpenConfirmModal(doc.id)}
+                                            title="حذف سند"
+                                        >
+                                            <MdDelete className="w-7 h-7 text-danger" />
+                                        </button>
+                                    </div>
+
+                                    <div className="text-sm text-gray-600">
+                                        تاریخ: {formatJalali(doc.createdAt)}
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                )}
             </div>
+
+            <ConfirmModal
+                isOpen={showConfirm}
+                title="حذف سند"
+                message="آیا از حذف این سند اطمینان دارید؟"
+                onCancel={() => setShowConfirm(false)}
+                onConfirm={handleConfirmRemove}
+            />
         </div>
-    )
+    );
 }

@@ -71,6 +71,9 @@ export const endpoints = {
         assignInvoiceToProject: (businessId: string, projectId: string, invoiceId: string) => `/api/Project/${businessId}/invoice/${projectId}/attach/${invoiceId}`,
         removeInvoiceFromProject: (businessId: string, projectId: string, invoiceId: string) => `/api/Project/${businessId}/invoice/${projectId}/detach/${invoiceId}`,
         getInvoiceTransactions: (businessId: string, projectId: string) => `/api/Project/${businessId}/invoice/${projectId}/all`,
+        uploadProjectDocument: `/api/Static/attachProjectDocuments`,
+        getProjectDocuments: (projectId: string) => `/api/Static/project/${projectId}/all`,
+        deleteProjectDocument: (id: string) => `/api/Static/detachProjectDocuments/${id}`
     },
     notification: {
         createOneTime: (businessId: string) => `/api/Notification/${businessId}/onetime`,

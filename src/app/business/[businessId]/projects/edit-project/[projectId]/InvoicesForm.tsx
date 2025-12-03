@@ -108,9 +108,9 @@ export default function ProjectInvoicesPage() {
                     </div>
                 ) : (
                     <div
-                        className="!px-3 grid grid-cols-1 gap-3 overflow-y-auto sm:grid-cols-2 !pb-4 lg:grid-cols-3 xl:grid-cols-4"
+                        className="flex flex-col items-center !px-3 gap-3 overflow-y-auto !pb-4"
                         style={{
-                            maxHeight: "calc(100vh - 250px)",
+                            // maxHeight: "calc(100vh - 250px)",
                         }}
                     >
                     {linkedInvoices.map((inv) => (

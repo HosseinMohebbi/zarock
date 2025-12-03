@@ -34,3 +34,36 @@ export interface ProjectOverview {
     transactions: AddCheckPayload | AddCashPayload;
     invoices: GetAllInvoicesResponse[];
 }
+
+export interface UploadProjectDocumentResponse {
+    createdAt: string;
+    updatedAt: string;
+    id: string;
+    fileName: string;
+    extension: string;
+}
+
+export interface ProjectDocumentItem {
+    createdAt: string;
+    updatedAt: string;
+    id: string;
+    fileName: string;
+    extension: string;
+}
+
+export interface ProjectDocumentItemFull {
+    id: string;
+    fileName: string;
+    extension: string;
+    createdAt: string;
+    updatedAt: string;
+    url: string; 
+}
+
+export interface DeleteProjectDocumentResponse {
+    id: string;
+    fileName: string;
+    extension: string;
+    createdAt: string;
+    updatedAt: string;
+}
