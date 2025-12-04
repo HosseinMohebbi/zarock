@@ -444,12 +444,12 @@ export default function EditItemFormPage() {
                     <Input label="توضیحات" name="description" type="text" value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))} />
 
                     <div className="flex justify-end items-center gap-3 mt-3">
-                        <Button label="لغو" type="button" onClick={handleCancelForm} />
-                        <Button label="ذخیره" type="submit" />
+                        <Button label="لغو" type="button" onClick={handleCancelForm} customStyle="!bg-danger"/>
+                        <Button label="ذخیره" type="submit" customStyle="!bg-confirm"/>
                     </div>
                 </form>
             </div>
-            <ConfirmModal title="حذف کالا/خدمت" isOpen={showConfirm} message="آیا مطمئن هستید که می‌خواهید این کالا/خدمت را حذف کنید؟" onConfirm={confirmDelete} onCancel={() => setShowConfirm(false)} />
+            <ConfirmModal title="حذف کالا/خدمت" isOpen={showConfirm} message="از حذف این کالا/خدمت مطمئن هستید؟" onConfirm={confirmDelete} onCancel={() => setShowConfirm(false)} />
         </div>
     );
 }

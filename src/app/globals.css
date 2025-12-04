@@ -14,7 +14,8 @@
   --muted: 210 40% 96%;
   --muted-foreground: 215 16% 47%;
 
-  --primary: 221 83% 53%;            /* آبی (brand) */
+  /*--primary: 221 83% 53%;            !* آبی (brand) *!*/
+  --primary: 145 55% 58%;
   --primary-foreground: 0 0% 100%;
 
   --secondary: 210 40% 96%;
@@ -44,7 +45,8 @@
   --muted: 215 25% 17%;
   --muted-foreground: 217 20% 65%;
 
-  --primary: 221 83% 60%;
+  /*--primary: 221 83% 60%;*/
+  --primary: 145 55% 58%;
   --primary-foreground: 0 0% 100%;
 
   --secondary: 215 25% 17%;

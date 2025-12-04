@@ -4,7 +4,7 @@ import { useParams, useRouter } from "next/navigation";
 import Button from "@/app/components/ui/Button";
 import ConfirmModal from "@/app/components/ui/ConfirmModal";
 import { toast } from "react-toastify";
-import { MdReceiptLong, MdDelete } from "react-icons/md";
+import {MdReceiptLong, MdDelete, MdAdd} from "react-icons/md";
 
 import {
     getProjectInvoices,
@@ -32,6 +32,7 @@ export default function ProjectInvoicesPage() {
 
     const [loading, setLoading] = useState(true);
     const [linkedInvoices, setLinkedInvoices] = useState<any[]>([]);
+    console.log(linkedInvoices);
     const [showConfirm, setShowConfirm] = useState(false);
     const [invoiceToRemove, setInvoiceToRemove] = useState<string | null>(null);
 
@@ -93,10 +94,12 @@ export default function ProjectInvoicesPage() {
                 <div className="flex justify-between items-center !mb-6">
                     <h2 className="text-xl font-semibold">فاکتورهای لینک‌شده</h2>
 
-                    <Button
-                        label="+ افزودن"
+                    <div
+                        className="w-9 h-9 flex justify-center items-center !rounded-full bg-blue-100 cursor-pointer"
                         onClick={handleAddInvoice}
-                    />
+                    >
+                        <MdAdd className="w-6 h-6 text-blue-700"/>
+                    </div>
                 </div>
 
                 {/* LIST */}
@@ -147,10 +150,17 @@ export default function ProjectInvoicesPage() {
                                                 </button>
                                             </div>
 
-                                            {inv.client?.fullname && (
+                                            {inv.fromClient?.fullname && (
                                                 <div className="flex items-center gap-2 text-lg">
-                                                    <h2>مشتری:</h2>
-                                                    <span>{inv.client.fullname}</span>
+                                                    <h2>فروشنده:</h2>
+                                                    <span>{inv.fromClient.fullname}</span>
+                                                </div>
+                                            )}
+
+                                            {inv.toClient?.fullname && (
+                                                <div className="flex items-center gap-2 text-lg">
+                                                    <h2>خریدار:</h2>
+                                                    <span>{inv.toClient.fullname}</span>
                                                 </div>
                                             )}
 

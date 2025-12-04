@@ -212,8 +212,8 @@ export default function AddItemFormPage() {
 
                     {/* دکمه‌ها */}
                     <div className="flex justify-end items-center gap-3 !mt-3">
-                        <Button label="لغو" type="button" onClick={handleCancelForm}/>
-                        <Button label="افزودن" type="submit"/>
+                        <Button label="لغو" type="button" onClick={handleCancelForm} customStyle="!bg-danger"/>
+                        <Button label="افزودن" type="submit" customStyle="!bg-confirm"/>
                     </div>
                 </form>
             </div>

@@ -5,7 +5,7 @@ import { useParams } from "next/navigation";
 import Button from "@/app/components/ui/Button";
 import ConfirmModal from "@/app/components/ui/ConfirmModal";
 import { toast } from "react-toastify";
-import { MdDelete, MdImage } from "react-icons/md";
+import {MdAdd, MdDelete, MdImage} from "react-icons/md";
 
 import {
     getProjectDocumentsWithFiles,
@@ -118,15 +118,12 @@ export default function ProjectDocumentsPage() {
                 <div className="flex justify-between items-center !mb-6">
                     <h2 className="text-xl font-semibold">مدارک پروژه</h2>
 
-                    <button
-                        type="button"
+                    <div
+                        className="w-9 h-9 flex justify-center items-center !rounded-full bg-blue-100 cursor-pointer"
                         onClick={() => document.getElementById("project-doc-upload")?.click()}
-                        disabled={uploading}
-                        className="flex gap-2 justify-center items-center bg-cyan-400 text-white text-[20px] font-bold rounded-lg py-[5px] px-[26px]"
                     >
-                        {uploading ? "در حال آپلود..." : "+ افزودن سند"}
-                    </button>
-
+                        <MdAdd className="w-6 h-6 text-blue-700"/>
+                    </div>
                     <input
                         id="project-doc-upload"
                         type="file"

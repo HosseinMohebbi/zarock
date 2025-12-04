@@ -64,7 +64,7 @@ export default function ClientsPage() {
     // -----------------------------
     if (isFetching) {
         return (
-            <div className="flex items-center justify-center h-[70vh]">
+            <div className="flex items-center justify-center h-screen">
                 <Loader />   {/* TailChase */}
             </div>
         );
@@ -85,19 +85,20 @@ export default function ClientsPage() {
         <div className="!p-4 !pt-24 flex flex-col gap-2">
             {/* HEADER */}
             <div className="flex items-center justify-between gap-4 !px-3">
-                <h1 className="text-lg !font-semibold text-right">اشخاص</h1>
+                <h1 className="!text-lg !font-semibold text-right">اشخاص</h1>
 
                 <div
                     className="flex justify-center items-center w-12 h-12 !rounded-full border border-gray-300 cursor-pointer"
                     onClick={handleAddClientButton}
                 >
-                    <MdAdd className="w-8 h-8 text-green-600" />
+                    <MdAdd className="w-8 h-8 text-primary" />
                 </div>
             </div>
 
             {/* SEARCH */}
             <div className="!mb-4 !px-3 flex gap-4">
                 <Input
+                    name="searchPattern"
                     type="text"
                     placeholder="جستجو بر اساس نام یا گروه"
                     value={searchPattern}
@@ -128,12 +129,12 @@ export default function ClientsPage() {
                         >
                             <div className="flex flex-col gap-3">
                                 <div className="flex items-center gap-2">
-                                    <MdPerson className="w-8 h-8 text-green-600" />
+                                    <MdPerson className="w-8 h-8 text-primary" />
                                     <span className="text-lg font-medium">{client.fullname}</span>
                                 </div>
 
                                 <div className="flex items-center gap-2">
-                                    <MdLocationPin className="w-8 h-8 text-green-600 flex-shrink-0" />
+                                    <MdLocationPin className="w-8 h-8 text-primary flex-shrink-0" />
                                     <span
                                         className="text-sm text-gray-600 truncate"
                                         style={{
@@ -148,7 +149,7 @@ export default function ClientsPage() {
                                 </div>
 
                                 <div className="flex items-center gap-2">
-                                    <MdAccountBalance className="w-8 h-8 text-green-600" />
+                                    <MdAccountBalance className="w-8 h-8 text-primary" />
                                     <span className="text-lg text-gray-600">
                                     {(client.credits ?? 0).toLocaleString()} تومان
                                 </span>
@@ -160,81 +161,6 @@ export default function ClientsPage() {
             </div>
         </div>
     );
-
-
-    // return (
-    //     <div className="!p-4 !pt-24 flex flex-col gap-2">
-    //         {/* HEADER */}
-    //         <div className="flex items-center justify-between gap-4 !px-3">
-    //             <h1 className="text-lg !font-semibold text-right">اشخاص</h1>
-    //
-    //             <div
-    //                 className="flex justify-center items-center w-12 h-12 !rounded-full border border-gray-300 cursor-pointer"
-    //                 onClick={handleAddClientButton}
-    //             >
-    //                 <MdAdd className="w-8 h-8 text-green-600" />
-    //             </div>
-    //         </div>
-    //
-    //         {/* SEARCH BOX */}
-    //         <div className="!mb-4 !px-3 flex gap-4">
-    //             <Input
-    //                 type="text"
-    //                 placeholder="جستجو بر اساس نام یا گروه"
-    //                 value={searchPattern}
-    //                 onChange={(e) => setSearchPattern(e.target.value)}
-    //             />
-    //         </div>
-    //
-    //         {/* ERROR */}
-    //         {error && (
-    //             <div className="text-center text-red-500 !py-4">{error}</div>
-    //         )}
-    //
-    //         {/* CLIENTS LIST */}
-    //         <div
-    //             className="overflow-y-auto !px-3 !py-3 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
-    //             style={{ maxHeight: 'calc(100vh - 250px)' }}
-    //         >
-    //             {clients.map((client: Client) => (
-    //                 <Card
-    //                     key={client.id}
-    //                     customStyle="w-full max-w-xl border !rounded-md !p-4 bg-card cursor-pointer"
-    //                     onClick={() => handelEditClient(client.id)}
-    //                 >
-    //                     <div className="flex flex-col gap-3">
-    //                         <div className="flex items-center gap-2">
-    //                             <MdPerson className="w-8 h-8 text-green-600" />
-    //                             <span className="text-lg font-medium">{client.fullname}</span>
-    //                         </div>
-    //
-    //                         <div className="flex items-center gap-2">
-    //                             <MdLocationPin className="w-8 h-8 text-green-600 flex-shrink-0" />
-    //                             <span
-    //                                 className="text-sm text-gray-600 truncate"
-    //                                 style={{
-    //                                     whiteSpace: 'nowrap',
-    //                                     overflow: 'hidden',
-    //                                     textOverflow: 'ellipsis',
-    //                                     flexGrow: 1,
-    //                                 }}
-    //                             >
-    //                                 {client.address}
-    //                             </span>
-    //                         </div>
-    //
-    //                         <div className="flex items-center gap-2">
-    //                             <MdAccountBalance className="w-8 h-8 text-green-600" />
-    //                             <span className="text-lg text-gray-600">
-    //                                 {(client.credits ?? 0).toLocaleString()} تومان
-    //                             </span>
-    //                         </div>
-    //                     </div>
-    //                 </Card>
-    //             ))}
-    //         </div>
-    //     </div>
-    // );
 }
 
 

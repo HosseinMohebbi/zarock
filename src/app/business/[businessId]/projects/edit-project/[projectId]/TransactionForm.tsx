@@ -6,7 +6,7 @@ import {
     getProjectTransactions,
     assignTransactionToProject, removeTransactionFromProject,
 } from "@/services/project/project.service";
-import {MdCheck, MdMoney, MdDelete} from "react-icons/md";
+import {MdCheck, MdMoney, MdDelete, MdAdd} from "react-icons/md";
 import {TransactionType} from "@/services/transaction/transaction.types";
 
 import dayjs from "dayjs";
@@ -121,11 +121,12 @@ export default function ProjectTransactionsPage() {
             <div className="w-full max-w-2xl mx-auto">
                 <div className="flex justify-between items-center !mb-6">
                     <h2 className="text-xl font-semibold">تراکنش‌های لینک‌شده</h2>
-
-                    <Button
-                        label="+ افزودن"
+                    <div
+                        className="w-9 h-9 flex justify-center items-center !rounded-full bg-blue-100 cursor-pointer"
                         onClick={handleAddTransaction}
-                    />
+                    >
+                        <MdAdd className="w-6 h-6 text-blue-700"/>
+                    </div>
                 </div>
 
                 {/* ----------------------------------------- */}

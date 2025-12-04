@@ -186,20 +186,20 @@
 // }
 
 'use client';
-import { useEffect, useState } from "react";
+import {useEffect, useState} from "react";
 import Card from "@/app/components/ui/Card";
 import Input from "@/app/components/ui/Input";
-import { useParams, useRouter } from "next/navigation";
+import {useParams, useRouter} from "next/navigation";
 import {MdReceipt, MdAdd, MdArrowLeft, MdOutlineHomeRepairService, MdInventory, MdBuild, MdEdit} from "react-icons/md";
-import { getItemResponse } from "@/services/item/item.types";
+import {getItemResponse} from "@/services/item/item.types";
 
 // 📅 برای تاریخ شمسی
 import dayjs from "dayjs";
 import jalaliday from "jalaliday";
 import "dayjs/locale/fa";
 
-import { useDispatch, useSelector } from "react-redux";
-import { fetchItems, selectItems } from "@/app/store/itemsSlice";
+import {useDispatch, useSelector} from "react-redux";
+import {fetchItems, selectItems} from "@/app/store/itemsSlice";
 import Loader from "@/app/components/ui/Loader";
 import {fetchInvoices} from "@/app/store/invoivesSlice";
 
@@ -221,8 +221,8 @@ function getItemTypeFa(type?: string): string {
 }
 
 const getItemIcon = (type?: string) => {
-    if (type === "Merchandise") return <MdInventory size={22} />;
-    if (type === "Service") return <MdBuild size={22} />;
+    if (type === "Merchandise") return <MdInventory size={22}/>;
+    if (type === "Service") return <MdBuild size={22}/>;
     return null;
 };
 
@@ -238,7 +238,6 @@ export default function ItemsPage(): JSX.Element {
     const [pageSize, setPageSize] = useState(50);
     const [isFetching, setIsFetching] = useState(true);
     const [filteredItems, setFilteredItems] = useState<getItemResponse[]>([]);
-
 
 
     const params = useParams() as { businessId?: string };
@@ -264,7 +263,7 @@ export default function ItemsPage(): JSX.Element {
         }
 
         console.log("🌐 دریافت از API");
-        dispatch(fetchItems({ businessId, page, pageSize, pattern: searchPattern, type: typeFilter || undefined, tags }))
+        dispatch(fetchItems({businessId, page, pageSize, pattern: searchPattern, type: typeFilter || undefined, tags}))
             .unwrap()
             .catch(err => setError(err))
             .finally(() => setLoading(false));
@@ -304,7 +303,7 @@ export default function ItemsPage(): JSX.Element {
     if (isFetching) {
         return (
             <main className="flex items-center justify-center h-screen">
-                <Loader />
+                <Loader/>
             </main>
         );
     }
@@ -323,29 +322,31 @@ export default function ItemsPage(): JSX.Element {
     // ----------------------------
     // 📭 لیست خالی
     // ----------------------------
-    if (!loading && !error && items.length === 0 && !isFetching) {
-        return (
-            <main className="flex flex-col items-center justify-center h-screen gap-4">
-                <h2 className="text-gray-600 text-xl">
-                    هیچ کالا / خدمتی برای نمایش وجود ندارد
-                </h2>
-            </main>
-        );
-    }
+    // if (!loading && !error && items.length === 0 && !isFetching) {
+    //     return (
+    //         <main className="flex flex-col items-center justify-center h-screen gap-4">
+    //             <h2 className="text-gray-600 text-xl">
+    //                 هیچ کالا / خدمتی برای نمایش وجود ندارد
+    //             </h2>
+    //         </main>
+    //     );
+    // }
 
     return (
         <main className="!p-4 !pt-24">
             {/* header */}
             <div className="flex items-center justify-between !mt-6 !mb-4 !px-3">
-                <h1 className="text-lg !font-semibold text-right">کالا و خدمات</h1>
-                <div className="w-9 h-9 flex justify-center items-center !rounded-full bg-green-100 cursor-pointer" onClick={handleAddItem}>
-                    <MdAdd className="w-6 h-6 text-green-700"/>
+                <h1 className="!text-lg !font-semibold text-right">کالا و خدمات</h1>
+                <div className="w-9 h-9 flex justify-center items-center !rounded-full bg-green-100 cursor-pointer"
+                     onClick={handleAddItem}>
+                    <MdAdd className="w-6 h-6 text-primary"/>
                 </div>
             </div>
 
             {/* فیلتر جستجو */}
             <div className="!mb-4 !px-3 flex gap-4">
                 <Input
+                    name="searchPattern"
                     type="text"
                     placeholder="جستجو بر اساس گروه یا زیرگروه"
                     value={searchPattern}
@@ -372,17 +373,25 @@ export default function ItemsPage(): JSX.Element {
                     </label>
                 </div>
             </div>
-            
+
             {/* list */}
-            <div className="!px-3 !mt-4 grid grid-cols-1 gap-3 overflow-y-auto sm:grid-cols-2 !pb-4 lg:grid-cols-3 xl:grid-cols-4" style={{ maxHeight: 'calc(100vh - 200px)' }}>
-                {filteredItems?.map((item: getItemResponse) => (
+            {items.length === 0 ? (
+                <div className="flex items-center justify-center text-gray-500 w-full h-[60vh]">
+                    هیچ کالا یا خدمتی برای نمایش وجود ندارد
+                </div>
+            ) : (
+                <div
+                    className="!px-3 !mt-4 grid grid-cols-1 gap-3 overflow-y-auto sm:grid-cols-2 !pb-4 lg:grid-cols-3 xl:grid-cols-4"
+                    style={{maxHeight: 'calc(100vh - 200px)'}}>
+                    {filteredItems?.map((item: getItemResponse) => (
                     <div
                         key={item.id}
                         onClick={() => handleOpenItem(item.id)}
                         className="w-full bg-card !rounded-lg shadow-sm hover:shadow-md transition cursor-pointer overflow-hidden"
                     >
                         <div className="flex items-stretch">
-                            <div className="flex flex-col items-center justify-center w-16 bg-green-500 text-white !p-2 rounded-r-lg">
+                            <div
+                                className="flex flex-col items-center justify-center w-16 bg-primary text-white !p-2 rounded-r-lg">
                                 <div className="!mb-1">
                                     {getItemIcon(item.itemType)}
                                 </div>
@@ -413,11 +422,10 @@ export default function ItemsPage(): JSX.Element {
                             </div>
                         </div>
                     </div>
-                ))}
-            </div>
-        </main>
-    );
-}
+                    ))}</div>)}
+                </main>
+                );
+            }
 
 // 'use client';
 // import { useEffect, useState } from "react";

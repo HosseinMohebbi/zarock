@@ -226,10 +226,12 @@ export default function Client() {
                             label="لغو"
                             type="button"
                             onClick={handleCancel}
+                            customStyle="!bg-danger"
                         />
                         <Button
-                            label={loading ? 'در حال افزودن...' : 'افزودن'}
+                            label="افزودن"
                             type="submit"
+                            customStyle="!bg-confirm"
                         />
                     </div>
                 </form>

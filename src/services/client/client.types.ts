@@ -25,7 +25,7 @@ export interface Client {
     createdAt: string;
     updatedAt: string;
     id: string;
-    fullname: string;
+    fullName: string;
     nationalCode: string;
     address: string;
     credits: number;

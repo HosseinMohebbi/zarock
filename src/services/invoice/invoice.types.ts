@@ -34,7 +34,7 @@ export interface AddInvoicePayload {
     fromClient: Client;
     toClient: Client;
     dateTime: string;
-    invoiceTimes: InvoiceItem[];
+    invoiceItems: InvoiceItem[];
     taxPercent: number;
     discountPercent: number;
     description: string

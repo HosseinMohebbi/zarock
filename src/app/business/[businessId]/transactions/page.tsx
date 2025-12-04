@@ -375,24 +375,24 @@ export default function TransactionsPage(): JSX.Element {
         );
     }
 
-    if (!loading && !error && transactions.length === 0 && !isFetching) {
-        return (
-            <main className="flex flex-col items-center justify-center h-screen gap-4">
-                <h2 className="text-gray-600 text-xl">
-                    تراکنشی برای نمایش وجود ندارد
-                </h2>
-
-                {!isSelectMode && (
-                    <button
-                        onClick={handleAddTransaction}
-                        className="px-5 py-2 rounded-lg bg-blue-600 text-white shadow"
-                    >
-                        افزودن تراکنش جدید
-                    </button>
-                )}
-            </main>
-        );
-    }
+    // if (!loading && !error && transactions.length === 0 && !isFetching) {
+    //     return (
+    //         <main className="flex flex-col items-center justify-center h-screen gap-4">
+    //             <h2 className="text-gray-600 text-xl">
+    //                 تراکنشی برای نمایش وجود ندارد
+    //             </h2>
+    //
+    //             {!isSelectMode && (
+    //                 <button
+    //                     onClick={handleAddTransaction}
+    //                     className="px-5 py-2 rounded-lg bg-blue-600 text-white shadow"
+    //                 >
+    //                     افزودن تراکنش جدید
+    //                 </button>
+    //             )}
+    //         </main>
+    //     );
+    // }
 
     return (
         <main className="!p-4 !pt-24">
@@ -413,99 +413,103 @@ export default function TransactionsPage(): JSX.Element {
                 )}
             </div>
 
-            {loading && <div className="!py-6 text-center">در حال بارگذاری...</div>}
             {error && <div className="!py-4 text-red-600">{error}</div>}
-            {!loading && !error && transactions.length === 0 && (
-                <div className="!py-6 text-center text-gray-500">تراکنشی یافت نشد.</div>
-            )}
 
             {/* گرید کارت‌ها (بدون هیچ تغییر ظاهری) */}
-            <div
-                className="!px-3 !mt-4 grid grid-cols-1 gap-3 overflow-y-auto sm:grid-cols-2 !pb-4 lg:grid-cols-3 xl:grid-cols-4"
-                style={{maxHeight: "calc(100vh - 200px)"}}
-            >
-                {transactions.map((t: any) => (
+            {/*<div*/}
+            {/*    className="!px-3 !mt-4 grid grid-cols-1 gap-3 overflow-y-auto sm:grid-cols-2 !pb-4 lg:grid-cols-3 xl:grid-cols-4"*/}
+            {/*    style={{maxHeight: "calc(100vh - 200px)"}}*/}
+            {/*>*/}
+            {transactions.length === 0 ? (
+                    <div className="flex items-center justify-center text-gray-500 w-full h-[60vh]">
+                        <div className="text-center text-xl">هیچ تراکنشی برای نمایش وجود ندارد</div>
+                    </div>
+                ) :
+                (
                     <div
-                        key={t.id ?? `${t.createdAt}-${Math.random()}`}
-                        onClick={() => handleOpenTransaction(t)}
-                        className="w-full bg-card !rounded-lg shadow-sm hover:shadow-md transition cursor-pointer overflow-hidden"
+                        className="!px-3 !mt-4 grid grid-cols-1 gap-3 overflow-y-auto sm:grid-cols-2 !pb-4 lg:grid-cols-3 xl:grid-cols-4"
+                        style={{maxHeight: "calc(100vh - 200px)"}}
                     >
-                        <div className="h-full flex items-stretch">
+                        {transactions.map((t: any) => (
+                            <div
+                                key={t.id ?? `${t.createdAt}-${Math.random()}`}
+                                onClick={() => handleOpenTransaction(t)}
+                                className="w-full bg-card !rounded-lg shadow-sm hover:shadow-md transition cursor-pointer overflow-hidden"
+                            >
+                                <div className="h-full flex items-stretch">
 
-                            <div className="h-full flex flex-col items-center justify-center w-16 
+                                    <div className="h-full flex flex-col items-center justify-center w-16 
                                 bg-blue-500 text-white !p-2 !rounded-r-lg">
-                                <div className="!mb-1 text-lg font-bold">
-                                    {getItemIcon(t.transactionType)}
-                                </div>
-                                <div className="!mb-1 text-lg font-bold">
-                                    {getTransactionTypeFa(t.transactionType)}
-                                </div>
-                            </div>
+                                        <div className="!mb-1 text-lg font-bold">
+                                            {getItemIcon(t.transactionType)}
+                                        </div>
+                                        <div className="!mb-1 text-lg font-bold">
+                                            {getTransactionTypeFa(t.transactionType)}
+                                        </div>
+                                    </div>
 
-                            <div className="flex-1 !p-3">
-                                <div className="flex flex-col gap-4 !p-4">
-                                    <div className="flex items-center gap-2 text-lg">
-                                        <h2>مبلغ:</h2>
-                                        <span className="text-base">
+                                    <div className="flex-1 !p-3">
+                                        <div className="flex flex-col gap-4 !p-4">
+                                            <div className="flex items-center gap-2 text-lg">
+                                                <h2>مبلغ:</h2>
+                                                <span className="text-base">
                                             {typeof t.amount === "number"
                                                 ? t.amount.toLocaleString() + " تومان"
                                                 : t.amount ?? "-"}
                                         </span>
-                                    </div>
+                                            </div>
 
-                                    {(t.fromClient?.fullname) && (
-                                        <div className="flex items-center gap-2 text-lg">
-                                            <h2>مبدا:</h2>
-                                            <span className="text-base">{t.fromClient?.fullname ?? "—"}</span>
-                                        </div>
-                                    )}
+                                            {(t.fromClient?.fullname) && (
+                                                <div className="flex items-center gap-2 text-lg">
+                                                    <h2>مبدا:</h2>
+                                                    <span className="text-base">{t.fromClient?.fullname ?? "—"}</span>
+                                                </div>
+                                            )}
 
-                                    {(t.toClient?.fullname) && (
-                                        <div className="flex items-center gap-2 text-lg">
-                                            <h2>مقصد:</h2>
-                                            <span className="text-base">{t.toClient?.fullname ?? "—"}</span>
-                                        </div>
-                                    )}
+                                            {(t.toClient?.fullname) && (
+                                                <div className="flex items-center gap-2 text-lg">
+                                                    <h2>مقصد:</h2>
+                                                    <span className="text-base">{t.toClient?.fullname ?? "—"}</span>
+                                                </div>
+                                            )}
 
-                                    {t.transactionType === "Check" && t.state && (
-                                        <div className="flex items-center gap-2 text-lg">
-                                            <h2>وضعیت:</h2>
-                                            <span className="text-base">
+                                            {t.transactionType === "Check" && t.state && (
+                                                <div className="flex items-center gap-2 text-lg">
+                                                    <h2>وضعیت:</h2>
+                                                    <span className="text-base">
                                                 {checkStateMap[t.state as TransactionType] ?? t.state}
                                             </span>
-                                        </div>
-                                    )}
+                                                </div>
+                                            )}
 
-                                    {t.transactionType === "Check" ? (
-                                        <div className="flex flex-col gap-2 text-lg">
-                                            <div className="flex items-center gap-2 text-lg">
-                                                <h2>دریافت: </h2>
-                                                <span className="text-base">{formatJalali(t.receiveDate)}</span>
-                                            </div>
-                                            <div className="flex items-center gap-2 text-lg">
-                                                <h2>موعود: </h2>
-                                                <span className="text-base">{formatJalali(t.dueDate)}</span>
-                                            </div>
-                                        </div>
-                                    ) : (
-                                        <div className="flex items-center gap-2 text-lg">
-                                            <h2>تاریخ: </h2>
-                                            <span className="text-base">{formatJalali(t.date)}</span>
-                                        </div>
-                                    )}
+                                            {t.transactionType === "Check" ? (
+                                                <div className="flex flex-col gap-2 text-lg">
+                                                    <div className="flex items-center gap-2 text-lg">
+                                                        <h2>دریافت: </h2>
+                                                        <span className="text-base">{formatJalali(t.receiveDate)}</span>
+                                                    </div>
+                                                    <div className="flex items-center gap-2 text-lg">
+                                                        <h2>موعود: </h2>
+                                                        <span className="text-base">{formatJalali(t.dueDate)}</span>
+                                                    </div>
+                                                </div>
+                                            ) : (
+                                                <div className="flex items-center gap-2 text-lg">
+                                                    <h2>تاریخ: </h2>
+                                                    <span className="text-base">{formatJalali(t.date)}</span>
+                                                </div>
+                                            )}
 
-                                    <div className="flex gap-2 text-lg">
-                                        <h2>توضیح:</h2>
-                                        <span className="text-base">{t.description ?? ""}</span>
+                                            <div className="flex gap-2 text-lg">
+                                                <h2>توضیح:</h2>
+                                                <span className="text-base">{t.description ?? ""}</span>
+                                            </div>
+                                        </div>
                                     </div>
+
                                 </div>
                             </div>
-
-                        </div>
-                    </div>
-                ))}
-            </div>
-
+                        ))}</div>)}
         </main>
     );
 }
