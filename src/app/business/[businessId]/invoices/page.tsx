@@ -158,7 +158,7 @@ export default function InvoicesPage() {
 
                             {/* ستون آبی — عین نسخه دوم */}
                             <div
-                                className="flex flex-col items-center justify-center w-32 bg-blue-500 text-white !p-2 rounded-r-lg">
+                                className="flex flex-col items-center justify-center w-32 bg-primary text-white !p-2 rounded-r-lg">
                                 <div className="!mb-1">
                                     <MdReceipt size={22}/>
                                 </div>

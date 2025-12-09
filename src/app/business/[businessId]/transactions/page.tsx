@@ -254,6 +254,7 @@ import {TransactionType} from "@/services/transaction/transaction.types";
 import dayjs from "dayjs";
 import jalaliday from "jalaliday";
 import "dayjs/locale/fa";
+import TransactionDocument from "@/app/components/ui/TransactionDocument";
 
 dayjs.extend(jalaliday);
 
@@ -408,7 +409,7 @@ export default function TransactionsPage(): JSX.Element {
                         aria-label="افزودن تراکنش"
                         className="inline-flex items-center gap-2 !px-3 !py-1.5 bg-blue-600 text-white rounded shadow-sm cursor-pointer"
                     >
-                        <MdAdd className="w-5 h-5"/>
+                        <MdAdd className="w-5 h-5 text-primary"/>
                     </button>
                 )}
             </div>
@@ -439,7 +440,7 @@ export default function TransactionsPage(): JSX.Element {
                                 <div className="h-full flex items-stretch">
 
                                     <div className="h-full flex flex-col items-center justify-center w-16 
-                                bg-blue-500 text-white !p-2 !rounded-r-lg">
+                                bg-primary text-white !p-2 !rounded-r-lg">
                                         <div className="!mb-1 text-lg font-bold">
                                             {getItemIcon(t.transactionType)}
                                         </div>
@@ -504,6 +505,10 @@ export default function TransactionsPage(): JSX.Element {
                                                 <h2>توضیح:</h2>
                                                 <span className="text-base">{t.description ?? ""}</span>
                                             </div>
+
+                                            {/*{t.document.id && <div className="flex justify-start">*/}
+                                            {/*    <TransactionDocument docId={t.document.id}/>*/}
+                                            {/*</div>}*/}
                                         </div>
                                     </div>
 

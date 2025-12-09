@@ -98,3 +98,11 @@ export interface getTransactionResponse {
     hasNotification: boolean;
     notificationId: string;
 }
+
+export interface UploadTransactionDocumentResponse {
+    createdAt: string;
+    updatedAt: string;
+    id: string;
+    fileName: string;
+    extension: string;
+}

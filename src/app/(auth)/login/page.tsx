@@ -115,7 +115,7 @@ export default function LoginPage(): JSX.Element {
                     <div className="w-[90%] sm:w-[80%] md:w-[60%] max-w-lg mx-auto">
                         <Button
                             type="submit"
-                            label={loading ? "در حال ارسال…" : "ورود"}
+                            label="ورود"
                             disabled={loading}
                             customStyle='p-[6.2px] h-fit w-[100%] h-[40px] text-[22px] hover:bg-green-700 !mt-6'
                         />
@@ -130,47 +130,3 @@ export default function LoginPage(): JSX.Element {
         </div>
     );
 }
-
-// 'use client';
-// import {useState} from "react";
-// import { cn } from "@/utils/cn";
-// import Input from "@/app/components/ui/Input";
-// import Button from "@/app/components/ui/Button";
-// import ThemeToggle from "@/app/components/theme/ThemeToggle";
-//
-// export default function Home() {
-//     const [name, setName] = useState('');
-//     const [email, setEmail] = useState('');
-//     return (
-//         <div>
-//             <ThemeToggle/>
-//             <div className="flex flex-col w-full min-h-screen items-center justify-center gap-4 font-sans bg-background text-foreground">
-//                 <Input
-//                     label="نام کاربری"
-//                     name="username"
-//                     value={name}
-//                     containerClass={cn('w-[80%] sm:w-[80%] md:w-[60%] max-w-lg mx-auto')}
-//                     inputClass={cn('w-full h-[40px]')}
-//                     onChange={(e) => setName(e.target.value)}
-//                 />
-//
-//                 <Input
-//                     label="رمز عبور"
-//                     name="password"
-//                     type="password"
-//                     containerClass={cn('w-[80%] sm:w-[80%] md:w-[60%] max-w-lg mx-auto')}
-//                     inputClass={cn('w-full h-[40px]')}
-//                     onChange={(e) => setEmail(e.target.value)}
-//                 />
-//
-//                 <div className="w-[80%] sm:w-[80%] md:w-[60%] max-w-lg mx-auto">
-//                     <Button
-//                         type='submit'
-//                         label='submit'
-//                         customStyle='p-[6.2px] h-fit w-[100%] h-[40px] text-[22px]'
-//                     />
-//                 </div>
-//             </div>
-//         </div>
-//     );
-// }

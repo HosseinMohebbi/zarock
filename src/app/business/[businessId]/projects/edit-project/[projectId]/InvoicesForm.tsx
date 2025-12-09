@@ -125,7 +125,7 @@ export default function ProjectInvoicesPage() {
 
                                     {/* ستون آیکون */}
                                     <div className="flex flex-col items-center justify-center w-16 
-                                  bg-blue-500 text-white p-2 self-stretch">
+                                  bg-primary text-white p-2 self-stretch">
                                         <MdReceiptLong className="w-6 h-6" />
                                         <div className="!mb-1 text-sm font-bold mt-1">فاکتور</div>
                                     </div>

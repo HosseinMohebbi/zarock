@@ -1,13 +1,13 @@
 'use client';
-import { useEffect, useState } from "react";
+import {useEffect, useState} from "react";
 import Card from "@/app/components/ui/Card";
 import Input from "@/app/components/ui/Input";
-import { useParams, useRouter } from "next/navigation";
-import { MdPerson, MdLocationPin, MdAccountBalance, MdAdd } from "react-icons/md";
+import {useParams, useRouter} from "next/navigation";
+import {MdPerson, MdLocationPin, MdAccountBalance, MdAdd} from "react-icons/md";
 import {Client} from "@/services/client/client.types"
 
 // Redux
-import { useDispatch, useSelector } from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {
     fetchClients,
     selectClients,
@@ -65,7 +65,7 @@ export default function ClientsPage() {
     if (isFetching) {
         return (
             <div className="flex items-center justify-center h-screen">
-                <Loader />   {/* TailChase */}
+                <Loader/> {/* TailChase */}
             </div>
         );
     }
@@ -91,7 +91,7 @@ export default function ClientsPage() {
                     className="flex justify-center items-center w-12 h-12 !rounded-full border border-gray-300 cursor-pointer"
                     onClick={handleAddClientButton}
                 >
-                    <MdAdd className="w-8 h-8 text-primary" />
+                    <MdAdd className="w-8 h-8 text-primary"/>
                 </div>
             </div>
 
@@ -112,16 +112,20 @@ export default function ClientsPage() {
             )}
 
             {/* CLIENT LIST OR EMPTY MESSAGE */}
-            <div
-                className="overflow-y-auto !px-3 !py-3 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
-                style={{ maxHeight: 'calc(100vh - 250px)' }}
-            >
-                {clients.length === 0 ? (
-                    <div className="col-span-full text-center text-gray-500 py-10">
-                        هیچ شخصی برای نمایش وجود ندارد
-                    </div>
-                ) : (
-                    clients.map((client: Client) => (
+            {/*<div*/}
+            {/*    className="overflow-y-auto !px-3 !py-3 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"*/}
+            {/*    style={{ maxHeight: 'calc(100vh - 250px)' }}*/}
+            {/*>*/}
+            {clients.length === 0 ? (
+                <div className="flex items-center justify-center text-gray-500 w-full h-[60vh]">
+                    <div className="text-center text-xl">هیچ شخصی برای نمایش وجود ندارد</div>
+                </div>
+            ) : (
+                <div
+                    className="overflow-y-auto !px-3 !py-3 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+                    style={{maxHeight: 'calc(100vh - 250px)'}}
+                >
+                    {clients.map((client: Client) => (
                         <Card
                             key={client.id}
                             customStyle="w-full max-w-xl border !rounded-md !p-4 bg-card cursor-pointer"
@@ -129,12 +133,15 @@ export default function ClientsPage() {
                         >
                             <div className="flex flex-col gap-3">
                                 <div className="flex items-center gap-2">
-                                    <MdPerson className="w-8 h-8 text-primary" />
-                                    <span className="text-lg font-medium">{client.fullname}</span>
+                                    <MdPerson className="w-8 h-8 text-primary"/>
+                                    <div className="flex items-center gap-2">
+                                        <span className="text-lg font-medium">{client.fullname}</span>
+                                        <span>{client.isJuridicalPerson ? "(حقوقی)" : "(حقیقی)"}</span>
+                                    </div>
                                 </div>
 
                                 <div className="flex items-center gap-2">
-                                    <MdLocationPin className="w-8 h-8 text-primary flex-shrink-0" />
+                                    <MdLocationPin className="w-8 h-8 text-primary flex-shrink-0"/>
                                     <span
                                         className="text-sm text-gray-600 truncate"
                                         style={{
@@ -149,16 +156,16 @@ export default function ClientsPage() {
                                 </div>
 
                                 <div className="flex items-center gap-2">
-                                    <MdAccountBalance className="w-8 h-8 text-primary" />
+                                    <MdAccountBalance className="w-8 h-8 text-primary"/>
                                     <span className="text-lg text-gray-600">
                                     {(client.credits ?? 0).toLocaleString()} تومان
                                 </span>
                                 </div>
                             </div>
                         </Card>
-                    ))
-                )}
-            </div>
+                    ))}
+                </div>
+            )}
         </div>
     );
 }

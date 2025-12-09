@@ -116,12 +116,12 @@
 // }
 
 'use client';
-import React, { useEffect, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
+import React, {useEffect, useState} from "react";
+import {useParams, useRouter} from "next/navigation";
 import Input from "@/app/components/ui/Input";
 import Select from "@/app/components/ui/SelectInput";
-import { getAllClients } from "@/services/client/client.service";
-import { getCashById, updateCash, deleteCash } from "@/services/transaction/transaction.service";
+import {getAllClients} from "@/services/client/client.service";
+import {getCashById, updateCash, deleteCash} from "@/services/transaction/transaction.service";
 import DatePicker from "react-multi-date-picker";
 import persian from "react-date-object/calendars/persian";
 import persian_fa from "react-date-object/locales/persian_fa";
@@ -131,10 +131,11 @@ import Button from "@/app/components/ui/Button";
 import {MdDelete} from "react-icons/md";
 import {toast} from "react-toastify";
 import ConfirmModal from "@/app/components/ui/ConfirmModal";
+
 dayjs.extend(jalaliday);
 
 export default function EditCashPage() {
-    const { businessId, transactionId } = useParams();
+    const {businessId, transactionId} = useParams();
 
     const router = useRouter();
 
@@ -158,9 +159,9 @@ export default function EditCashPage() {
             try {
                 const [cashData, clientsData] = await Promise.all([
                     getCashById(businessId, transactionId),
-                    getAllClients({ page: 1, pageSize: 200 }, businessId),
+                    getAllClients({page: 1, pageSize: 200}, businessId),
                 ]);
-                
+
                 setForm({
                     trackingCode: cashData.trackingCode,
                     amount: cashData.amount,
@@ -177,6 +178,7 @@ export default function EditCashPage() {
                 setLoading(false);
             }
         }
+
         loadData();
     }, [businessId, transactionId]);
 
@@ -214,14 +216,18 @@ export default function EditCashPage() {
             console.error(err);
         }
     }
-    
+
+    function handleCancelForm() {
+        router.push(`/business/${businessId}/transactions`);
+    }
+
     return (
         <div className="w-full flex justify-center !px-4 !pt-24">
             <div className="w-full max-w-lg mx-auto !p-6 bg-background text-foreground !rounded-lg shadow">
 
                 <div className="relative w-full flex items-start">
                     <div onClick={handleDelete} className="absolute right-0 text-danger cursor-pointer">
-                        <MdDelete className='w-6 h-6' />
+                        <MdDelete className='w-6 h-6'/>
                     </div>
                     <h2 className="!mx-auto text-xl font-semibold !mb-4 text-center">ویرایش تراکنش نقدی</h2>
                 </div>
@@ -231,13 +237,13 @@ export default function EditCashPage() {
                     <Input
                         label="مبلغ"
                         value={form.amount}
-                        onChange={(e) => setForm({ ...form, amount: e.target.value })}
+                        onChange={(e) => setForm({...form, amount: e.target.value})}
                     />
 
                     <Input
                         label="کد پیگیری"
                         value={form.trackingCode}
-                        onChange={(e) => setForm({ ...form, trackingCode: e.target.value })}
+                        onChange={(e) => setForm({...form, trackingCode: e.target.value})}
                     />
 
                     <div className="flex flex-col gap-2">
@@ -260,21 +266,29 @@ export default function EditCashPage() {
                         label="توضیحات"
                         value={form.description}
                         onChange={(e) =>
-                            setForm({ ...form, description: e.target.value })
+                            setForm({...form, description: e.target.value})
                         }
                     />
 
-                    <div className="flex justify-center mt-6">
+                    <div className="flex justify-end items-center gap-3 mt-3">
+                        <Button
+                            label="لغو"
+                            onClick={handleCancelForm}
+                            disabled={saving}
+                            customStyle="!px-6 !py-2 !bg-danger text-white !rounded-md"
+                        />
                         <Button
                             label="ذخیره"
                             onClick={handleSave}
                             disabled={saving}
-                            customStyle="!px-6 !py-2 bg-indigo-600 text-white !rounded-md"
+                            customStyle="!px-6 !py-2 !bg-confirm text-white !rounded-md"
                         />
                     </div>
                 </div>
             </div>
-            <ConfirmModal title="حذف تراکنش" isOpen={showConfirm} message="آیا مطمئن هستید که می‌خواهید تراکنش را حذف کنید؟" onConfirm={confirmDelete} onCancel={() => setShowConfirm(false)} />
+            <ConfirmModal title="حذف تراکنش" isOpen={showConfirm}
+                          message="آیا مطمئن هستید که می‌خواهید تراکنش را حذف کنید؟" onConfirm={confirmDelete}
+                          onCancel={() => setShowConfirm(false)}/>
         </div>
     );
 }

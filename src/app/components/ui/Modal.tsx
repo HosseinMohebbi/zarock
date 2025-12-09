@@ -69,13 +69,13 @@ export default function Modal({ open, confirmButtonTitle, cancelButtonTitle, onC
                         type="button"
                         label={cancelButtonTitle ?? 'لغو'}
                         onClick={onClose}
-                        customStyle="bg-gray-400 hover:bg-gray-500 !px-4 !py-2 rounded-lg"
+                        customStyle="!bg-danger hover:bg-gray-500 !px-4 !py-2 rounded-lg"
                     />
                     <Button
                         type="button"
                         label={confirmButtonTitle ?? 'افزودن'}
                         onClick={onSubmit}
-                        customStyle="bg-green-600 hover:bg-green-700 !px-4 !py-2 rounded-lg text-white"
+                        customStyle="!bg-confirm hover:bg-green-700 !px-4 !py-2 rounded-lg text-white"
                     />
                 </div>
             </div>

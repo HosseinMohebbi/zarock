@@ -19,43 +19,43 @@ import {
 const dashboardCards = [
     {
         title: "اشخاص",
-        icon: <MdPeople className="w-8 h-8 text-green-600"/>,
+        icon: <MdPeople className="w-8 h-8 text-primary"/>,
         customStyle: "w-30 h-10 sm:w-70 sm:h-80 md:w-sm md:h-md",
         route: '/clients'
     },
     {
         title: "کالا و خدمات",
-        icon: <MdInventory className="w-8 h-8 text-green-600"/>,
+        icon: <MdInventory className="w-8 h-8 text-primary"/>,
         customStyle: "w-30 h-10 sm:w-70 sm:h-80 md:w-sm h-md",
         route: '/items'
     },
     {
         title: "فاکتورها",
-        icon: <MdReceiptLong className="w-8 h-8 text-green-600"/>,
+        icon: <MdReceiptLong className="w-8 h-8 text-primary"/>,
         customStyle: "w-30 h-10 sm:w-70 sm:h-80 md:w-sm h-md",
         route: '/invoices'
     },
     {
         title: "تراکنش ها",
-        icon: <MdAccountBalanceWallet className="w-8 h-8 text-green-600"/>,
+        icon: <MdAccountBalanceWallet className="w-8 h-8 text-primary"/>,
         customStyle: "w-50 h-60 sm:w-70 h-80 md:w-sm h-md",
         route: '/transactions'
     },
     {
         title: "پروژه ها",
-        icon: <MdWork className="w-8 h-8 text-green-600"/>,
+        icon: <MdWork className="w-8 h-8 text-primary"/>,
         customStyle: "w-50 h-60 sm:w-70 h-80 md:w-sm h-md",
         route: '/projects'
     },
     {
         title: "دستی",
-        icon: <MdEditNote className="w-8 h-8 text-green-600"/>,
+        icon: <MdEditNote className="w-8 h-8 text-primary"/>,
         customStyle: "w-50 h-60 sm:w-70 h-80 md:w-sm h-md",
         route: '/clients'
     },
     {
         title: "انبار",
-        icon: <MdWarehouse className="w-8 h-8 text-green-600"/>,
+        icon: <MdWarehouse className="w-8 h-8 text-primary"/>,
         customStyle: "w-50 h-60 sm:w-70 h-80 md:w-sm h-md",
         route: '/clients'
     },

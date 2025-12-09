@@ -15,6 +15,10 @@ export function validate(form: AddInvoicePayload) {
             if (!item.quantityMetric || item.quantityMetric.trim() === "") {
                 e[`item_${index}_metric`] = `واحد آیتم شماره ${index + 1} را وارد کنید`;
             }
+
+            if (!item.price || item.price.trim() === "") {
+                e[`item_${index}_price`] = `قیمت آیتم شماره ${index + 1} را وارد کنید`;
+            }
         });
     }
     

@@ -4,9 +4,10 @@ import {
     AddCashResponse,
     AddCheckPayload,
     AddCheckResponse,
-    getTransactionResponse
+    getTransactionResponse, UploadTransactionDocumentResponse
 } from "./transaction.types";
 import {endpoints} from "@/config/endpoint.config";
+import {GetStaticFileResponse} from "@/services/business/business.types";
 
 export async function createCheck(
     businessId: string,
@@ -98,4 +99,53 @@ export async function getAllTransactions(params: { page: number; pageSize: numbe
         params: { page, pageSize }, // axios به‌صورت ?page=..&pageSize=.. اضافه می‌کند
     });
     return data;
+}
+
+export async function uploadTransactionDocument(
+    transactionId: string,
+    file: File
+): Promise<UploadTransactionDocumentResponse> {
+
+    const form = new FormData();
+    form.append("Id", transactionId);
+    form.append("Document", file);
+
+    const { data } = await http.post<UploadTransactionDocumentResponse>(
+        endpoints.transaction.uploadTransactionDocument,
+        form,
+        {
+            headers: {
+                "Content-Type": "multipart/form-data"
+            }
+        }
+    );
+
+    return data;
+}
+
+export async function getStaticFile(id: string): Promise<GetStaticFileResponse> {
+
+    const response = await http.get(endpoints.business.getStatic(id), {
+        responseType: "blob",
+    });
+
+    // گرفتن نام فایل از هدر
+    const contentDisposition = response.headers["content-disposition"];
+    let fileName = "download";
+
+    if (contentDisposition) {
+        const match = contentDisposition.match(/filename\*=UTF-8''(.+)|filename="(.+)"/);
+        if (match) {
+            fileName = decodeURIComponent(match[1] || match[2]);
+        }
+    }
+
+    // ساخت لینک دانلود
+    const fileUrl = URL.createObjectURL(response.data);
+
+    return {
+        id,
+        fileName,
+        url: fileUrl
+    };
 }

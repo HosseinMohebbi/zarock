@@ -1,6 +1,6 @@
 'use client';
 
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useParams, useRouter} from 'next/navigation';
 import {toast} from "react-toastify";
 
@@ -15,6 +15,7 @@ import persian from "react-date-object/calendars/persian";
 import persian_fa from "react-date-object/locales/persian_fa";
 
 import {createOneTimeNotif} from "@/services/notification/oneTimeNotif/notification.service";
+import {validate} from "@/services/notification/oneTimeNotif/notification.validation";
 import {AddOneTimeNotifPayload, FieldErrors} from "@/services/notification/oneTimeNotif/notification.types";
 
 
@@ -32,22 +33,16 @@ export default function OneTimeNotifCreatePage() {
     const router = useRouter();
 
     // ------------------ VALIDATION ------------------
-    const validate = () => {
-        const errors: FieldErrors = {};
-
-        if (!description.trim()) errors.description = "توضیحات الزامی است";
-        if (!notificationDate.trim()) errors.notificationDate = "تاریخ الزامی است";
-        if (!dayBeforeNotification.trim() || Number(dayBeforeNotification) < 0)
-            errors.dayBeforeNotification = "تعداد روز را صحیح وارد کنید";
-
-        return errors;
-    };
 
     // ------------------ SUBMIT ------------------
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        const errs = validate();
+        const errs = validate(
+            description,
+            notificationDate,
+            dayBeforeNotification
+        );
         setFieldErrors(errs);
         if (Object.keys(errs).length > 0) return;
 
@@ -75,11 +70,17 @@ export default function OneTimeNotifCreatePage() {
         router.push(`/business/${businessId}/notifications`);
     };
 
-    return (
-        <div className="w-full flex justify-center !px-4">
-            <div className="w-full max-w-lg mx-auto !p-6 bg-background text-foreground rounded-lg shadow">
+    useEffect(() => {
+        if (!notificationDate) {
+            setNotificationDate(new Date().toISOString());
+        }
+    }, []);
 
-                <div className="flex items-center justify-between mb-4">
+    return (
+        <div className="w-full flex justify-center !px-4 !pt-24">
+            <div className="w-full max-w-lg mx-auto !p-6 bg-background text-foreground !rounded-lg shadow">
+
+                <div className="flex items-center justify-between !mb-4">
                     <h1 className="text-xl font-semibold text-center w-full">
                         ایجاد اعلان یک‌بار
                     </h1>
@@ -106,7 +107,7 @@ export default function OneTimeNotifCreatePage() {
                             value={
                                 notificationDate
                                     ? dayjs(notificationDate).calendar('jalali').toDate()
-                                    : null
+                                    : new Date()
                             }
                             onChange={(notificationDate) =>
                                 setNotificationDate(notificationDate ? notificationDate.toDate().toISOString() : "")
@@ -148,11 +149,13 @@ export default function OneTimeNotifCreatePage() {
                             label="لغو"
                             type="button"
                             onClick={handleCancel}
+                            customStyle="!bg-danger"
                         />
 
                         <Button
-                            label={loading ? "در حال ثبت..." : "ثبت اعلان"}
+                            label="افزودن"
                             type="submit"
+                            customStyle="!bg-confirm"
                         />
                     </div>
                 </form>

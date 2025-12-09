@@ -258,8 +258,8 @@ export default function EditProjectPage() {
                     />
 
                     <div className="flex justify-end items-center gap-3 !mt-3">
-                        <Button label="لغو" type="button" onClick={handleCancel} />
-                        <Button label="ویرایش" type="submit" />
+                        <Button label="لغو" type="button" onClick={handleCancel} customStyle="!bg-danger"/>
+                        <Button label="ویرایش" type="submit" customStyle="!bg-confirm"/>
                     </div>
                 </form>
             </div>

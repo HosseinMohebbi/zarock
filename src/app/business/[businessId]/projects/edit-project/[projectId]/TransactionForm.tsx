@@ -149,7 +149,7 @@ export default function ProjectTransactionsPage() {
 
                                     {/* ستون آبی */}
                                     <div className="flex flex-col items-center justify-center w-16 
-                                    bg-blue-500 text-white p-2 self-stretch">
+                                    bg-primary text-white p-2 self-stretch">
 
                                         <div className="!mb-1 text-lg font-bold">
                                             {getItemIcon(t.transactionType)}

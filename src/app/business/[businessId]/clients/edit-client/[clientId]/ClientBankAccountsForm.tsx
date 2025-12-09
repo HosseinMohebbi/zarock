@@ -389,10 +389,10 @@ export default function ClientBankAccountsForm({ businessId, clientId }: Props) 
                 <Button
                     type="button"
                     onClick={handleAddNewAccount}
-                    customStyle="flex items-center gap-2 !px-3 !py-2 bg-green-600 hover:bg-green-700"
+                    customStyle="flex items-center gap-2 !px-3 !py-2 !bg-primary"
                     label={
                         <span className="flex items-center gap-2">
-                            <MdAdd className="w-5 h-5" />
+                            <MdAdd className="w-5 h-5"/>
                         </span>
                     }
                 />
@@ -467,12 +467,12 @@ export default function ClientBankAccountsForm({ businessId, clientId }: Props) 
                                     <Button
                                         label="حذف"
                                         onClick={() => handleDelete(acc.id)}
-                                        customStyle="!px-3 !py-1 text-sm !rounded-md !bg-danger text-white hover:bg-blue-700"
+                                        customStyle="!px-3 !py-1 text-sm !rounded-md !bg-danger text-white"
                                     />
                                     <Button
                                         label="ویرایش"
                                         onClick={() => handleEditAccount(acc)}
-                                        customStyle="!px-3 !py-1 text-sm !rounded-md bg-blue-600 text-white hover:bg-blue-700"
+                                        customStyle="!px-3 !py-1 text-sm !rounded-md !bg-confirm text-white"
                                     />
                                 </div>
                             </Card>

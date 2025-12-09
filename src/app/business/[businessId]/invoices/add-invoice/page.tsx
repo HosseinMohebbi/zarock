@@ -358,6 +358,10 @@ export default function AddInvoiceFormPage() {
                                 value={item.price}
                                 onChange={(e) => handleItemChange(index, 'price', e.target.value)}
                             />
+                            {errors[`item_${index}_price`] && (
+                                <span className="text-red-500 text-sm">{errors[`item_${index}_price`]}</span>
+                            )}
+
 
                             <Input
                                 label="توضیحات"

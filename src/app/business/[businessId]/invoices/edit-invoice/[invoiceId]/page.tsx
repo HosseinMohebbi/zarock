@@ -17,9 +17,11 @@ import {getAllClients} from '@/services/client/client.service';
 import {Client} from '@/services/client/client.types';
 import {getAllInvoice, updateInvoice, updateInvoiceArchive, deleteInvoice} from '@/services/invoice/invoice.service';
 import {AddInvoicePayload, GetAllInvoicesResponse} from '@/services/invoice/invoice.types';
+import {validate} from '@/services/invoice/invoice.validation';
 import {useDispatch, useSelector} from "react-redux";
 import {refetchInvoices, selectInvoiceById} from "@/app/store/invoivesSlice";
 import {toast} from "react-toastify";
+
 
 dayjs.extend(jalaliday);
 
@@ -88,7 +90,7 @@ export default function EditInvoiceFormPage() {
         try {
             await updateInvoiceArchive(businessId, invoiceId);
             setShowArchiveModal(false);
-            await dispatch(refetchInvoices({ businessId })).unwrap();
+            await dispatch(refetchInvoices({businessId})).unwrap();
             router.push(`/business/${businessId}/invoices`);
         } catch (err) {
             console.error(err);
@@ -116,7 +118,7 @@ export default function EditInvoiceFormPage() {
     useEffect(() => {
         if (!invoice && businessId) {
             // اگر فاکتور در redux نبود، کل فاکتورها را بگیریم
-            getAllInvoice({ page: 1, pageSize: 1000 }, businessId)
+            getAllInvoice({page: 1, pageSize: 1000}, businessId)
                 .then((all) => {
                     const found = all.find(inv => inv.id === invoiceId);
                     setInvoice(found || null);
@@ -157,7 +159,7 @@ export default function EditInvoiceFormPage() {
             await deleteInvoice(businessId, invoiceId);
 
             // حذف از Redux پس از حذف واقعی
-            await dispatch(refetchInvoices({ businessId })).unwrap();
+            await dispatch(refetchInvoices({businessId})).unwrap();
 
             toast.success("فاکتور با موفقیت حذف شد.");
 
@@ -171,20 +173,13 @@ export default function EditInvoiceFormPage() {
         }
     }
 
-    function validate() {
-        const e: Record<string, string> = {};
-        if (!form.fromClient) e.fromClient = 'فروشنده را انتخاب کنید';
-        if (!form.toClient) e.toClient = 'خریدار را انتخاب کنید';
-        return e;
-    }
-
     async function handleSubmit(ev?: React.FormEvent) {
         ev?.preventDefault();
         setMessage(null);
-        const v = validate();
+        const v = validate(form)
         if (Object.keys(v).length) {
-            setErrors(v);
-            return;
+            setErrors(v)
+            return
         }
 
         if (!businessId || !invoiceId) {
@@ -210,7 +205,7 @@ export default function EditInvoiceFormPage() {
 
             await updateInvoice(businessId, invoiceId, payload);
 
-            await dispatch(refetchInvoices({ businessId })).unwrap();
+            await dispatch(refetchInvoices({businessId})).unwrap();
 
             // setMessage('فاکتور با موفقیت ویرایش شد');
             toast.success('فاکتور با موفقیت ویرایش شد.')
@@ -254,20 +249,28 @@ export default function EditInvoiceFormPage() {
         }));
     }
 
+    function handleCancelForm() {
+        router.push(`/business/${businessId}/invoices`);
+    }
+
 
     return (
         <div className="w-full flex justify-center !px-4 !pt-24">
             <div className="w-full max-w-lg mx-auto !p-6 bg-background text-foreground rounded-lg shadow">
                 <div className="relative w-full flex items-start">
-                    <div onClick={() => setShowDeleteModal(true)} className="absolute right-0 text-danger cursor-pointer">
-                        <MdDelete className='w-6 h-6' />
+                    <div onClick={() => setShowDeleteModal(true)}
+                         className="absolute right-0 text-danger cursor-pointer">
+                        <MdDelete className='w-6 h-6'/>
                     </div>
-                    {!form.isArchived ? <h2 className="!mx-auto text-xl font-semibold !mb-4 text-center">ویرایش فاکتور</h2> :
-                        <h2 className="!mx-auto !mb-4 text-center !px-3 !py-1 text-xl !rounded-md bg-yellow-100 text-yellow-700">بایگانی شده</h2>}
+                    {!form.isArchived ?
+                        <h2 className="!mx-auto text-xl font-semibold !mb-4 text-center">ویرایش فاکتور</h2> :
+                        <h2 className="!mx-auto !mb-4 text-center !px-3 !py-1 text-xl !rounded-md bg-yellow-100 text-yellow-700">بایگانی
+                            شده</h2>}
 
                     {message && (
                         <div className="!mb-4 text-sm text-center">
-                            <span className="inline-block !px-3 !py-1 bg-green-100 text-green-800 rounded">{message}</span>
+                            <span
+                                className="inline-block !px-3 !py-1 bg-green-100 text-green-800 rounded">{message}</span>
                         </div>
                     )}
                 </div>
@@ -407,6 +410,9 @@ export default function EditInvoiceFormPage() {
                                 value={item.quantity}
                                 onChange={(e) => handleItemChange(idx, 'quantity', e.target.value)}
                             />
+                            {errors[`item_${idx}_quantity`] && (
+                                <span className="text-red-500 text-sm">{errors[`item_${idx}_quantity`]}</span>
+                            )}
 
                             <Input
                                 disabled={form.isArchived}
@@ -415,6 +421,9 @@ export default function EditInvoiceFormPage() {
                                 value={item.quantityMetric}
                                 onChange={(e) => handleItemChange(idx, 'quantityMetric', e.target.value)}
                             />
+                            {errors[`item_${idx}_metric`] && (
+                                <span className="text-red-500 text-sm">{errors[`item_${idx}_metric`]}</span>
+                            )}
 
                             <Input
                                 disabled={form.isArchived}
@@ -424,6 +433,9 @@ export default function EditInvoiceFormPage() {
                                 value={item.price}
                                 onChange={(e) => handleItemChange(idx, 'price', e.target.value)}
                             />
+                            {errors[`item_${idx}_price`] && (
+                                <span className="text-red-500 text-sm">{errors[`item_${idx}_price`]}</span>
+                            )}
 
                             <Input
                                 disabled={form.isArchived}
@@ -435,22 +447,32 @@ export default function EditInvoiceFormPage() {
                         </div>
                     ))}
 
-                    <div className="flex justify-center items-center gap-3 !mt-3">
-                        <button
-                            disabled={form.isArchived}
-                            type="button"
-                            className="w-8 h-8 flex justify-center items-center !rounded-full !bg-green-400 cursor-pointer"
-                            onClick={addNewItem}><MdAdd className="w-5 h-5"/>
-                        </button>
-                    </div>
+                    {!form.isArchived ? <div className="flex justify-center items-center gap-3 !mt-3">
+                            <button
+                                disabled={form.isArchived}
+                                type="button"
+                                className="w-8 h-8 flex justify-center items-center !rounded-full !bg-primary cursor-pointer"
+                                onClick={addNewItem}><MdAdd className="w-5 h-5"/>
+                            </button>
+                        </div>
+                        :
+                        <Button label="بازگشت" type="button" onClick={handleCancelForm} customStyle="!bg-confirm"/>
+                    }
 
                     {!form.isArchived && (
-                        <div className="flex justify-center gap-4 mt-6">
-                            <Button label="ویرایش فاکتور" type="submit" loading={loading}/>
-                            <Button
-                                label="بایگانی فاکتور"
-                                onClick={() => setShowArchiveModal(true)}
-                            />
+                        <div className="flex justify-between items-center gap-4 mt-6">
+                            <div>
+                                <Button
+                                    label="بایگانی فاکتور"
+                                    onClick={() => setShowArchiveModal(true)}
+                                    customStyle="!bg-confirm"
+                                />
+                            </div>
+                            <div className="flex justify-end items-center gap-2">
+                                <Button label="لغو" type="button" onClick={handleCancelForm} customStyle="!bg-danger"/>
+                                <Button label="ویرایش فاکتور" type="submit" loading={loading}
+                                        customStyle="!bg-confirm"/>
+                            </div>
                         </div>
                     )}
                 </form>
@@ -459,7 +481,7 @@ export default function EditInvoiceFormPage() {
                 isOpen={showArchiveModal}
                 title="بایگانی فاکتور"
                 message="آیا از بایگانی این فاکتور مطمئن هستید؟"
-                confirmText={archiveLoading ? "در حال بایگانی..." : "بایگانی"}
+                confirmText="بایگانی"
                 cancelText="لغو"
                 onCancel={() => setShowArchiveModal(false)}
                 onConfirm={handleArchive}
@@ -468,7 +490,7 @@ export default function EditInvoiceFormPage() {
                 isOpen={showDeleteModal}
                 title="حذف فاکتور"
                 message="آیا از حذف این فاکتور مطمئن هستید؟ این عملیات غیر قابل بازگشت است."
-                confirmText={deleteLoading ? "در حال حذف..." : "حذف"}
+                confirmText="حذف"
                 cancelText="لغو"
                 dangerColor="hsl(0, 75%, 50%)"
                 onCancel={() => setShowDeleteModal(false)}
