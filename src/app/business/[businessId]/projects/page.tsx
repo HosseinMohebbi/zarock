@@ -95,13 +95,13 @@ export default function ProjectsPage() {
 
             {/* HEADER */}
             <div className="flex items-center justify-between !mt-6 !mb-4 !px-3">
-                <h1 className="text-lg !font-semibold text-right">پروژه‌ها</h1>
+                <h1 className="!text-lg !font-semibold text-right">پروژه‌ها</h1>
 
                 <div
-                    className="w-9 h-9 flex justify-center items-center !rounded-full bg-blue-100 cursor-pointer"
+                    className="flex justify-center items-center w-12 h-10 !bg-primary !rounded border border-gray-300 cursor-pointer"
                     onClick={handleAddProject}
                 >
-                    <MdAdd className="w-6 h-6 text-blue-700"/>
+                    <MdAdd className="w-6 h-6 text-background"/>
                 </div>
             </div>
 

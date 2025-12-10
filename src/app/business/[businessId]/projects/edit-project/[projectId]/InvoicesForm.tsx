@@ -92,13 +92,13 @@ export default function ProjectInvoicesPage() {
         <div className="flex justify-center w-full !px-4 !pt-24">
             <div className="w-full max-w-2xl mx-auto">
                 <div className="flex justify-between items-center !mb-6">
-                    <h2 className="text-xl font-semibold">فاکتورهای لینک‌شده</h2>
+                    <h2 className="text-xl font-semibold">فاکتورهای لینک‌ شده</h2>
 
                     <div
-                        className="w-9 h-9 flex justify-center items-center !rounded-full bg-blue-100 cursor-pointer"
+                        className="flex justify-center items-center w-12 h-10 !bg-primary !rounded border border-gray-300 cursor-pointer"
                         onClick={handleAddInvoice}
                     >
-                        <MdAdd className="w-6 h-6 text-blue-700"/>
+                        <MdAdd className="w-6 h-6 text-background"/>
                     </div>
                 </div>
 

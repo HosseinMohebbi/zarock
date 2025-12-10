@@ -128,6 +128,20 @@ export async function updateBusiness(
     return data;
 }
 
+export async function updateBusinessWithLogo(
+    id: string,
+    payload: UpdateBusinessPayload,
+    logoFile?: File
+): Promise<Business> {
+    const business = await updateBusiness(id, payload);
+
+    if (logoFile) {
+        await uploadBusinessLogo(id, logoFile);
+    }
+
+    return business;
+}
+
 export async function deleteBusiness(
     id: string,
 ): Promise<void> {

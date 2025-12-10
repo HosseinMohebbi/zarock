@@ -121,13 +121,12 @@ export default function InvoicesPage() {
                 </h1>
 
                 {!isSelectMode && (
-                    <button
+                    <div
+                        className="flex justify-center items-center w-12 h-10 !bg-primary !rounded border border-gray-300 cursor-pointer"
                         onClick={handleAddInvoice}
-                        aria-label="افزودن فاکتور"
-                        className="inline-flex items-center gap-2 px-3 py-1.5 bg-blue-600 text-white rounded shadow-sm cursor-pointer"
                     >
-                        <MdAdd className="w-5 h-5 text-primary"/>
-                    </button>
+                        <MdAdd className="w-6 h-6 text-background"/>
+                    </div>
                 )}
             </div>
 

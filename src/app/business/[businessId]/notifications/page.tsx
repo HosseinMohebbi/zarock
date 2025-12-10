@@ -49,21 +49,24 @@ export default function NotificationsPage() {
                 // One-time
                 const one = await getOneTimeNotif(businessId, {page: 1, pageSize: 50});
                 setOneTimeNotifs(one);
-            } catch {}
+            } catch {
+            }
             setLoadingOne(false);
 
             try {
                 // Monthly
                 const monthly = await getMonthlyNotif(businessId, {page: 1, pageSize: 50});
                 setMonthlyNotifs(monthly);
-            } catch {}
+            } catch {
+            }
             setLoadingMonthly(false);
 
             try {
                 // Check
                 const checks = await getCheckNotif(businessId, {page: 1, pageSize: 50});
                 setCheckNotifs(checks);
-            } catch {}
+            } catch {
+            }
             setLoadingCheck(false);
         }
 
@@ -74,9 +77,9 @@ export default function NotificationsPage() {
 
     return (
         <div className="w-full flex justify-center !px-4 !pt-24">
-            <div className="w-full max-w-8xl mx-auto p-6 bg-background text-foreground rounded-lg shadow">
+            <div className="w-full max-w-8xl !mx-auto !p-6 bg-background text-foreground !rounded-lg shadow">
 
-                <h2 className="text-2xl font-semibold text-center mb-10">مدیریت اعلانات</h2>
+                <h2 className="!text-2xl !font-semibold text-center !mb-10">مدیریت اعلانات</h2>
 
                 <div className="flex flex-col items-center gap-6 !p-4">
 
@@ -85,46 +88,50 @@ export default function NotificationsPage() {
                     {/* ---------------------------------------------------------- */}
                     <div className="w-full !p-5 border !rounded-xl bg-card shadow-sm flex flex-col justify-between">
                         <div>
-                            <h3 className="text-lg font-semibold mb-3">اعلان‌های یک‌بار</h3>
 
-                            <div className="border !rounded-lg !p-4 bg-background shadow-sm text-sm">
+                            <div className="flex justify-between items-center !mb-3">
+                                <h3 className="!text-base !font-semibold">اعلان‌های یک‌بار</h3>
 
-                                {loadingOne ? (
-                                    <p className="text-gray-500 text-center">در حال بارگذاری...</p>
-                                ) : oneTimeNotifs.length === 0 ? (
-                                    <p className="text-gray-500 text-center">هیچ اعلان یک‌بار ثبت نشده است</p>
-                                ) : (
-                                    <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
-                                        {oneTimeNotifs.map((n) => (
-                                            <li
-                                                key={n.id}
-                                                className={`flex flex-col gap-4 !p-3 !rounded-lg ${n.isActive ? "bg-card" : "bg-muted"} border shadow-sm text-foreground`}
-                                            >
-                                                <div className="flex justify-start items-center gap-1">
-                                                    <p className="font-medium">توضیحات:</p>
-                                                    <p className="text-xs">{n.description}</p>
-                                                </div>
-                                                <div className="flex justify-start items-center gap-1">
-                                                    <p className="font-medium">تاریخ:</p>
-                                                    <p className="text-xs">{formatJalali(n.notificationDate)}</p>
-                                                </div>
-                                                <div className="flex justify-between items-center">
-                                                    <p className="font-medium">{n.dayBeforeNotification} روز قبل</p>
-                                                    <MdNotificationImportant className={`w-6 h-6 ${n.isActive ? "text-confirm" : "text-danger"}`} />
-                                                </div>
-                                            </li>
-                                        ))}
-                                    </ul>
-                                )}
-
+                                <Button
+                                    label={<MdAdd className="w-6 h-6"/>}
+                                    onClick={() => router.push(`/business/${businessId}/notifications/add-oneTime`)}
+                                    customStyle="!py-2 !px-3 !rounded-lg bg-white shadow hover:bg-gray-50"
+                                />
                             </div>
-                        </div>
 
-                        <Button
-                            label={<MdAdd className="w-6 h-6" />}
-                            onClick={() => router.push(`/business/${businessId}/notifications/add-oneTime`)}
-                            className="w-full mt-4 !py-3 !rounded-lg bg-white shadow hover:bg-gray-50"
-                        />
+                            {/*<div className="border !rounded-lg !p-4 bg-background shadow-sm text-sm">*/}
+
+                            {loadingOne ? (
+                                <p className="text-gray-500 text-center">در حال بارگذاری...</p>
+                            ) : oneTimeNotifs.length === 0 ? (
+                                <p className="text-gray-500 text-center">هیچ اعلان یک‌بار ثبت نشده است</p>
+                            ) : (
+                                <ul className="flex gap-4 overflow-x-auto whitespace-nowrap !pb-2">
+                                    {oneTimeNotifs.map((n) => (
+                                        <li
+                                            key={n.id}
+                                            className={`flex flex-col gap-4 flex-shrink-0 w-3xs !p-3 !rounded-lg ${n.isActive ? "bg-card" : "bg-muted"} border shadow-sm text-foreground`}
+                                        >
+                                            <div className="flex justify-start items-center gap-1">
+                                                <p className="font-medium">توضیحات:</p>
+                                                <p className="text-xs">{n.description}</p>
+                                            </div>
+                                            <div className="flex justify-start items-center gap-1">
+                                                <p className="font-medium">تاریخ:</p>
+                                                <p className="text-xs">{formatJalali(n.notificationDate)}</p>
+                                            </div>
+                                            <div className="flex justify-between items-center">
+                                                <p className="font-medium">{n.dayBeforeNotification} روز قبل</p>
+                                                <MdNotificationImportant
+                                                    className={`w-6 h-6 ${n.isActive ? "text-confirm" : "text-danger"}`}/>
+                                            </div>
+                                        </li>
+                                    ))}
+                                </ul>
+                            )}
+
+                            {/*</div>*/}
+                        </div>
                     </div>
 
                     {/* ---------------------------------------------------------- */}
@@ -132,7 +139,15 @@ export default function NotificationsPage() {
                     {/* ---------------------------------------------------------- */}
                     <div className="w-full !p-5 border !rounded-xl bg-card shadow-sm flex flex-col justify-between">
                         <div>
-                            <h3 className="text-lg font-semibold mb-3">اعلان‌های ماهانه</h3>
+                            <div className="flex justify-between items-center !mb-3">
+                                <h3 className="!text-base !font-semibold">اعلان‌های ماهانه</h3>
+
+                                <Button
+                                    label={<MdAdd className="w-6 h-6"/>}
+                                    onClick={() => router.push(`/business/${businessId}/notifications/check`)}
+                                    customStyle="!py-2 !px-3 !rounded-lg bg-white shadow hover:bg-gray-50"
+                                />
+                            </div>
 
                             <div className="border !rounded-lg !p-4 bg-background shadow-sm text-sm">
 
@@ -145,7 +160,7 @@ export default function NotificationsPage() {
                                         {monthlyNotifs.map((n) => (
                                             <li
                                                 key={n.id}
-                                                className={`flex flex-col gap-4 !p-3 !rounded-lg ${n.isActive ? "bg-card" : "bg-muted"} border shadow-sm`}
+                                                className={`flex flex-col gap-4 flex-shrink-0 w-3xs !p-3 !rounded-lg ${n.isActive ? "bg-card" : "bg-muted"} border shadow-sm`}
                                             >
                                                 <div className="flex justify-start items-center gap-1">
                                                     <p className="font-medium">عنوان:</p>
@@ -159,7 +174,8 @@ export default function NotificationsPage() {
 
                                                 <div className="flex justify-between items-center">
                                                     <p className="font-medium">{n.dayBeforeNotification} روز قبل</p>
-                                                    <MdNotificationImportant className={`w-6 h-6 ${n.isActive ? "text-confirm" : "text-danger"}`} />
+                                                    <MdNotificationImportant
+                                                        className={`w-6 h-6 ${n.isActive ? "text-confirm" : "text-danger"}`}/>
                                                 </div>
                                             </li>
                                         ))}
@@ -168,12 +184,6 @@ export default function NotificationsPage() {
 
                             </div>
                         </div>
-
-                        <Button
-                            label={<MdAdd className="w-6 h-6" />}
-                            onClick={() => router.push(`/business/${businessId}/notifications/monthly`)}
-                            className="w-full mt-4 !py-3 !rounded-lg bg-white shadow hover:bg-gray-50"
-                        />
                     </div>
 
                     {/* ---------------------------------------------------------- */}
@@ -181,48 +191,46 @@ export default function NotificationsPage() {
                     {/* ---------------------------------------------------------- */}
                     <div className="w-full !p-5 border !rounded-xl bg-card shadow-sm flex flex-col justify-between">
                         <div>
-                            <h3 className="text-lg font-semibold mb-3">اعلان‌های چک</h3>
+                            <div className="flex justify-between items-center !mb-3">
+                                <h3 className="!text-base !font-semibold">اعلان‌های چک</h3>
 
-                            <div className="border !rounded-lg !p-4 bg-background shadow-sm text-sm">
-
-                                {loadingCheck ? (
-                                    <p className="text-gray-500 text-center">در حال بارگذاری...</p>
-                                ) : checkNotifs.length === 0 ? (
-                                    <p className="text-gray-500 text-center">هیچ اعلان چکی ثبت نشده است</p>
-                                ) : (
-                                    <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
-                                        {checkNotifs.map((n) => (
-                                            <li
-                                                key={n.id}
-                                                className={`flex flex-col gap-4 !p-3 !rounded-lg ${n.isActive ? "bg-card" : "bg-muted"} border shadow-sm`}
-                                            >
-                                                <div className="flex justify-start items-center gap-1">
-                                                    <p className="font-medium">مبلغ:</p>
-                                                    <p className="text-xs">{n.amount}</p>
-                                                </div>
-
-                                                <div className="flex justify-start items-center gap-1">
-                                                    <p className="font-medium">تاریخ چک:</p>
-                                                    <p className="text-xs">{formatJalali(n.checkDate)}</p>
-                                                </div>
-
-                                                <div className="flex justify-between items-center">
-                                                    <p className="font-medium">{n.dayBeforeNotification} روز قبل</p>
-                                                    <MdNotificationImportant className={`w-6 h-6 ${n.isActive ? "text-confirm" : "text-danger"}`} />
-                                                </div>
-                                            </li>
-                                        ))}
-                                    </ul>
-                                )}
-
+                                <Button
+                                    label={<MdAdd className="w-6 h-6"/>}
+                                    onClick={() => router.push(`/business/${businessId}/notifications/add-checkNotif`)}
+                                    customStyle="!py-2 !px-3 !rounded-lg bg-white shadow hover:bg-gray-50"
+                                />
                             </div>
-                        </div>
 
-                        <Button
-                            label={<MdAdd className="w-6 h-6" />}
-                            onClick={() => router.push(`/business/${businessId}/notifications/cheque`)}
-                            className="w-full mt-4 !py-3 !rounded-lg bg-white shadow hover:bg-gray-50"
-                        />
+                            {/*<div className="border !rounded-lg !p-4 bg-background shadow-sm text-sm">*/}
+
+                            {loadingCheck ? (
+                                <p className="text-gray-500 text-center">در حال بارگذاری...</p>
+                            ) : checkNotifs.length === 0 ? (
+                                <p className="text-gray-500 text-center">هیچ اعلان چکی ثبت نشده است</p>
+                            ) : (
+                                // <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
+                                <ul className="flex gap-4 overflow-x-auto whitespace-nowrap !pb-2">
+                                    {checkNotifs.map((n) => (
+                                        <li
+                                            key={n.id}
+                                            className={`flex flex-col gap-4 flex-shrink-0 w-3xs !p-3 !rounded-lg ${n.isActive ? "bg-card" : "bg-muted"} border shadow-sm`}
+                                        >
+                                            <div className="flex justify-start items-center gap-1">
+                                                <p className="font-medium">شماره چک:</p>
+                                                <p className="text-xs">{n.check.checkNumber}</p>
+                                            </div>
+                                            <div className="flex justify-between items-center">
+                                                <p className="font-medium">{n.dayBeforeNotification} روز قبل</p>
+                                                <MdNotificationImportant
+                                                    className={`w-6 h-6 ${n.isActive ? "text-confirm" : "text-danger"}`}/>
+                                            </div>
+                                        </li>
+                                    ))}
+                                </ul>
+                            )}
+
+                            {/*</div>*/}
+                        </div>
                     </div>
 
                 </div>

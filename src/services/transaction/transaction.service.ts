@@ -3,7 +3,7 @@ import {
     AddCashPayload,
     AddCashResponse,
     AddCheckPayload,
-    AddCheckResponse,
+    AddCheckResponse, CheckTransaction,
     getTransactionResponse, UploadTransactionDocumentResponse
 } from "./transaction.types";
 import {endpoints} from "@/config/endpoint.config";
@@ -148,4 +148,21 @@ export async function getStaticFile(id: string): Promise<GetStaticFileResponse> 
         fileName,
         url: fileUrl
     };
+}
+
+export async function getAllChecks(
+    businessId: string,
+    params: { page: number; pageSize: number }
+): Promise<CheckTransaction[]> {
+    const { data } = await http.get<CheckTransaction[]>(
+        endpoints.transaction.getAllChecks(businessId),
+        {
+            params: {
+                page: params.page,
+                pageSize: params.pageSize,
+            },
+        }
+    );
+
+    return data;
 }

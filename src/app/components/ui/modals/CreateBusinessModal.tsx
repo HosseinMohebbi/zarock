@@ -128,27 +128,57 @@ export default function CreateBusinessModal({ open, onClose, onCreated }: Create
                 />
                 
                 {/* File Upload */}
-                <div className="flex flex-col gap-1">
+                <div className="flex flex-col gap-2 mt-2">
                     <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
                         لوگو
                     </label>
+
+                    {/* دکمه آپلود سفارشی */}
+                    <label
+                        htmlFor="logo-upload"
+                        className="cursor-pointer w-auto bg-primary text-white text-center py-2 rounded-md shadow"
+                    >
+                        انتخاب لوگو
+                    </label>
+
+                    {/* ورودی فایل مخفی */}
                     <input
+                        id="logo-upload"
                         type="file"
                         accept="image/*"
+                        className="hidden"
                         onChange={handleFileChange}
-                        className="block w-full text-sm text-gray-500 dark:text-gray-300
-                       file:mr-4 file:py-2 file:px-4
-                       file:rounded-md file:border-0
-                       file:text-sm file:font-semibold
-                       file:bg-green-100 file:text-green-700
-                       hover:file:bg-green-200"
                     />
+
+                    {/* نمایش نام فایل */}
                     {file && (
                         <p className="text-xs text-gray-500 mt-1">
                             فایل انتخاب شده: {file.name}
                         </p>
                     )}
                 </div>
+                
+                {/*<div className="flex flex-col gap-1">*/}
+                {/*    <label className="text-sm font-medium text-gray-700 dark:text-gray-300">*/}
+                {/*        لوگو*/}
+                {/*    </label>*/}
+                {/*    <input*/}
+                {/*        type="file"*/}
+                {/*        accept="image/*"*/}
+                {/*        onChange={handleFileChange}*/}
+                {/*        className="block w-full text-sm text-gray-500 dark:text-gray-300*/}
+                {/*       file:mr-4 file:py-2 file:px-4*/}
+                {/*       file:rounded-md file:border-0*/}
+                {/*       file:text-sm file:font-semibold*/}
+                {/*       file:bg-green-100 file:text-green-700*/}
+                {/*       hover:file:bg-green-200"*/}
+                {/*    />*/}
+                {/*    {file && (*/}
+                {/*        <p className="text-xs text-gray-500 mt-1">*/}
+                {/*            فایل انتخاب شده: {file.name}*/}
+                {/*        </p>*/}
+                {/*    )}*/}
+                {/*</div>*/}
 
                 {/* Buttons */}
                 {/*<div className="flex justify-end gap-3 mt-4">*/}

@@ -88,10 +88,10 @@ export default function ClientsPage() {
                 <h1 className="!text-lg !font-semibold text-right">اشخاص</h1>
 
                 <div
-                    className="flex justify-center items-center w-12 h-12 !rounded-full border border-gray-300 cursor-pointer"
+                    className="flex justify-center items-center w-12 h-10 !bg-primary !rounded border border-gray-300 cursor-pointer"
                     onClick={handleAddClientButton}
                 >
-                    <MdAdd className="w-8 h-8 text-primary"/>
+                    <MdAdd className="w-6 h-6 text-background"/>
                 </div>
             </div>
 

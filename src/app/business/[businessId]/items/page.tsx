@@ -337,9 +337,11 @@ export default function ItemsPage(): JSX.Element {
             {/* header */}
             <div className="flex items-center justify-between !mt-6 !mb-4 !px-3">
                 <h1 className="!text-lg !font-semibold text-right">کالا و خدمات</h1>
-                <div className="w-9 h-9 flex justify-center items-center !rounded-full bg-green-100 cursor-pointer"
-                     onClick={handleAddItem}>
-                    <MdAdd className="w-6 h-6 text-primary"/>
+                <div
+                    className="flex justify-center items-center w-12 h-10 !bg-primary !rounded border border-gray-300 cursor-pointer"
+                    onClick={handleAddItem}
+                >
+                    <MdAdd className="w-6 h-6 text-background"/>
                 </div>
             </div>
 
@@ -384,48 +386,48 @@ export default function ItemsPage(): JSX.Element {
                     className="!px-3 !mt-4 grid grid-cols-1 gap-3 overflow-y-auto sm:grid-cols-2 !pb-4 lg:grid-cols-3 xl:grid-cols-4"
                     style={{maxHeight: 'calc(100vh - 200px)'}}>
                     {filteredItems?.map((item: getItemResponse) => (
-                    <div
-                        key={item.id}
-                        onClick={() => handleOpenItem(item.id)}
-                        className="w-full bg-card !rounded-lg shadow-sm hover:shadow-md transition cursor-pointer overflow-hidden"
-                    >
-                        <div className="flex items-stretch">
-                            <div
-                                className="flex flex-col items-center justify-center w-16 bg-primary text-white !p-2 rounded-r-lg">
-                                <div className="!mb-1">
-                                    {getItemIcon(item.itemType)}
-                                </div>
-                                <span className="text-lg font-semibold">
+                        <div
+                            key={item.id}
+                            onClick={() => handleOpenItem(item.id)}
+                            className="w-full bg-card !rounded-lg shadow-sm hover:shadow-md transition cursor-pointer overflow-hidden"
+                        >
+                            <div className="flex items-stretch">
+                                <div
+                                    className="flex flex-col items-center justify-center w-16 bg-primary text-white !p-2 rounded-r-lg">
+                                    <div className="!mb-1">
+                                        {getItemIcon(item.itemType)}
+                                    </div>
+                                    <span className="text-lg font-semibold">
                                     {getItemTypeFa(item.itemType)}
                                 </span>
-                            </div>
+                                </div>
 
-                            <div className="flex-1 !p-3">
-                                <div className="flex flex-col gap-4 !p-4">
-                                    <div className="flex gap-2 text-lg">
-                                        <h2>گروه: </h2>
-                                        <span className="text-md">{item.group ?? "-"}</span>
-                                    </div>
-                                    <div className="flex gap-2 text-lg">
-                                        <h2>زیر گروه: </h2>
-                                        <span>{item.name ?? "-"}</span>
-                                    </div>
-                                    <div className="flex gap-2 text-lg">
-                                        <h2>قیمت واحد: </h2>
-                                        <span>
+                                <div className="flex-1 !p-3">
+                                    <div className="flex flex-col gap-4 !p-4">
+                                        <div className="flex gap-2 text-lg">
+                                            <h2>گروه: </h2>
+                                            <span className="text-md">{item.group ?? "-"}</span>
+                                        </div>
+                                        <div className="flex gap-2 text-lg">
+                                            <h2>زیر گروه: </h2>
+                                            <span>{item.name ?? "-"}</span>
+                                        </div>
+                                        <div className="flex gap-2 text-lg">
+                                            <h2>قیمت واحد: </h2>
+                                            <span>
                                             {typeof item.defaultUnitPrice === "number"
                                                 ? item.defaultUnitPrice.toLocaleString() + " تومان"
                                                 : item.defaultUnitPrice ?? "-"}
                                         </span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
                     ))}</div>)}
-                </main>
-                );
-            }
+        </main>
+    );
+}
 
 // 'use client';
 // import { useEffect, useState } from "react";

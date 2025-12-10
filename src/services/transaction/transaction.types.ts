@@ -106,3 +106,38 @@ export interface UploadTransactionDocumentResponse {
     fileName: string;
     extension: string;
 }
+
+export interface CheckClient {
+    id: string;
+    fullname: string;
+    nationalCode: string;
+    address: string;
+    credits: number;
+    isJuridicalPerson: boolean;
+    isOwnerClient: boolean;
+    constantDescriptionInvoice: string;
+}
+
+export interface CheckDocument {
+    id: string;
+    fileName: string;
+    extension: string;
+}
+
+export interface CheckTransaction {
+    id: string;
+    toClient: CheckClient;
+    fromClient: CheckClient;
+    amount: number;
+    document: CheckDocument | null;
+    tags: string[];
+    transactionType: "Check";
+    flowType: string;
+    hasNotification: boolean;
+    notificationId: string | null;
+    checkNumber: string;
+    bank: string;
+    receiveDate: string;
+    dueDate: string;
+    state: string;
+}

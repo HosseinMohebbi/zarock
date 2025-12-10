@@ -116,13 +116,13 @@ export default function ProjectDocumentsPage() {
 
                 {/* HEADER */}
                 <div className="flex justify-between items-center !mb-6">
-                    <h2 className="text-xl font-semibold">مدارک پروژه</h2>
+                    <h2 className="text-xl font-semibold">اسناد پروژه</h2>
 
                     <div
-                        className="w-9 h-9 flex justify-center items-center !rounded-full bg-blue-100 cursor-pointer"
+                        className="flex justify-center items-center w-12 h-10 !bg-primary !rounded border border-gray-300 cursor-pointer"
                         onClick={() => document.getElementById("project-doc-upload")?.click()}
                     >
-                        <MdAdd className="w-6 h-6 text-blue-700"/>
+                        <MdAdd className="w-6 h-6 text-background"/>
                     </div>
                     <input
                         id="project-doc-upload"

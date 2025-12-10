@@ -240,12 +240,12 @@ export default function BusinessPage(): JSX.Element {
 
             {/* HEADER */}
             <div className="flex items-center justify-between gap-4 !px-3">
-                <h1 className="text-lg !font-semibold text-right">کسب و کارها</h1>
+                <h1 className="!text-lg !font-semibold text-right">کسب و کارها</h1>
                 <div
-                    className="flex justify-center items-center w-12 h-12 !rounded-full border border-gray-300 cursor-pointer"
+                    className="flex justify-center items-center w-12 h-10 !bg-primary !rounded border border-gray-300 cursor-pointer"
                     onClick={handleAddBusiness}
                 >
-                    <MdAdd className="w-8 h-8 text-green-600"/>
+                    <MdAdd className="w-6 h-6 text-background"/>
                 </div>
             </div>
 
@@ -272,20 +272,20 @@ export default function BusinessPage(): JSX.Element {
                         >
                             {/* --- ROW 1: LOGO + EDIT BUTTON --- */}
                             <div className="w-full flex justify-between items-center">
-                                <BusinessLogo logoId={b.logo?.id}/>
+                                    <BusinessLogo logoId={b.logo?.id}/>
 
                                 <div
-                                    className="w-10 h-10 flex justify-center items-center rounded-full bg-green-100 cursor-pointer"
+                                    className="w-10 h-10 flex justify-center items-center rounded-full bg-primary cursor-pointer"
                                     onClick={(e) => handleEditBusiness(e, b.id)}
                                 >
-                                    <MdEdit className="w-6 h-6 text-green-700"/>
+                                    <MdEdit className="w-6 h-6 text-background"/>
                                 </div>
                             </div>
 
                             {/* --- BUSINESS NAME --- */}
                             <div className="flex justify-start items-baseline gap-2 text-xl w-full">
                                 <p className="text-lg font-semibold flex-shrink-0">نام:</p>
-                                <h3 className="font-semibold group-hover:text-green-700 truncate"
+                                <h3 className="!text-md group-hover:text-green-700 truncate"
                                     title={b.name}>
                                     {b.name}
                                 </h3>
@@ -294,7 +294,7 @@ export default function BusinessPage(): JSX.Element {
                             {/* --- DESCRIPTION --- */}
                             <div className="flex justify-start items-baseline gap-2 text-xl w-full">
                                 <p className="text-lg font-semibold flex-shrink-0">توضیحات:</p>
-                                <p className="mt-1 text-md truncate" style={{maxWidth: 'calc(100% - 100px)'}}
+                                <p className="!mt-1 !text-md truncate" style={{maxWidth: 'calc(100% - 100px)'}}
                                    title={b.description}>
                                     {b.description}
                                 </p>
@@ -303,7 +303,7 @@ export default function BusinessPage(): JSX.Element {
                             {/* --- CREATED DATE --- */}
                             <div className="flex justify-start items-center gap-2 !mt-2 text-xl w-full">
                                 <p className="text-lg font-semibold">ساخت:</p>
-                                <p className="mt-1 text-md">
+                                <p className="!mt-1 !text-md">
                                     {new Date(b.createdAt).toLocaleDateString('fa-IR')}
                                 </p>
                             </div>

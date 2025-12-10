@@ -59,6 +59,7 @@ export const endpoints = {
         updateCash: (businessId: string, cashId: string) => `/api/Transaction/${businessId}/cash/${cashId}`,
         deleteCash: (businessId: string, cashId: string) => `/api/Transaction/${businessId}/cash/${cashId}`,
         getAll: (businessId: string) => `/api/Transaction/${businessId}/all`,
+        getAllChecks: (businessId: string) => `/api/Transaction/${businessId}/check/all`,
         uploadTransactionDocument: `/api/Static/attachTransactionDocument`,
     },
     project: {
