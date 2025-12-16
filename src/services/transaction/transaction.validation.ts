@@ -42,24 +42,11 @@ export function checkValidate(form: AddCheckPayload) {
         e.amount = "مبلغ معتبر نیست";
     }
 
-    // if (!form.receiveDate) {
-    //     e.receiveDate = "تاریخ دریافت انتخاب نشده است";
-    // } else if (isNaN(Date.parse(form.receiveDate))) {
-    //     e.receiveDate = "تاریخ دریافت معتبر نیست";
-    // }
-
     if (!form.receiveDate.trim())
         e.receiveDate = "تاریخ دریافت انتخاب نشده است";
 
     if (!form.dueDate.trim())
         e.receiveDate = "تاریخ سررسید انتخاب نشده است";
-
-    
-    // if (!form.dueDate) {
-    //     e.dueDate = "تاریخ سررسید انتخاب نشده است";
-    // } else if (isNaN(Date.parse(form.dueDate))) {
-    //     e.dueDate = "تاریخ سررسید معتبر نیست";
-    // }
 
    
     if (form.receiveDate && form.dueDate) {

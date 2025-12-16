@@ -1,9 +1,6 @@
 'use client';
-import {useState} from "react";
 import {useRouter, useParams} from "next/navigation";
-import {cn} from "@/utils/cn";
 import Card from "@/app/components/ui/Card";
-import {Car, Wallet} from "lucide-react"
 import {
     MdPeople,
     MdInventory,
@@ -68,9 +65,6 @@ const dashboardCards = [
 ]
 
 export default function Home() {
-    const [name, setName] = useState('');
-    const [email, setEmail] = useState('');
-
     const router = useRouter();
     const params = useParams() as { businessId?: string };
     const businessId = params.businessId ?? '';
@@ -91,9 +85,6 @@ export default function Home() {
                     ))}
                 </div>
             </div>
-            {/*<div className="flex flex-col w-full min-h-screen items-center justify-center gap-4 font-sans bg-background text-foreground">*/}
-            {/*    <Card customStyle="w-80" title="تراکنش ها" icon={<MdAccountBalanceWallet className="w-8 h-8 text-green-600" />}/>*/}
-            {/*</div>*/}
         </div>
     );
 }

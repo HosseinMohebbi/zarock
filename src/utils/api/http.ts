@@ -1,22 +1,11 @@
-import axios, { AxiosInstance } from "axios";
-
-// export const http: AxiosInstance = axios.create({
-//     baseURL: process.env.NEXT_PUBLIC_API_BASE_URL || "",
-//     headers: {
-//         "Content-Type": "application/json",
-//         Accept: "application/json",
-//     },
-//     timeout: 15_000,
-// });
+import axios from "axios";
 
 export const http = axios.create({
-    baseURL: "", // همون اوریجین فرانت
+    baseURL: "", 
     headers: { "Content-Type": "application/json", Accept: "application/json" },
     timeout: 15_000,
-    // withCredentials: true,
 });
 
-// اختیاری: افزودن توکن از localStorage در سمت کلاینت
 http.interceptors.request.use((config) => {
     if (typeof window !== "undefined") {
         const token = localStorage.getItem("auth_token");
@@ -26,8 +15,7 @@ http.interceptors.request.use((config) => {
 });
 
 
-//  مدیریت خطای 401 (توکن منقضی شده)
-let isRedirecting = false; // جلوگیری از چندبار ریدایرکت
+let isRedirecting = false;
 
 http.interceptors.response.use(
     (response) => response,
@@ -37,15 +25,11 @@ http.interceptors.response.use(
             const status = error.response?.status;
 
             if (status === 401) {
-                console.warn("🔒 Token expired → redirecting to login");
-
                 if (!isRedirecting) {
                     isRedirecting = true;
-
-                    // پاک کردن توکن
+                    
                     localStorage.removeItem("auth_token");
-
-                    // ریدایرکت به لاگین
+                    
                     window.location.href = "/login";
                 }
             }

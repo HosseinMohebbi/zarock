@@ -121,7 +121,12 @@ import {useParams, useRouter} from "next/navigation";
 import Input from "@/app/components/ui/Input";
 import Select from "@/app/components/ui/SelectInput";
 import {getAllClients} from "@/services/client/client.service";
-import {getCashById, updateCash, deleteCash} from "@/services/transaction/transaction.service";
+import {
+    getCashById,
+    updateCash,
+    deleteCash,
+    uploadTransactionDocument
+} from "@/services/transaction/transaction.service";
 import DatePicker from "react-multi-date-picker";
 import persian from "react-date-object/calendars/persian";
 import persian_fa from "react-date-object/locales/persian_fa";
@@ -131,6 +136,7 @@ import Button from "@/app/components/ui/Button";
 import {MdDelete} from "react-icons/md";
 import {toast} from "react-toastify";
 import ConfirmModal from "@/app/components/ui/ConfirmModal";
+import TransactionDocument from "@/app/components/ui/TransactionDocument";
 
 dayjs.extend(jalaliday);
 
@@ -152,6 +158,8 @@ export default function EditCashPage() {
         toClient: "",
         description: "",
         tags: "",
+        attachment: null as File | null,
+        documentId: undefined as string | undefined,
     });
 
     useEffect(() => {
@@ -170,6 +178,8 @@ export default function EditCashPage() {
                     toClient: cashData.toClient?.id,
                     description: cashData.description,
                     tags: cashData.tags.join(", "),
+                    attachment: null,
+                    documentId: cashData.document?.id,
                 });
                 setClients(clientsData);
             } catch (err) {
@@ -190,6 +200,11 @@ export default function EditCashPage() {
                 amount: Number(form.amount),
                 tags: form.tags.split(",").map((t) => t.trim()).filter(Boolean),
             });
+            
+            if (form.attachment) {
+                await uploadTransactionDocument(transactionId, form.attachment);
+            }
+            
             router.push(`/business/${businessId}/transactions`);
         } catch (err) {
             console.error("Failed to update cash", err);
@@ -235,12 +250,14 @@ export default function EditCashPage() {
                 <div className="flex flex-col gap-5">
 
                     <Input
+                        name="amount"
                         label="مبلغ"
                         value={form.amount}
                         onChange={(e) => setForm({...form, amount: e.target.value})}
                     />
 
                     <Input
+                        name="trackingCode"
                         label="کد پیگیری"
                         value={form.trackingCode}
                         onChange={(e) => setForm({...form, trackingCode: e.target.value})}
@@ -263,12 +280,47 @@ export default function EditCashPage() {
                     </div>
 
                     <Input
+                        name="description"
                         label="توضیحات"
                         value={form.description}
                         onChange={(e) =>
                             setForm({...form, description: e.target.value})
                         }
                     />
+
+                    {form.documentId && (
+                        <div className="flex items-center gap-3">
+                            <TransactionDocument docId={form.documentId} transactionTitle="نمایش رسید"/>
+                        </div>
+                    )}
+
+                    <div className="flex flex-col gap-2">
+                        <label
+                            htmlFor="file-upload"
+                            className="cursor-pointer w-auto bg-primary text-white text-center py-2 rounded-md shadow"
+                        >
+                            جایگزینی رسید
+                        </label>
+
+                        <input
+                            id="file-upload"
+                            type="file"
+                            accept="image/*"
+                            className="hidden"
+                            onChange={(e) =>
+                                setForm({
+                                    ...form,
+                                    attachment: e.target.files?.[0] || null,
+                                })
+                            }
+                        />
+
+                        {form.attachment && (
+                            <p className="text-xs text-gray-500 mt-1">
+                                فایل جدید: {form.attachment.name}
+                            </p>
+                        )}
+                    </div>
 
                     <div className="flex justify-end items-center gap-3 mt-3">
                         <Button
@@ -278,7 +330,7 @@ export default function EditCashPage() {
                             customStyle="!px-6 !py-2 !bg-danger text-white !rounded-md"
                         />
                         <Button
-                            label="ذخیره"
+                            label="ویرایش"
                             onClick={handleSave}
                             disabled={saving}
                             customStyle="!px-6 !py-2 !bg-confirm text-white !rounded-md"
@@ -287,7 +339,8 @@ export default function EditCashPage() {
                 </div>
             </div>
             <ConfirmModal title="حذف تراکنش" isOpen={showConfirm}
-                          message="آیا مطمئن هستید که می‌خواهید تراکنش را حذف کنید؟" onConfirm={confirmDelete}
+                          message="آیا از حذف این تراکنش مطمئن هستید؟ این عملیات غیر قابل بازگشت است."
+                          onConfirm={confirmDelete}
                           onCancel={() => setShowConfirm(false)}/>
         </div>
     );

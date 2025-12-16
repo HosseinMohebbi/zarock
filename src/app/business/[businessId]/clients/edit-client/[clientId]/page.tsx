@@ -1,4 +1,3 @@
-// src/app/.../EditClient.tsx
 'use client';
 
 import {useState} from "react";
@@ -13,7 +12,6 @@ export default function EditClient() {
     const clientId = params.clientId ?? '';
 
     const [activeTab, setActiveTab] = useState<'info' | 'bank'>('info');
-    console.log(activeTab);
 
     if (!businessId || !clientId) {
         return (
@@ -50,7 +48,6 @@ export default function EditClient() {
                 </div>
 
                 {/* هر دو کامپوننت mount هستند، فقط یکی مخفی می‌شود */}
-                {/*<div className="w-full flex justify-center">*/}
                     <div className={activeTab === 'info' ? 'block' : 'hidden'}>
                         <ClientInfoForm businessId={businessId} clientId={clientId}/>
                     </div>
@@ -58,7 +55,6 @@ export default function EditClient() {
                     <div className={activeTab === 'bank' ? 'block' : 'hidden'}>
                         <ClientBankAccountsForm businessId={businessId} clientId={clientId}/>
                     </div>
-                {/*</div>*/}
             </div>
         </div>
     );

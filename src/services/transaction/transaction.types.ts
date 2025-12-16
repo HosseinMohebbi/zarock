@@ -20,14 +20,14 @@ export interface AddCheckResponse {
     amount: number;
     document: Document;
     tags: string[];
-    transactionType: "Check";              // چون آبجکت توی نمونه Check بود
-    flowType: FlowType;                    // "None" | "Inflow" | "Outflow"
+    transactionType: "Check";              
+    flowType: FlowType;                    
     hasNotification: boolean;
     notificationId: string;
     checkNumber: string;
     bank: string;
-    receiveDate: string;                   // ISO string
-    dueDate: string;                       // ISO string
+    receiveDate: string;                   
+    dueDate: string;                      
     state: StateType;
 }
 
@@ -50,8 +50,8 @@ export interface AddCashResponse {
     amount: number;
     document: Document;
     tags: string[];
-    transactionType: TransactionType; // می‌تونی مقادیر واقعی‌اش رو اصلاح کنی
-    flowType: "None" | "Inflow" | "Outflow"; // همینطور برای نوع جریان
+    transactionType: TransactionType; 
+    flowType: "None" | "Inflow" | "Outflow";
     hasNotification: boolean;
     notificationId: string;
     date: string;

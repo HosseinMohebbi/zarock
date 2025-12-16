@@ -1,8 +1,6 @@
 import {http} from "@/utils/api/http";
 import {AddBusinessPayload, AddBusinessResponse, Business, UpdateBusinessPayload, UploadBusinessLogoResponse, GetStaticFileResponse} from "./business.types"
 import {endpoints} from "@/config/endpoint.config";
-import axios from "axios";
-
 
 export async function addBusiness(payload: AddBusinessPayload): Promise<AddBusinessResponse> {
     const { data } = await http.post<AddBusinessResponse>(
@@ -53,7 +51,6 @@ export async function getStaticFile(id: string): Promise<GetStaticFileResponse> 
         responseType: "blob",
     });
 
-    // گرفتن نام فایل از هدر
     const contentDisposition = response.headers["content-disposition"];
     let fileName = "download";
 
@@ -63,8 +60,7 @@ export async function getStaticFile(id: string): Promise<GetStaticFileResponse> 
             fileName = decodeURIComponent(match[1] || match[2]);
         }
     }
-
-    // ساخت لینک دانلود
+    
     const fileUrl = URL.createObjectURL(response.data);
 
     return {
@@ -74,25 +70,6 @@ export async function getStaticFile(id: string): Promise<GetStaticFileResponse> 
     };
 }
 
-// export async function createBusiness(payload: AddBusinessPayload & { logo?: File }): Promise<AddBusinessResponse> {
-//     const formData = new FormData();
-//     formData.append("name", payload.name);
-//     formData.append("description", payload.description);
-//     if (payload.logo) formData.append("logo", payload.logo);
-//
-//     const { data } = await http.post<AddBusinessResponse>(
-//         endpoints.business.createBusiness,
-//         formData,
-//         {
-//             headers: {
-//                 "Content-Type": "multipart/form-data"
-//             }
-//         }
-//     );
-//     return data;
-// }
-
-
 export async function getAllBusiness(
     params: { page: number; pageSize: number },
 ): Promise<AddBusinessResponse[]> {
@@ -100,23 +77,14 @@ export async function getAllBusiness(
         endpoints.business.getAllBusiness,
         {
             params,
-            // withCredentials: true,
         }
     );
     return data;
 }
 
-// export async function getAllBusiness(params: { page: number; pageSize: number }) {
-//     const res = await axios.post("/api/proxy", {
-//         path: "/api/Business/all",
-//         method: "GET",
-//         params
-//     });
-//     return res.data;
-// }
 
-export async function getBusinessById(id: string): Promise<Business[]> {
-    const { data } = await http.get<Business[]>(endpoints.business.getBusinessById(id));
+export async function getBusinessById(id: string): Promise<Business> {
+    const { data } = await http.get<Business>(endpoints.business.getBusinessById(id));
     return data;
 }
 

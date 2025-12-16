@@ -101,13 +101,12 @@ export default function ClientInfoForm({ businessId, clientId }: Props) {
                 businessId,
                 clientId,
                 payload: {
-                    fullName,
+                    fullname: fullName,
                     nationalCode,
                     address,
                     constantDescriptionInvoice: invoiceDesc,
                     isJuridicalPerson,
                     isOwnerClient,
-                    tags: client?.tags ?? []
                 }
             })).unwrap();
 
@@ -193,7 +192,7 @@ export default function ClientInfoForm({ businessId, clientId }: Props) {
                             <input
                                 type="radio"
                                 name="clientType"
-                                checked={isJuridicalPerson === true}
+                                checked={isJuridicalPerson}
                                 onChange={() => setIsJuridicalPerson(true)}
                                 className="w-4 h-4 accent-primary"
                             />
@@ -204,7 +203,7 @@ export default function ClientInfoForm({ businessId, clientId }: Props) {
                             <input
                                 type="radio"
                                 name="clientType"
-                                checked={isJuridicalPerson === false}
+                                checked={!isJuridicalPerson}
                                 onChange={() => setIsJuridicalPerson(false)}
                                 className="w-4 h-4 accent-primary"
                             />
@@ -232,7 +231,7 @@ export default function ClientInfoForm({ businessId, clientId }: Props) {
             <ConfirmModal
                 title="حذف مشتری"
                 isOpen={showConfirm}
-                message="آیا مطمئن هستید که می‌خواهید این مشتری را حذف کنید؟"
+                message="آیا از حذف این شخص مطمئن هستید؟ این عملیات غیر قابل بازگشت است."
                 onConfirm={confirmDelete}
                 onCancel={() => setShowConfirm(false)}
             />

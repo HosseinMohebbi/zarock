@@ -4,6 +4,11 @@ export function validate(form: AddInvoicePayload) {
     const e: Record<string, string> = {};
     if (!form.fromClient) e.fromClient = 'فروشنده را انتخاب کنید';
     if (!form.toClient) e.toClient = 'خریدار را انتخاب کنید';
+    if (form.hint) {
+        if (form.hint.length < 2) {
+            e.hint = 'توضیح کوتاه در صورت وارد شدن باید حداقل 2 کاراکتر باشد.';
+        }
+    }
 
     if (form.invoiceItems && form.invoiceItems.length > 0) {
         form.invoiceItems.forEach((item, index) => {
@@ -21,6 +26,6 @@ export function validate(form: AddInvoicePayload) {
             }
         });
     }
-    
+
     return e;
 }

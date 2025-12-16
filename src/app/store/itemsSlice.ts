@@ -1,4 +1,3 @@
-// /store/itemsSlice.ts
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import {filterItems, getAllItems, updateItem, deleteItem} from '@/services/item/item.service';
 import { getItemResponse } from '@/services/item/item.types';
@@ -15,7 +14,6 @@ const initialState: ItemsState = {
     error: null,
 };
 
-// Async thunk برای گرفتن همه آیتم‌ها
 export const fetchItems = createAsyncThunk<
     getItemResponse[],
     {
@@ -38,7 +36,6 @@ export const fetchItems = createAsyncThunk<
     }
 );
 
-// Async thunk برای آپدیت یک آیتم
 export const updateItemThunk = createAsyncThunk<
     getItemResponse,
     { businessId: string; itemId: string; payload: Partial<getItemResponse> }
@@ -54,16 +51,15 @@ export const updateItemThunk = createAsyncThunk<
     }
 );
 
-// Async thunk برای حذف آیتم
 export const deleteItemThunk = createAsyncThunk<
-    string, // خروجی: فقط id آیتمی که حذف شده
+    string,
     { businessId: string; itemId: string }
 >(
     'items/deleteItem',
     async ({ businessId, itemId }, { rejectWithValue }) => {
         try {
-            await deleteItem(businessId, itemId); // ← صدا زدن API حذف
-            return itemId; // ← فقط id را برمی‌گردانیم تا از state حذف کنیم
+            await deleteItem(businessId, itemId);
+            return itemId; 
         } catch (err: any) {
             return rejectWithValue(err?.message || 'خطا در حذف آیتم');
         }
@@ -93,7 +89,6 @@ const itemsSlice = createSlice({
                 state.error = action.payload as string;
             })
             .addCase(updateItemThunk.fulfilled, (state, action: PayloadAction<getItemResponse>) => {
-                // آپدیت آیتم در لیست Redux
                 const idx = state.items.findIndex((i) => i.id === action.payload.id);
                 if (idx !== -1) state.items[idx] = action.payload;
             })
@@ -103,7 +98,6 @@ const itemsSlice = createSlice({
     },
 });
 
-// Selectorها
 export const selectItems = (state: { items: ItemsState }) => state.items.items;
 export const selectItemsLoading = (state: { items: ItemsState }) => state.items.loading;
 export const selectItemsError = (state: { items: ItemsState }) => state.items.error;

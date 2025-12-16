@@ -5,7 +5,7 @@ import {useParams, useRouter} from 'next/navigation';
 import Input from '@/app/components/ui/Input';
 import {createInvoice} from '@/services/invoice/invoice.service';
 import Button from '@/app/components/ui/Button';
-import Select, {SelectOption} from '@/app/components/ui/SelectInput';
+import Select from '@/app/components/ui/SelectInput';
 import {MdAdd, MdMinimize} from "react-icons/md";
 import {getAllClients} from '@/services/client/client.service';
 import {Client} from '@/services/client/client.types';
@@ -18,6 +18,7 @@ import DatePicker from "react-multi-date-picker";
 import {toast} from "react-toastify";
 import {useDispatch} from "react-redux";
 import {refetchInvoices} from "@/app/store/invoivesSlice";
+import {AppDispatch} from "@/app/store/store";
 
 dayjs.extend(jalaliday);
 
@@ -44,7 +45,7 @@ export default function AddInvoiceFormPage() {
     const params = useParams() as { businessId?: string };
     const router = useRouter();
     const businessId = params?.businessId ?? '';
-    const dispatch = useDispatch();
+    const dispatch = useDispatch<AppDispatch>();
 
     const [form, setForm] = useState<FormState>({
         hint: '',
@@ -60,7 +61,6 @@ export default function AddInvoiceFormPage() {
     });
 
     const [clients, setClients] = useState<Client[]>([]);
-    console.log(clients)
     const [errors, setErrors] = useState<Record<string, string>>({});
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState<string | null>(null);
@@ -78,18 +78,16 @@ export default function AddInvoiceFormPage() {
 
         fetchClients();
     }, [businessId]);
-
-    // Handle Submit
+    
     async function handleSubmit(ev?: React.FormEvent) {
         ev?.preventDefault();
         setMessage(null);
-        console.log("Form Submitted!", form);
         const v = validate(form)
         if (Object.keys(v).length) {
             setErrors(v)
             return
         }
-        
+
         if (!businessId) {
             setMessage('شناسه کسب‌وکار پیدا نشد');
             return;
@@ -109,15 +107,10 @@ export default function AddInvoiceFormPage() {
                 description: form.description,
                 invoiceItems: form.invoiceItems,
             };
-
-            console.log("Payload to send:", payload);
-
+            
             await createInvoice(businessId, payload);
-            dispatch(refetchInvoices({ businessId }));
-
-            console.log("Payload to send:", payload);
-
-            // setMessage('فاکتور با موفقیت ایجاد شد');
+            dispatch(refetchInvoices({businessId}));
+            
             toast.success('فاکتور با موفقیت اضافه شد')
             setForm({
                 hint: '',
@@ -141,12 +134,7 @@ export default function AddInvoiceFormPage() {
         }
     }
 
-    // Toggle Item Form
-    function toggleItemForm() {
-        setForm((f) => ({...f, showItemForm: !f.showItemForm}));
-    }
-
-    // Handle Item Change
+    
     function handleItemChange(index: number, field: string, value: string) {
         setForm((f) => {
             const invoiceItems = [...f.invoiceItems];
@@ -171,14 +159,6 @@ export default function AddInvoiceFormPage() {
         }));
     }
 
-    const handleDateChange = (date: Date) => {
-        const formattedDate = date ? dayjs(date).calendar('jalali').toISOString() : '';
-        setForm((f) => ({
-            ...f,
-            date: formattedDate, // ذخیره تاریخ به فرمت شمسی
-        }));
-    };
-
     const handleCancel = () => {
         router.push(`/business/${businessId}/invoices`);
     };
@@ -195,13 +175,15 @@ export default function AddInvoiceFormPage() {
                 )}
 
                 <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+
                     <Input
                         label="توضیح کوتاه"
                         name="hint"
                         value={form.hint}
                         onChange={(e) => setForm((f) => ({...f, hint: e.target.value}))}
+                        error={errors.hint}
                     />
-                    {/* فروشنده */}
+
                     <Select
                         label="فروشنده"
                         value={form.fromClient}
@@ -213,7 +195,6 @@ export default function AddInvoiceFormPage() {
                     />
                     {errors.fromClient && <span className="text-red-500 text-sm">{errors.fromClient}</span>}
 
-                    {/* خریدار */}
                     <Select
                         label="خریدار"
                         value={form.toClient}
@@ -255,7 +236,6 @@ export default function AddInvoiceFormPage() {
                         </div>
                     </div>
 
-                    {/* مالیات */}
                     <Input
                         label="مالیات"
                         name="taxPercent"
@@ -264,7 +244,6 @@ export default function AddInvoiceFormPage() {
                         onChange={(e) => setForm((f) => ({...f, taxPercent: e.target.value}))}
                     />
 
-                    {/* تخفیف */}
                     <Input
                         label="تخفیف"
                         name="discountPercent"
@@ -273,7 +252,6 @@ export default function AddInvoiceFormPage() {
                         onChange={(e) => setForm((f) => ({...f, discountPercent: e.target.value}))}
                     />
 
-                    {/* تاریخ */}
                     <div className="flex items-center gap-2">
                         <label className="label">تاریخ فاکتور </label>
                         <DatePicker
@@ -293,7 +271,7 @@ export default function AddInvoiceFormPage() {
                             className="w-full border rounded-md px-3 py-2"
                         />
                     </div>
-                    {/* توضیحات */}
+
                     <Input
                         label="توضیحات"
                         name="description"
@@ -319,7 +297,7 @@ export default function AddInvoiceFormPage() {
                                         }))
                                     }
                                 >
-                                    <MdMinimize className="w-6 h-6" />
+                                    <MdMinimize className="w-6 h-6"/>
                                 </button>
                             </div>
 
@@ -371,17 +349,14 @@ export default function AddInvoiceFormPage() {
                             />
                         </div>
                     ))}
-                    
-                    {/* دکمه افزودن آیتم */}
+
                     <div className="flex justify-center items-center gap-3 !mt-3">
-                        {/*<Button label={<MdAdd className="w-5 h-5"/>} type="button" onClick={toggleItemForm} customStyle="w-8 h-8    rounded-full"/>*/}
                         <button
                             type="button"
                             className="w-8 h-8 flex justify-center items-center !rounded-full !bg-primary cursor-pointer"
                             onClick={addNewItem}><MdAdd className="w-5 h-5"/></button>
                     </div>
 
-                    {/* دکمه ارسال فرم */}
                     <div className="flex justify-end items-center gap-3 !mt-3">
                         <Button
                             label="لغو"
@@ -395,9 +370,6 @@ export default function AddInvoiceFormPage() {
                             customStyle="!bg-confirm"
                         />
                     </div>
-                    {/*<div className="flex justify-center mt-6">*/}
-                    {/*    <Button label="ایجاد فاکتور" type="submit" loading={loading}/>*/}
-                    {/*</div>*/}
                 </form>
             </div>
         </div>

@@ -12,7 +12,6 @@ import persian from "react-date-object/calendars/persian";
 import persian_fa from "react-date-object/locales/persian_fa";
 import dayjs from "dayjs";
 import jalaliday from "jalaliday";
-
 import {getAllClients} from '@/services/client/client.service';
 import {Client} from '@/services/client/client.types';
 import {getAllInvoice, updateInvoice, updateInvoiceArchive, deleteInvoice} from '@/services/invoice/invoice.service';
@@ -21,6 +20,7 @@ import {validate} from '@/services/invoice/invoice.validation';
 import {useDispatch, useSelector} from "react-redux";
 import {refetchInvoices, selectInvoiceById} from "@/app/store/invoivesSlice";
 import {toast} from "react-toastify";
+import {AppDispatch} from "@/app/store/store";
 
 
 dayjs.extend(jalaliday);
@@ -58,7 +58,7 @@ export default function EditInvoiceFormPage() {
     );
 
     const [invoice, setInvoice] = useState<GetAllInvoicesResponse | null>(invoiceFromRedux || null);
-    const dispatch = useDispatch();
+    const dispatch = useDispatch<AppDispatch>();
 
     const [form, setForm] = useState<FormState>({
         hint: '',
@@ -99,8 +99,7 @@ export default function EditInvoiceFormPage() {
             setArchiveLoading(false);
         }
     }
-
-    // Fetch clients
+    
     useEffect(() => {
         async function fetchClients() {
             try {
@@ -113,11 +112,9 @@ export default function EditInvoiceFormPage() {
 
         fetchClients();
     }, [businessId]);
-
-    // Fetch invoice by finding it in getAllInvoice
+    
     useEffect(() => {
         if (!invoice && businessId) {
-            // اگر فاکتور در redux نبود، کل فاکتورها را بگیریم
             getAllInvoice({page: 1, pageSize: 1000}, businessId)
                 .then((all) => {
                     const found = all.find(inv => inv.id === invoiceId);
@@ -157,8 +154,7 @@ export default function EditInvoiceFormPage() {
 
         try {
             await deleteInvoice(businessId, invoiceId);
-
-            // حذف از Redux پس از حذف واقعی
+            
             await dispatch(refetchInvoices({businessId})).unwrap();
 
             toast.success("فاکتور با موفقیت حذف شد.");
@@ -206,8 +202,7 @@ export default function EditInvoiceFormPage() {
             await updateInvoice(businessId, invoiceId, payload);
 
             await dispatch(refetchInvoices({businessId})).unwrap();
-
-            // setMessage('فاکتور با موفقیت ویرایش شد');
+            
             toast.success('فاکتور با موفقیت ویرایش شد.')
             router.push(`/business/${businessId}/invoices`);
         } catch (err: any) {
@@ -217,10 +212,6 @@ export default function EditInvoiceFormPage() {
         } finally {
             setLoading(false);
         }
-    }
-
-    function toggleItemForm() {
-        setForm(f => ({...f, showItemForm: !f.showItemForm}));
     }
 
     function handleItemChange(index: number, field: string, value: string) {
@@ -252,8 +243,7 @@ export default function EditInvoiceFormPage() {
     function handleCancelForm() {
         router.push(`/business/${businessId}/invoices`);
     }
-
-
+    
     return (
         <div className="w-full flex justify-center !px-4 !pt-24">
             <div className="w-full max-w-lg mx-auto !p-6 bg-background text-foreground rounded-lg shadow">
@@ -282,9 +272,9 @@ export default function EditInvoiceFormPage() {
                         name="hint"
                         value={form.hint}
                         onChange={(e) => setForm(f => ({...f, hint: e.target.value}))}
+                        error={errors.hint}
                     />
-
-                    {/* فروشنده */}
+                    
                     <Select
                         disabled={form.isArchived}
                         label="فروشنده"
@@ -293,8 +283,7 @@ export default function EditInvoiceFormPage() {
                         options={clients.map(c => ({value: c.id, label: c.fullname}))}
                     />
                     {errors.fromClient && <span className="text-red-500 text-sm">{errors.fromClient}</span>}
-
-                    {/* خریدار */}
+                    
                     <Select
                         disabled={form.isArchived}
                         label="خریدار"
@@ -470,7 +459,7 @@ export default function EditInvoiceFormPage() {
                             </div>
                             <div className="flex justify-end items-center gap-2">
                                 <Button label="لغو" type="button" onClick={handleCancelForm} customStyle="!bg-danger"/>
-                                <Button label="ویرایش فاکتور" type="submit" loading={loading}
+                                <Button label="ویرایش" type="submit" loading={loading}
                                         customStyle="!bg-confirm"/>
                             </div>
                         </div>

@@ -6,13 +6,12 @@ import Link from "next/link";
 import {cn} from "@/utils/cn";
 import Input from "@/app/components/ui/Input";
 import Button from "@/app/components/ui/Button";
-import {loginUser, type LoginResponse} from "@/services/auth";
-import {useUser} from '@/context/UserContext';
+import {loginUser} from "@/services/auth/auth.service";
+import {LoginPayload, LoginResponse} from "@/services/auth/auth.types";
 import {loginValidate} from '@/services/auth/auth.validation'
-import {LoginPayload} from "@/services/auth/auth.types";
+import {useUser} from '@/context/UserContext';
 import {toast} from "react-toastify";
 
-// type Errors = Partial<{ userName: string; password: string; server: string }>;
 
 type FormState = {
     userName: string
@@ -22,24 +21,14 @@ type FormState = {
 export default function LoginPage(): JSX.Element {
     const router = useRouter();
     const {refresh} = useUser();
-
-    // const [userName, setUserName] = useState<string>("");
-    // const [password, setPassword] = useState<string>("");
+    
     const [form, setForm] = useState<FormState>({
         userName: '',
         password: '',
     })
     const [errors, setErrors] = useState<Record<string, string>>({})
     const [loading, setLoading] = useState(false)
-    const [message, setMessage] = useState<string | null>(null)
-
-    // const validate = (): Errors => {
-    //     const e: Errors = {};
-    //     if (!userName.trim()) e.userName = "نام کاربری لازم است";
-    //     if (password.length < 1) e.password = "رمز عبور لازم است";
-    //     return e;
-    // };
-
+    
     const onSubmit = async (ev: React.FormEvent<HTMLFormElement>) => {
         ev.preventDefault();
         setErrors({});
@@ -62,7 +51,6 @@ export default function LoginPage(): JSX.Element {
                 localStorage.setItem("auth_token", res.token);
                 localStorage.setItem("auth_expires", res.expires);
             }
-            // ریدایرکت دلخواه:
             
             await refresh();
             setForm({
@@ -83,29 +71,6 @@ export default function LoginPage(): JSX.Element {
         }
     };
 
-    // const onSubmit = async (ev: React.FormEvent<HTMLFormElement>) => {
-    //     ev.preventDefault();
-    //     setErrors({});
-    //     const e = validate();
-    //     if (Object.keys(e).length) {
-    //         setErrors(e);
-    //         return;
-    //     }
-    //     setLoading(true);
-    //     try {
-    //         await loginUser({ userName, password }); // بدون res.token
-    //         await refresh(); // می‌گیره کاربر رو از cookie
-    //         router.push("/business");
-    //     } catch (err: any) {
-    //         const msg =
-    //             err?.message ||
-    //             "خطا در ورود";
-    //         setErrors({ server: msg });
-    //     } finally {
-    //         setLoading(false);
-    //     }
-    // };
-
     const update = (key: string, value: any) => {
         setForm(prev => ({...prev, [key]: value}));
     };
@@ -115,6 +80,7 @@ export default function LoginPage(): JSX.Element {
             <form onSubmit={onSubmit} dir="rtl"
                   className="w-full h-full flex flex-col justify-center items-center gap-4  font-sans bg-background text-foreground">
                 <h2 className="text-2xl font-semibold mb-4 text-center">ورود</h2>
+                
                 <Input
                     label="نام کاربری"
                     name="username"
@@ -125,9 +91,7 @@ export default function LoginPage(): JSX.Element {
                     // onChange={(e) => setUserName(e.target.value)}
                     error={errors.userName}
                 />
-                {/*{errors.userName && (*/}
-                {/*    <p className="text-sm text-red-500 mt-1">{errors.userName}</p>*/}
-                {/*)}*/}
+      
                 <Input
                     label="رمز عبور"
                     name="password"
@@ -139,13 +103,6 @@ export default function LoginPage(): JSX.Element {
                     // onChange={(e) => setPassword(e.target.value)}
                     error={errors.password}
                 />
-                {/*{errors.password && (*/}
-                {/*    <p className="text-sm text-red-500 mt-1">{errors.password}</p>*/}
-                {/*)}*/}
-
-                {/*{errors.server && (*/}
-                {/*    <p className="text-sm text-red-600 mt-3 text-center">{errors.server}</p>*/}
-                {/*)}*/}
 
                 <div className="w-[90%] sm:w-[80%] md:w-[60%] max-w-lg mx-auto">
                     <Button

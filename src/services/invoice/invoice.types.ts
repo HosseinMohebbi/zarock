@@ -75,35 +75,3 @@ export interface GetAllInvoicesResponse {
     isArchived: boolean;
     items: Item[];
 }
-export interface AddClientResponse {
-    createdAt: string;
-    updatedAt: string;
-    id: string;
-    fullname: string;
-    nationalCode: string;
-    address: string;
-    credits: number;
-    isJuridicalPerson: boolean;
-    isOwnerClient: boolean;
-    constantDescriptionInvoice: string;
-}
-
-export interface BankLogo {
-    name: string;
-    url: string;
-}
-
-export interface BankAccountPayload {
-    bankName: string;
-    accountNumber: string;
-    cardNumber: string;
-    shaBaCode: string;
-}
-
-export interface BankAccountResponse {
-    id: string;
-    bankName: string;
-    accountNumber: string;
-    cardNumber: string;
-    shaBaCode: string;
-}

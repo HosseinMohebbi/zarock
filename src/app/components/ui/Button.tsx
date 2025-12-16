@@ -1,7 +1,7 @@
 import { cn } from '@/utils/cn'
 
 type ButtonProps = {
-    label?: string;
+    label?: React.ReactNode;
     onClick?: () => void;
     customStyle?: string;
     type?: 'button' | 'submit';

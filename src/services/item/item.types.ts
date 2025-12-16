@@ -11,7 +11,7 @@ export interface AddItemPayload {
 }
 
 export interface AddItemResponse {
-    id: string
+    id: string;
     name: string;
     group: string;
     defaultUnitPrice: number;
@@ -21,7 +21,7 @@ export interface AddItemResponse {
 }
 
 export interface getItemResponse {
-    id: String;
+    id: string;
     name: string;
     group: string;
     defaultUnitPrice: number;

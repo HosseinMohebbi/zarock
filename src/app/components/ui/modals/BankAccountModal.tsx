@@ -17,7 +17,6 @@ export function BankAccountModal({open, onClose, onSubmit, editingAccount, logos
     const [cardNumber, setCardNumber] = useState(editingAccount?.cardNumber || "");
     const [shaBaCode, setShaBaCode] = useState(editingAccount?.shaBaCode || "");
     const [selectedBank, setSelectedBank] = useState<BankLogo | null>(editingAccount ? logos.find(l => l.name === editingAccount.bankName) || logos[0] : logos[0]);
-    const [dropdownOpen, setDropdownOpen] = useState(false);
 
     useEffect(() => {
         if (editingAccount) {

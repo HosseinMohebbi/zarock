@@ -4,10 +4,10 @@ import "./globals.css";
 import Providers from "@/app/Providers";
 import {ToastContainer} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import HumburgerMenu from "@/app/components/ui/HamburgerMenu";
 import HeaderController from "@/app/components/layout/HeaderController";
 import ReduxProvider from "./ReduxProvider"
 import {UserProvider} from "@/context/UserContext";
+import ThemeToggle from "@/app/components/theme/ThemeToggle";
 
 
 const geistSans = Geist({
@@ -36,27 +36,26 @@ export default function RootLayout({
             className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         >
         <UserProvider>
-        {/*<HumburgerMenu/>*/}
-        <HeaderController/>
-        {/*<div className="fixed left-4 z-50">*/}
-        {/*    <ThemeToggle />*/}
-        {/*</div>*/}
-        <div className="">
-            <ReduxProvider>
-                <Providers>{children}</Providers>
-            </ReduxProvider>
-        </div>
-        <ToastContainer
-            rtl={true}                // راست چین برای فارسی
-            position="top-center"     // موقعیت نمایش
-            autoClose={3000}          // زمان خودکار بسته شدن (میلی‌ثانیه)
-            hideProgressBar={false}   // نوار پیشرفت
-            newestOnTop={false}       // جدیدترین پیام بالای لیست باشه؟
-            closeOnClick               // بسته شدن با کلیک
-            pauseOnHover
-            draggable
-            theme="colored"
-        />
+            <HeaderController/>
+            <div className="fixed left-6 z-50">
+                <ThemeToggle/>
+            </div>
+            <div className="">
+                <ReduxProvider>
+                    <Providers>{children}</Providers>
+                </ReduxProvider>
+            </div>
+            <ToastContainer
+                rtl={true}
+                position="top-center"
+                autoClose={3000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                pauseOnHover
+                draggable
+                theme="colored"
+            />
         </UserProvider>
         </body>
         </html>

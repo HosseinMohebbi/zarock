@@ -1,4 +1,3 @@
-
 'use client';
 import React, { useEffect, useRef } from 'react';
 import { MdClose } from "react-icons/md";
@@ -26,7 +25,6 @@ export default function Modal({ open, confirmButtonTitle, cancelButtonTitle, onC
         };
 
         document.addEventListener('keydown', onKey);
-        // focus dialog for accessibility
         dialogRef.current?.focus();
 
         return () => {

@@ -1,6 +1,7 @@
 import {createSlice, createAsyncThunk, PayloadAction} from "@reduxjs/toolkit";
 import {getAllInvoice, updateInvoice, updateInvoiceArchive} from "@/services/invoice/invoice.service";
 import {GetAllInvoicesResponse, AddInvoicePayload} from "@/services/invoice/invoice.types";
+import {RootState} from "@/app/store/store";
 
 export interface InvoiceState {
     invoices: GetAllInvoicesResponse[];
@@ -16,9 +17,6 @@ const initialState: InvoiceState = {
     error: null,
 };
 
-// ---------------------------------------------------------------------
-// 📌 دریافت همه فاکتورها
-// ---------------------------------------------------------------------
 export const fetchInvoices = createAsyncThunk(
     "invoices/fetchInvoices",
     async ({ businessId }: { businessId: string }) => {
@@ -27,51 +25,16 @@ export const fetchInvoices = createAsyncThunk(
     }
 );
 
-// export const fetchInvoices = createAsyncThunk(
-//     "invoices/fetchInvoices",
-//     async ({businessId}: { businessId: string }, {getState}) => {
-//         const state: any = getState();
-//         const existingInvoices = state.invoices.invoices;
-//
-//         if (existingInvoices && existingInvoices.length > 0) {
-//             // داده‌ها توی redux موجوده، نیاز به API call نیست
-//             console.log("💾 دیتاها از Redux cache خونده شد");
-//             return existingInvoices;
-//         }
-//
-//         // داده‌ها موجود نیست -> API call
-//         console.log("🌐 دیتاها از API گرفته می‌شود");
-//         const data = await getAllInvoice({page: 1, pageSize: 1000}, businessId);
-//         return data;
-//     }
-// );
-
-// ---------------------------------------------------------------------
-// 📌 دریافت یک فاکتور خاص
-// ---------------------------------------------------------------------
-// export const fetchInvoiceById = createAsyncThunk(
-//     "invoices/fetchInvoiceById",
-//     async ({businessId, invoiceId}: { businessId: string; invoiceId: string }) => {
-//         const all = await getAllInvoice({page: 1, pageSize: 1000}, businessId);
-//         const invoice = all.find(i => i.id === invoiceId);
-//         if (!invoice) throw new Error("فاکتور پیدا نشد");
-//         return invoice;
-//     }
-// );
-
 export const fetchInvoiceById = createAsyncThunk(
     "invoices/fetchInvoiceById",
     async ({businessId, invoiceId}: { businessId: string; invoiceId: string }, {getState}) => {
         const state: any = getState();
         const existing = state.invoices.invoices.find((i: any) => i.id === invoiceId);
-
-        // اگر فاکتور قبلاً توی ریداکس هست → از کش بخوان
+        
         if (existing) {
-            console.log("💾 فاکتور از Redux cache خوانده شد");
             return existing;
         }
 
-        console.log("🌐 فاکتور از API دریافت می‌شود...");
         const all = await getAllInvoice({page: 1, pageSize: 1000}, businessId);
         const invoice = all.find((i: any) => i.id === invoiceId);
 
@@ -81,9 +44,6 @@ export const fetchInvoiceById = createAsyncThunk(
     }
 );
 
-// ---------------------------------------------------------------------
-// 📌 ویرایش فاکتور
-// ---------------------------------------------------------------------
 export const updateInvoiceThunk = createAsyncThunk(
     "invoices/updateInvoice",
     async ({
@@ -96,9 +56,6 @@ export const updateInvoiceThunk = createAsyncThunk(
     }
 );
 
-// ---------------------------------------------------------------------
-// 📌 آرشیو فاکتور
-// ---------------------------------------------------------------------
 export const archiveInvoiceThunk = createAsyncThunk(
     "invoices/archiveInvoice",
     async ({businessId, invoiceId}: { businessId: string; invoiceId: string }) => {
@@ -110,7 +67,6 @@ export const archiveInvoiceThunk = createAsyncThunk(
 export const refetchInvoices = createAsyncThunk(
     "invoices/refetchInvoices",
     async ({businessId}: { businessId: string }) => {
-        console.log("🌐 دیتاها از API گرفته می‌شوند (force refresh)");
         const data = await getAllInvoice({page: 1, pageSize: 1000}, businessId);
         return data;
     }
@@ -123,7 +79,6 @@ const invoiceSlice = createSlice({
     reducers: {},
     extraReducers: (builder) => {
         builder
-            // --- fetchInvoices ---
             .addCase(fetchInvoices.pending, (state) => {
                 state.loading = true;
                 state.error = null;
@@ -137,7 +92,7 @@ const invoiceSlice = createSlice({
                 state.error = action.error.message ?? "خطا در دریافت فاکتورها";
             })
 
-            // --- fetchInvoiceById ---
+
             .addCase(fetchInvoiceById.pending, (state) => {
                 state.loading = true;
                 state.error = null;
@@ -151,7 +106,7 @@ const invoiceSlice = createSlice({
                 state.error = action.error.message ?? "خطا در دریافت فاکتور";
             })
 
-            // --- updateInvoice ---
+
             .addCase(updateInvoiceThunk.pending, (state) => {
                 state.loading = true;
             })
@@ -163,7 +118,7 @@ const invoiceSlice = createSlice({
                 state.error = action.error.message ?? "خطا در ویرایش فاکتور";
             })
 
-            // --- archiveInvoice ---
+
             .addCase(archiveInvoiceThunk.pending, (state) => {
                 state.loading = true;
             })
@@ -182,7 +137,7 @@ const invoiceSlice = createSlice({
     },
 });
 
-export const selectInvoices = (state: any) => state.invoices.invoices;
+export const selectInvoices = (state: RootState) => state.invoices.invoices;
 export const selectInvoiceById = (state: any, id: string) =>
     state.invoices.invoices.find((i: any) => i.id === id);
 

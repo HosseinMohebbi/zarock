@@ -1,8 +1,3 @@
-// /services/endpoint.config.ts
-import {getCheckById} from "@/services/transaction/transaction.service";
-
-export const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:5000';
-
 export const endpoints = {
     auth: {
         login: `/api/user/login`,
@@ -45,9 +40,6 @@ export const endpoints = {
         updateInvoice: (businessId: string, invoiceId: string) => `/api/Invoice/${businessId}/${invoiceId}`,
         updateInvoiceArchive: (businessId: string, invoiceId: string) => `/api/Invoice/${businessId}/archive/${invoiceId}`,
         deleteInvoice: (businessId: string, invoiceId: string) => `/api/Invoice/${businessId}/${invoiceId}`,
-        // اگر بعداً نیاز به filter یا جزئیات داشتیم می‌تونیم اضافه کنیم
-        // filter: (businessId: string) => `${API_BASE}/api/Invoice/${businessId}/filter`,
-        // getById: (businessId: string, invoiceId: string) => `${API_BASE}/api/Invoice/${businessId}/${invoiceId}`,
     },
     transaction: {
         createCheck: (businessId: string) => `/api/Transaction/${businessId}/check`,
@@ -66,6 +58,7 @@ export const endpoints = {
         create: (businessId: string) => `/api/Project/${businessId}`,
         getAll: (businessId: string) => `/api/Project/${businessId}/all`,
         getProjectById: (businessId: string, projectId: string) => `/api/Project/${businessId}/overview/${projectId}`,
+        deleteProject: (businessId: string, projectId: string) => `/api/Project/${businessId}/${projectId}`,
         updateProject: (businessId: string, projectId: string) => `/api/Project/${businessId}/${projectId}`,
         assignTransactionToProject: (businessId: string, projectId: string, transactionId: string) => `/api/Project/${businessId}/transaction/${projectId}/attach/${transactionId}`,
         removeTransactionFromProject: (businessId: string, projectId: string, transactionId: string) => `/api/Project/${businessId}/transaction/${projectId}/detach/${transactionId}`,
@@ -86,17 +79,3 @@ export const endpoints = {
         getCheck: (businessId: string) => `/api/Notification/${businessId}/check`,
     }
 };
-
-// export const endpoints = {
-//     auth: {
-//         login: `api/user/login`,
-//         register: `/auth/register`,
-//         refresh: `/auth/refresh`,
-//     },
-//     client: {
-//         getAllClients: `/api/clients`,
-//     },
-//     users: {
-//         me: `/users/me`,
-//     },
-// };

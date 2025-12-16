@@ -31,8 +31,8 @@ export async function getAllClients(params: { page: number; pageSize: number }, 
     return data;
 }
 
-export async function getClientById(businessId: string, clientId: string): Promise<Client[]> {
-    const {data} = await http.get<Client[]>(endpoints.client.getClient(businessId, clientId));
+export async function getClientById(businessId: string, clientId: string): Promise<Client> {
+    const {data} = await http.get<Client>(endpoints.client.getClient(businessId, clientId));
     return data;
 }
 

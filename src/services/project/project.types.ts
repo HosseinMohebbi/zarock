@@ -17,8 +17,8 @@ export interface AddProjectResponse {
     progress: number;
     description: string;
     tags: string[];
-    client: Client;           // می‌تونی دقیق‌تر تایپش کنی
-    transactions: getTransactionResponse[];   // بعداً می‌تونم برات کاملش کنم
+    client: Client;          
+    transactions: getTransactionResponse[]; 
     invoices: AddInvoiceResponse[];
 }
 

@@ -1,19 +1,14 @@
 'use client';
-
 import React, { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import Button from "@/app/components/ui/Button";
 import ConfirmModal from "@/app/components/ui/ConfirmModal";
 import { toast } from "react-toastify";
 import {MdAdd, MdDelete, MdImage} from "react-icons/md";
-
 import {
     getProjectDocumentsWithFiles,
     uploadProjectDocument,
     deleteProjectDocument,
 } from "@/services/project/project.service";
-
-// تاریخ جلالی
 import dayjs from "dayjs";
 import jalaliday from "jalaliday";
 import "dayjs/locale/fa";
@@ -34,9 +29,7 @@ export default function ProjectDocumentsPage() {
     const [showConfirm, setShowConfirm] = useState(false);
     const [docToRemove, setDocToRemove] = useState<string | null>(null);
     const [uploading, setUploading] = useState(false);
-
-    // -----------------------------------
-    // بارگذاری اسناد + URL فایل ها
+    
     async function loadData() {
         setLoading(true);
         try {
@@ -56,11 +49,8 @@ export default function ProjectDocumentsPage() {
 
     useEffect(() => {
         loadData();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
-
-    // -----------------------------------
-    // آپلود سند جدید
+    
     async function handleUploadDocument(evt: React.ChangeEvent<HTMLInputElement>) {
         const file = evt.target.files?.[0];
         if (!file) return;
@@ -80,16 +70,12 @@ export default function ProjectDocumentsPage() {
             setUploading(false);
         }
     }
-
-    // -----------------------------------
-    // باز کردن مودال حذف سند
+    
     function handleOpenConfirmModal(id: string) {
         setDocToRemove(id);
         setShowConfirm(true);
     }
-
-    // -----------------------------------
-    // حذف سند
+    
     async function handleConfirmRemove() {
         if (!docToRemove) return;
 
@@ -107,8 +93,6 @@ export default function ProjectDocumentsPage() {
             setDocToRemove(null);
         }
     }
-
-    // -----------------------------------
 
     return (
         <div className="flex justify-center w-full !px-4 !pt-24">
@@ -132,10 +116,7 @@ export default function ProjectDocumentsPage() {
                         className="hidden"
                     />
                 </div>
-
-
-
-                {/* LIST */}
+                
                 {loading ? (
                     <div className="text-center !py-10">در حال بارگذاری...</div>
                 ) : documents.length === 0 ? (
@@ -149,7 +130,6 @@ export default function ProjectDocumentsPage() {
                                 key={doc.id}
                                 className="w-full max-w-sm bg-card !p-4 !rounded-lg shadow-sm hover:shadow-md transition overflow-hidden cursor-pointer"
                             >
-                                {/* عکس یا PDF */}
                                 <div className="w-full h-40 bg-gray-100 flex items-center justify-center overflow-hidden !rounded-lg">
                                     {doc.url ? (
                                         doc.extension?.toLowerCase() === ".pdf" ? (
@@ -171,8 +151,7 @@ export default function ProjectDocumentsPage() {
                                         <MdImage className="text-gray-400 w-10 h-10" />
                                     )}
                                 </div>
-
-                                {/* INFO */}
+                                
                                 <div className="!p-3 flex flex-col gap-2">
 
                                     <div className="flex justify-between items-center">

@@ -1,10 +1,7 @@
-// TypeScript (React / Next client component)
 'use client'
-
 import React, {useState} from 'react'
 import {useParams, useRouter} from 'next/navigation'
 import Input from '@/app/components/ui/Input'
-// import {createItem, itemType} from '@/services/item'
 import {itemType} from "@/services/item/item.types";
 import {createItem} from '@/services/item/item.service'
 import Button from "@/app/components/ui/Button";
@@ -44,16 +41,7 @@ export default function AddItemFormPage() {
     const [errors, setErrors] = useState<Record<string, string>>({})
     const [loading, setLoading] = useState(false)
     const [message, setMessage] = useState<string | null>(null)
-
-    // function validate() {
-    //     const e: Record<string, string> = {}
-    //     if (!form.group.trim()) e.group = 'این فیلد الزامی است'
-    //     if (!form.unit.trim()) e.unit = 'این فیلد الزامی است'
-    //     const price = Number(form.defaultUnitPrice)
-    //     if (isNaN(price) || price < 0) e.defaultUnitPrice = 'قیمت معتبر نیست'
-    //     return e
-    // }
-
+    
     async function handleSubmit(ev?: React.FormEvent) {
         ev?.preventDefault()
         setMessage(null)
@@ -82,10 +70,9 @@ export default function AddItemFormPage() {
             await createItem(businessId, payload);
             dispatch(clearItems());
             toast.success("کالا با موفقیت اضافه شد");
-            // setMessage('کالا با موفقیت ایجاد شد')
-            // در صورت نیاز به هدایت بعد از ایجاد:
+
             router.push(`/business/${businessId}/items`)
-            // یا پاک کردن فرم:
+
             setForm({
                 name: '',
                 group: '',
@@ -104,18 +91,7 @@ export default function AddItemFormPage() {
             setLoading(false)
         }
     }
-
-    function handleAddTagFromInput() {
-        const val = form.tagInput.trim()
-        if (!val) return
-        const newTags = val.split(',').map(t => t.trim()).filter(Boolean)
-        setForm(f => ({...f, tags: Array.from(new Set([...f.tags, ...newTags])), tagInput: ''}))
-    }
-
-    function handleRemoveTag(tag: string) {
-        setForm(f => ({...f, tags: f.tags.filter(t => t !== tag)}))
-    }
-
+    
     function handleCancelForm() {
         router.push(`/business/${businessId}/items`)
     }
@@ -134,7 +110,7 @@ export default function AddItemFormPage() {
                 )}
 
                 <form onSubmit={handleSubmit} className="flex flex-col gap-5">
-                    {/* گروه */}
+
                     <Input
                         label="گروه"
                         name="group"
@@ -142,16 +118,14 @@ export default function AddItemFormPage() {
                         onChange={e => setForm(f => ({...f, group: e.target.value}))}
                         error={errors.group}
                     />
-
-                    {/* زیرگروه */}
+                    
                     <Input
                         label="زیرگروه"
                         name="name"
                         value={form.name}
                         onChange={e => setForm(f => ({...f, name: e.target.value}))}
                     />
-
-                    {/* واحد */}
+                    
                     <Input
                         label="واحد"
                         name="unit"
@@ -159,8 +133,7 @@ export default function AddItemFormPage() {
                         onChange={e => setForm(f => ({...f, unit: e.target.value}))}
                         error={errors.unit}
                     />
-
-                    {/* قیمت واحد */}
+                    
                     <Input
                         label="قیمت واحد"
                         name="defaultUnitPrice"
@@ -169,8 +142,7 @@ export default function AddItemFormPage() {
                         onChange={e => setForm(f => ({...f, defaultUnitPrice: e.target.value}))}
                         error={errors.defaultUnitPrice}
                     />
-
-                    {/* نوع */}
+                    
                     <div className="flex flex-col gap-2">
                         <label className="text-lg font-medium">نوع</label>
 
@@ -200,8 +172,7 @@ export default function AddItemFormPage() {
                             </label>
                         </div>
                     </div>
-
-                    {/* توضیحات */}
+                    
                     <Input
                         label="توضیحات"
                         name="description"
@@ -209,8 +180,7 @@ export default function AddItemFormPage() {
                         value={form.description}
                         onChange={e => setForm(f => ({...f, description: e.target.value}))}
                     />
-
-                    {/* دکمه‌ها */}
+                    
                     <div className="flex justify-end items-center gap-3 !mt-3">
                         <Button label="لغو" type="button" onClick={handleCancelForm} customStyle="!bg-danger"/>
                         <Button label="افزودن" type="submit" customStyle="!bg-confirm"/>

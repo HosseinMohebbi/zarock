@@ -16,7 +16,7 @@ interface SelectProps {
     placeholder?: string;
     label?: string;
     className?: string;
-    disabled?: boolean; // ← اضافه شد
+    disabled?: boolean;
     error?: string
 }
 
@@ -28,7 +28,7 @@ export default function Select({
                                    label,
                                    className,
                                    error,
-                                   disabled = false, // ← پیش‌فرض
+                                   disabled = false,
                                }: SelectProps) {
     const [open, setOpen] = useState(false);
     const [highlighted, setHighlighted] = useState<number>(-1);

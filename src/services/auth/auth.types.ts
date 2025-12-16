@@ -1,3 +1,15 @@
+export interface RegisterPayload {
+    userName: string;
+    fullname: string;
+    nationalCode: string;
+    password: string;
+}
+
+export interface RegisterResponse {
+    token: string;
+    expires: string;
+}
+
 export interface LoginPayload {
     userName: string;
     password: string;
@@ -8,15 +20,23 @@ export interface LoginResponse {
     expires: string;
 }
 
-export interface RegisterPayload {
-    userName: string;
+export interface UpdateUserPayload {
     fullname: string;
     nationalCode: string;
-    password: string;
-    confirm: string;
+    password?: string;
+    role?: string;
 }
 
-export interface RegisterResponse {
-    token: string;
-    expires: string;
+export interface UpdateUserResponse {
+    username: string;
+    fullname: string;
+    nationalCode: string;
+    roles?: string;
+}
+
+export interface GetUserResponse {
+    username: string;
+    fullname: string;
+    role: string;
+    nationalCode: string;
 }

@@ -25,11 +25,7 @@ export default function CashForm({ clients, loadingClients }: CashFormProps) {
     const { businessId } = useParams();
     const [errors, setErrors] = useState<Record<string, string>>({});
     const router = useRouter();
-
-
-    // ----------------------------
-    // ⭐ Single unified form state
-    // ----------------------------
+    
     const [form, setForm] = useState({
         amount: "",
         fromClient: "",
@@ -42,8 +38,7 @@ export default function CashForm({ clients, loadingClients }: CashFormProps) {
     });
 
     const [saving, setSaving] = useState(false);
-
-    // reusable setter ✔️
+    
     const update = (key: string, value: any) => {
         setForm(prev => ({ ...prev, [key]: value }));
     };
@@ -76,18 +71,15 @@ export default function CashForm({ clients, loadingClients }: CashFormProps) {
                 description: form.description,
                 tags: form.tags.split(",").map(t => t.trim()).filter(Boolean),
             };
-
-            // ۱) ایجاد تراکنش نقدی
+            
             const created = await createCash(businessId, payload);
-
-            // ۲) اگر فایل انتخاب شده → آپلود سند
+            
             if (form.attachment) {
                 await uploadTransactionDocument(created.id, form.attachment);
             }
 
             router.push(`/business/${businessId}/transactions`);
-
-            // reset
+            
             setForm({
                 amount: "",
                 fromClient: "",
@@ -146,6 +138,7 @@ export default function CashForm({ clients, loadingClients }: CashFormProps) {
                     />
 
                     <Input
+                        name="trackingCode"
                         label="کد پیگیری"
                         value={form.trackingCode}
                         onChange={(e) => update("trackingCode", e.target.value)}
@@ -169,6 +162,7 @@ export default function CashForm({ clients, loadingClients }: CashFormProps) {
                     </div>
 
                     <Input
+                        name="description"
                         label="توضیحات"
                         value={form.description}
                         onChange={(e) => update("description", e.target.value)}
@@ -176,16 +170,13 @@ export default function CashForm({ clients, loadingClients }: CashFormProps) {
 
                     <div className="flex flex-col gap-2">
                         <label className="text-lg font-medium">تصویر رسید</label>
-
-                        {/* دکمه‌ی سفارشی برای انتخاب فایل */}
                         <label
                             htmlFor="file-upload"
                             className="cursor-pointer w-auto bg-primary text-white text-center py-2 rounded-md shadow"
                         >
-                            تصویر سند
+                            افزودن
                         </label>
-
-                        {/* ورودی فایل مخفی */}
+                        
                         <input
                             id="file-upload"
                             type="file"
@@ -193,8 +184,7 @@ export default function CashForm({ clients, loadingClients }: CashFormProps) {
                             className="hidden"
                             onChange={(e) => update("attachment", e.target.files?.[0] || null)}
                         />
-
-                        {/* نمایش نام فایل (اختیاری) */}
+                        
                         {form.attachment && (
                             <p className="text-xs text-gray-500 mt-1">
                                 فایل انتخاب شده: {form.attachment.name}

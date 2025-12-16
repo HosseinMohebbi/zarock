@@ -33,10 +33,7 @@ export default function CheckForm({
     const { businessId } = useParams();
     const [errors, setErrors] = useState<Record<string, string>>({});
     const router = useRouter();
-
-    // ----------------------------
-    // ⭐ Unified Single Form State
-    // ----------------------------
+    
     const [form, setForm] = useState({
         amount: "",
         fromClient: "",
@@ -101,8 +98,7 @@ export default function CheckForm({
             }
 
             router.push(`/business/${businessId}/transactions`);
-
-            // Reset form
+            
             setForm({
                 amount: "",
                 fromClient: "",
@@ -139,6 +135,7 @@ export default function CheckForm({
                 <div className="flex flex-col gap-5">
 
                     <Input
+                        name="amount"
                         label="مبلغ"
                         value={form.amount}
                         onChange={(e) => update("amount", e.target.value)}
@@ -164,6 +161,7 @@ export default function CheckForm({
                     />
 
                     <Input
+                        name="checkNumber"
                         label="شماره چک"
                         value={form.checkNumber}
                         onChange={(e) => update("checkNumber", e.target.value)}
@@ -182,8 +180,7 @@ export default function CheckForm({
                         }))}
                         error={errors.bank}
                     />
-
-                    {/* تاریخ دریافت */}
+                    
                     <div className="flex flex-col gap-2">
                         <label className="text-lg font-medium">تاریخ دریافت</label>
                         <DatePicker
@@ -201,8 +198,7 @@ export default function CheckForm({
                             
                         />
                     </div>
-
-                    {/* تاریخ سررسید */}
+                    
                     <div className="flex flex-col gap-2">
                         <label className="text-lg font-medium">تاریخ سررسید</label>
                         <DatePicker
@@ -219,8 +215,7 @@ export default function CheckForm({
                             className="w-full border rounded-md px-3 py-2"
                         />
                     </div>
-
-                    {/* وضعیت */}
+                    
                     <Select
                         label="وضعیت"
                         value={form.state}
@@ -236,25 +231,22 @@ export default function CheckForm({
                     />
 
                     <Input
+                        name="description"
                         label="توضیحات"
                         value={form.description}
                         onChange={(e) => update("description", e.target.value)}
                     />
                     
-
-                    {/* تصویر چک */}
+                    
                     <div className="flex flex-col gap-2">
                         <label className="text-lg font-medium">تصویر رسید</label>
-
-                        {/* دکمه‌ی سفارشی برای انتخاب فایل */}
                         <label
                             htmlFor="file-upload"
                             className="cursor-pointer w-auto bg-primary text-white text-center py-2 rounded-md shadow"
                         >
-                            تصویر سند
+                            افزودن
                         </label>
-
-                        {/* ورودی فایل مخفی */}
+                        
                         <input
                             id="file-upload"
                             type="file"
@@ -262,8 +254,7 @@ export default function CheckForm({
                             className="hidden"
                             onChange={(e) => update("attachment", e.target.files?.[0] || null)}
                         />
-
-                        {/* نمایش نام فایل (اختیاری) */}
+                        
                         {form.attachment && (
                             <p className="text-xs text-gray-500 mt-1">
                                 فایل انتخاب شده: {form.attachment.name}

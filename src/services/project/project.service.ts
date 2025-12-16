@@ -11,11 +11,6 @@ import {getTransactionResponse, AddCashResponse} from "../../services/transactio
 import {GetAllInvoicesResponse} from "../../services/invoice/invoice.types"
 import {endpoints} from "@/config/endpoint.config";
 import {GetStaticFileResponse} from "@/services/business/business.types";
-
-
-// ------------------------------------
-// CREATE
-// ------------------------------------
 export async function createProject(
     businessId: string,
     payload: AddProjectPayload
@@ -37,10 +32,6 @@ export async function getProjectById(
     return data;
 }
 
-// ------------------------------------
-// GET ALL (with pagination)
-// GET → /api/Project/{businessId}/all?page=1&pageSize=10
-// ------------------------------------
 export async function getAllProjects(
     params: { page: number; pageSize: number },
     businessId: string
@@ -57,17 +48,12 @@ export async function getAllProjects(
     return data;
 }
 
-// ------------------------------------
-// FILTER
-// POST → /api/Project/{businessId}/filter?page=1&pageSize=10
-// body: { pattern, tags }
-// ------------------------------------
 export async function filterProjects(
     businessId: string,
     params: {
         page: number;
         pageSize: number;
-        pattern: string;  // search text
+        pattern: string; 
         tags?: string[];
     }
 ): Promise<AddProjectResponse[]> {
@@ -87,10 +73,6 @@ export async function filterProjects(
     return data;
 }
 
-// ------------------------------------
-// UPDATE
-// PUT → /api/Project/{businessId}/{projectId}
-// ------------------------------------
 export async function updateProject(
     businessId: string,
     projectId: string,
@@ -104,15 +86,11 @@ export async function updateProject(
     return data;
 }
 
-// ------------------------------------
-// DELETE
-// DELETE → /api/Project/{businessId}/{projectId}
-// ------------------------------------
 export async function deleteProject(
     businessId: string,
     projectId: string
 ): Promise<void> {
-    await http.delete(`/api/Project/${businessId}/${projectId}`);
+    await http.delete(endpoints.project.deleteProject(businessId, projectId));
 }
 
 export async function getProjectTransactions(
@@ -267,8 +245,7 @@ export async function getProjectDocumentsWithFiles(
 ): Promise<ProjectDocumentItemFull[]> {
 
     const docs = await getProjectDocuments(projectId, params);
-
-    // گرفتن فایل واقعی برای هر سند
+    
     const docsWithUrl = await Promise.all(
         docs.map(async (doc) => {
             try {
@@ -280,7 +257,7 @@ export async function getProjectDocumentsWithFiles(
             } catch {
                 return {
                     ...doc,
-                    url: "", // اگر دریافت فایل خطا داد
+                    url: "",
                 };
             }
         })

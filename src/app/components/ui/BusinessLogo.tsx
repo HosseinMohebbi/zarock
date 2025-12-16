@@ -1,5 +1,4 @@
 "use client";
-
 import { useEffect, useState } from "react";
 import { getStaticFile } from "@/services/business/business.service";
 import { MdBusiness } from "react-icons/md";
@@ -15,7 +14,6 @@ export default function BusinessLogo({ logoId }: { logoId?: string }) {
                 const file = await getStaticFile(logoId);
                 setUrl(file.url);
             } catch (err) {
-                console.error("❌ Error loading logo:", err);
             }
         })();
     }, [logoId]);

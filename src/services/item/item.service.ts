@@ -19,7 +19,7 @@ export async function createItem(
 export async function getAllItems(params: { page: number; pageSize: number }, businessId): Promise<getItemResponse[]> {
     const { page, pageSize } = params;
     const { data } = await http.get<getItemResponse[]>(endpoints.item.getAllItems(businessId), {
-        params: { page, pageSize }, // axios به‌صورت ?page=..&pageSize=.. اضافه می‌کند
+        params: { page, pageSize },
     });
     return data;
 }
@@ -29,9 +29,9 @@ export async function filterItems(
     params: {
         page: number;
         pageSize: number;
-        pattern: string;  // برای جستجوی نام یا گروه
-        type?: "Merchandise" | "Service";  // فیلتر بر اساس نوع
-        tags?: string[];  // تگ‌ها برای فیلتر
+        pattern: string;  
+        type?: "Merchandise" | "Service";  
+        tags?: string[];
     }
 ): Promise<getItemResponse[]> {
     const { page, pageSize, pattern, type, tags } = params;
@@ -43,7 +43,7 @@ export async function filterItems(
             tags,
         },
         {
-            params: { page, pageSize }, // ارسال page و pageSize به‌عنوان query params
+            params: { page, pageSize },
         }
     );
     return data;

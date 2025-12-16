@@ -29,8 +29,6 @@ const initialState: BankAccountsState = {
     error: null,
 };
 
-// ---------------- Async Thunks ----------------
-
 export const fetchBankAccounts = createAsyncThunk(
     "bank/fetchAccounts",
     async ({ businessId, clientId }: { businessId: string; clientId: string }) => {
@@ -68,8 +66,6 @@ export const removeBankAccount = createAsyncThunk(
         return await getBankAccounts(businessId, clientId);
     }
 );
-
-// ---------------- Slice ----------------
 
 const bankAccountsSlice = createSlice({
     name: "bankAccounts",
@@ -142,7 +138,6 @@ const bankAccountsSlice = createSlice({
 
 export default bankAccountsSlice.reducer;
 
-// ---------------- Selectors ----------------
 
 export const selectBankAccounts = (state: any) => state.bankAccounts.accounts;
 export const selectBankLogos = (state: any) => state.bankAccounts.logos;

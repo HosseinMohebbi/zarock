@@ -1,13 +1,11 @@
 'use client';
 import React, {useState} from 'react';
 import {useParams, useRouter} from 'next/navigation';
-import {cn} from "@/utils/cn";
 import Input from "@/app/components/ui/Input";
 import Button from "@/app/components/ui/Button";
 import {createClient} from '@/services/client/client.service'
 import {validateClient, FieldErrors} from '@/services/client/client.validation'
 import {toast} from "react-toastify";
-
 
 export default function Client() {
     const [fullName, setFullName] = useState('');
@@ -16,7 +14,6 @@ export default function Client() {
     const [invoiceDescription, setInvoiceDescription] = useState('');
     const [isJuridicalPerson, setIsJuridicalPerson] = useState(false);
     const [isOwnerMember, setIsOwnerMember] = useState(false);
-    const [tagInput, setTagInput] = useState('');
     const [tags, setTags] = useState<string[]>([]);
     const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
     const params = useParams() as { businessId?: string };
@@ -27,20 +24,6 @@ export default function Client() {
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState<string | null>(null);
     
-    const addTag = () => {
-        const t = tagInput.trim();
-        if (!t) return;
-        if (tags.includes(t)) {
-            setTagInput('');
-            return;
-        }
-        setTags(prev => [...prev, t]);
-        setTagInput('');
-    };
-
-    const removeTag = (t: string) => {
-        setTags(prev => prev.filter(x => x !== t));
-    };
 
     const handleSubmit = async (e?: React.FormEvent) => {
         e?.preventDefault();
@@ -193,32 +176,6 @@ export default function Client() {
                             <span>عضو مالک هست؟</span>
                         </label>
                     </div>
-
-                    {/* چک‌باکس‌ها */}
-                    {/*<div className="flex flex-col gap-2">*/}
-                    {/*    <label className="text-lg font-medium">نوع شخص</label>*/}
-                    {/*    <div className="flex gap-6">*/}
-                    {/*        <label className="flex items-center gap-2">*/}
-                    {/*            <input*/}
-                    {/*                type="checkbox"*/}
-                    {/*                checked={isJuridicalPerson}*/}
-                    {/*                onChange={(e) => setIsJuridicalPerson(e.target.checked)}*/}
-                    {/*                className="w-4 h-4 accent-primary"*/}
-                    {/*            />*/}
-                    {/*            <span>شخص حقوقی؟</span>*/}
-                    {/*        </label>*/}
-                    
-                    {/*        <label className="flex items-center gap-2">*/}
-                    {/*            <input*/}
-                    {/*                type="checkbox"*/}
-                    {/*                checked={isOwnerMember}*/}
-                    {/*                onChange={(e) => setIsOwnerMember(e.target.checked)}*/}
-                    {/*                className="w-4 h-4 accent-primary"*/}
-                    {/*            />*/}
-                    {/*            <span>عضو مالک هست؟</span>*/}
-                    {/*        </label>*/}
-                    {/*    </div>*/}
-                    {/*</div>*/}
 
                     {/* دکمه‌ها */}
                     <div className="flex justify-end items-center gap-3 !mt-3">

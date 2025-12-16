@@ -5,9 +5,8 @@ import {MdAdd, MdReceipt} from "react-icons/md";
 import Loader from "@/app/components/ui/Loader";
 import {useDispatch, useSelector} from "react-redux";
 import {fetchInvoices, selectInvoices} from "@/app/store/invoivesSlice";
-
-// API برای لینک‌کردن به پروژه
 import {assignInvoiceToProject} from "@/services/project/project.service";
+import {GetAllInvoicesResponse} from "@/services/invoice/invoice.types";
 
 import dayjs from "dayjs";
 import jalaliday from "jalaliday";
@@ -45,13 +44,12 @@ export default function InvoicesPage() {
 
     const dispatch = useDispatch<any>();
 
-    const invoices = useSelector(selectInvoices);
+    const invoices = useSelector(selectInvoices) as GetAllInvoicesResponse[];
     const loading = useSelector((s: any) => s.invoices.loading);
     const error = useSelector((s: any) => s.invoices.error);
 
     const [isFetching, setIsFetching] = useState(true);
 
-    // 🔵 حالت انتخاب مشابه تراکنش‌ها
     const isSelectMode = search.get("selectMode") === "1";
     const projectId = search.get("projectId") ?? "";
 
@@ -63,8 +61,7 @@ export default function InvoicesPage() {
 
         dispatch(fetchInvoices({businessId}));
     }, [businessId]);
-
-    // 🔵 انتخاب یک فاکتور → لینک به پروژه → برگشت
+    
     const handleSelectInvoice = async (invoice: any) => {
         if (!isSelectMode || !projectId) return;
 
@@ -73,7 +70,6 @@ export default function InvoicesPage() {
                 businessId,
                 projectId,
                 invoice.id,
-                {}
             );
 
             router.back();
@@ -104,17 +100,8 @@ export default function InvoicesPage() {
         );
     }
 
-    // if (!loading && invoices.length === 0) {
-    //     return (
-    //         <main className="flex flex-col items-center justify-center h-[70vh] gap-4">
-    //             <h2 className="text-gray-600 text-xl">هیچ فاکتوری برای نمایش وجود ندارد</h2>
-    //         </main>
-    //     );
-    // }
-
     return (
         <main className="!p-4 !pt-24">
-            {/* header مثل نسخه دوم */}
             <div className="flex items-center justify-between mt-6 !mb-4 !px-3">
                 <h1 className="!text-lg !font-semibold text-right">
                     {isSelectMode ? "انتخاب فاکتور" : "فاکتورها"}
@@ -131,8 +118,7 @@ export default function InvoicesPage() {
             </div>
 
             {error && <div className="!py-4 text-red-600">{error}</div>}
-
-            {/* لیست کارت‌ها → دقیقا استایل نسخه دوم */}
+            
             {invoices.length === 0 ? (
                 <div className="flex items-center justify-center text-gray-500 w-full h-[60vh]">
                     <div className="text-center text-xl">هیچ فاکتوری برای نمایش وجود ندارد</div>
@@ -154,8 +140,7 @@ export default function InvoicesPage() {
                         onClick={() => handleOpenInvoice(inv)}
                     >
                         <div className="flex items-stretch h-full">
-
-                            {/* ستون آبی — عین نسخه دوم */}
+                            
                             <div
                                 className="flex flex-col items-center justify-center w-32 bg-primary text-white !p-2 rounded-r-lg">
                                 <div className="!mb-1">
@@ -164,8 +149,7 @@ export default function InvoicesPage() {
                                 <span className="text-lg font-semibold">{getInvoiceTypeFa(inv.type)}</span>
                                 <span>{inv.number ?? "-"}</span>
                             </div>
-
-                            {/* محتوای کارت — عین نسخه دوم */}
+                            
                             <div className="flex-1 !p-2">
                                 <div className="flex flex-col gap-4 !p-4">
 

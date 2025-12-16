@@ -1,5 +1,4 @@
 'use client'
-
 import React, { useState, useEffect } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import Input from '@/app/components/ui/Input'
@@ -25,10 +24,7 @@ export default function AddProjectFormPage() {
     const [errors, setErrors] = useState<Record<string, string>>({})
     const [clients, setClients] = useState<Client[]>([]);
     const [loadingClients, setLoadingClients] = useState(true)
-
-    // -----------------------------------
-    // ⭐ دریافت klient ها از API
-    // -----------------------------------
+    
     useEffect(() => {
         const loadClients = async () => {
             setLoadingClients(true);
@@ -45,9 +41,7 @@ export default function AddProjectFormPage() {
 
         if (businessId) loadClients();
     }, [businessId]);
-
-
-
+    
     function handleCancelForm() {
         router.push(`/business/${businessId}/projects`)
     }
@@ -78,7 +72,7 @@ export default function AddProjectFormPage() {
             router.push(`/business/${businessId}/projects`)
 
         } catch (err) {
-            console.error("Create project failed", err)
+            
         }
     }
 
@@ -88,8 +82,7 @@ export default function AddProjectFormPage() {
                 <h2 className="text-xl font-semibold !mb-4 text-center">ایجاد پروژه جدید</h2>
 
                 <form onSubmit={handleSubmit} className="flex flex-col gap-5">
-
-                    {/* نام پروژه */}
+                    
                     <Input
                         label="نام پروژه"
                         name="name"
@@ -97,8 +90,7 @@ export default function AddProjectFormPage() {
                         onChange={e => setForm(f => ({...f, name: e.target.value}))}
                         error={errors.name}
                     />
-
-                    {/* انتخاب کارفرما */}
+                    
                     <Select
                         label="کارفرما"
                         value={form.employerId}
@@ -110,8 +102,7 @@ export default function AddProjectFormPage() {
                         }))}
                         error={errors.employerId}
                     />
-
-                    {/* توضیحات */}
+                    
                     <Input
                         label="توضیحات"
                         name="description"
@@ -122,7 +113,7 @@ export default function AddProjectFormPage() {
 
                     <div className="flex justify-end items-center gap-3 !mt-3">
                         <Button label="لغو" type="button" onClick={handleCancelForm} customStyle="!bg-danger"/>
-                        <Button label="افزودن" type="submit" customStyle="!bg-confirm"/>
+                        <Button label="ذخیره" type="submit" customStyle="!bg-confirm"/>
                     </div>
                 </form>
             </div>

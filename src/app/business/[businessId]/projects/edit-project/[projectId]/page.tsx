@@ -1,5 +1,4 @@
 'use client';
-
 import { useState } from "react";
 import { useParams } from "next/navigation";
 import DocumentsForm from "./DocumentsForm";
@@ -10,24 +9,13 @@ import Button from "@/app/components/ui/Button";
 
 export default function ClientDetailsPage() {
     const params = useParams() as { businessId?: string; clientId?: string };
-    const businessId = params.businessId ?? '';
-    const clientId = params.clientId ?? '';
 
     const [activeTab, setActiveTab] = useState<'info' | 'transactions' | 'invoices' | 'documents'>('info');
-
-    // if (!businessId || !clientId) {
-    //     return (
-    //         <div className="flex justify-center items-center h-screen">
-    //             شناسه کسب‌وکار یا مشتری نامعتبر است
-    //         </div>
-    //     );
-    // }
 
     return (
         <div className="w-full flex flex-col items-center !px-4 !pb-6 !pt-24">
             <div className="w-full max-w-4xl mx-auto">
-
-                {/* تب‌ها */}
+                
                 <div className="flex justify-center gap-3 !mb-6 flex-wrap">
                     <Button
                         type="button"
@@ -69,8 +57,7 @@ export default function ClientDetailsPage() {
                             : '!bg-muted !text-muted-foreground'}`}
                     />
                 </div>
-
-                {/* محتوای تب‌ها */}
+                
                 <div className="w-full">
                     <div className={activeTab === 'info' ? 'block' : 'hidden'}>
                         <ProjectInfoForm/>

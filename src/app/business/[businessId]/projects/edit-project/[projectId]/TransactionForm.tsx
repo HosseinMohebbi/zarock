@@ -1,14 +1,12 @@
 'use client';
 import React, {useEffect, useState} from "react";
 import {useParams, useRouter} from "next/navigation";
-import Button from "@/app/components/ui/Button";
 import {
     getProjectTransactions,
-    assignTransactionToProject, removeTransactionFromProject,
+    removeTransactionFromProject,
 } from "@/services/project/project.service";
 import {MdCheck, MdMoney, MdDelete, MdAdd} from "react-icons/md";
 import {TransactionType} from "@/services/transaction/transaction.types";
-
 import dayjs from "dayjs";
 import jalaliday from "jalaliday";
 import "dayjs/locale/fa";
@@ -57,10 +55,7 @@ export default function ProjectTransactionsPage() {
     const [linkedTransactions, setLinkedTransactions] = useState<any[]>([]);
     const [showConfirm, setShowConfirm] = useState(false);
     const [transactionToRemove, setTransactionToRemove] = useState<string | null>(null);
-
-    // -----------------------------------------------------
-    // Load linked transactions
-    // -----------------------------------------------------
+    
     async function loadData() {
         setLoading(true);
         try {
@@ -74,10 +69,7 @@ export default function ProjectTransactionsPage() {
     useEffect(() => {
         loadData();
     }, []);
-
-    // -----------------------------------------------------
-    // Navigate to TransactionsPage in select mode
-    // -----------------------------------------------------
+    
     const handleAddTransaction = () => {
         router.push(
             `/business/${businessId}/transactions?selectMode=1&projectId=${projectId}`
@@ -85,7 +77,6 @@ export default function ProjectTransactionsPage() {
     };
 
     function handleOpenConfirmModal(transactionId: string) {
-        // e.stopPropagation();
         setTransactionToRemove(transactionId)
         setShowConfirm(true);
     }
@@ -100,7 +91,6 @@ export default function ProjectTransactionsPage() {
                 transactionToRemove
             );
 
-            // حذف سریع از UI
             setLinkedTransactions((prev) =>
                 prev.filter((t) => t.id !== transactionToRemove)
             );
@@ -108,7 +98,6 @@ export default function ProjectTransactionsPage() {
             toast.success("تراکنش با موفقیت حذف شد");
         } catch (err) {
             toast.error("خطا در حذف تراکنش");
-            console.error(err);
         } finally {
             setShowConfirm(false);
             setTransactionToRemove(null);
@@ -128,10 +117,7 @@ export default function ProjectTransactionsPage() {
                         <MdAdd className="w-6 h-6 text-background"/>
                     </div>
                 </div>
-
-                {/* ----------------------------------------- */}
-                {/* LIST OF LINKED TRANSACTIONS */}
-                {/* ----------------------------------------- */}
+                
                 {loading ? (
                     <div className="text-center !py-10">در حال بارگذاری...</div>
                 ) : linkedTransactions.length === 0 ? (
@@ -146,8 +132,6 @@ export default function ProjectTransactionsPage() {
                                 className="w-full max-w-sm bg-card !rounded-lg shadow-sm hover:shadow-md transition cursor-pointer overflow-hidden"
                             >
                                 <div className="flex items-stretch">
-
-                                    {/* ستون آبی */}
                                     <div className="flex flex-col items-center justify-center w-16 
                                     bg-primary text-white p-2 self-stretch">
 
@@ -159,8 +143,7 @@ export default function ProjectTransactionsPage() {
                                             {getTransactionTypeFa(t.transactionType)}
                                         </div>
                                     </div>
-
-                                    {/* بدنه کارت */}
+                                    
                                     <div className="flex-1">
                                         <div className="flex flex-col gap-4 !p-3">
 

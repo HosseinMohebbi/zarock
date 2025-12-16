@@ -1,11 +1,9 @@
 'use client';
-
 import {useEffect, useState} from "react";
-import Input from "@/app/components/ui/Input";
 import {useParams, useRouter} from "next/navigation";
-import {MdAdd, MdLocationPin, MdWork} from "react-icons/md";
+import {MdAdd} from "react-icons/md";
 import {getAllProjects} from "@/services/project/project.service";
-import {ProjectResponse} from "@/services/project/project.types";
+import {AddProjectResponse} from "@/services/project/project.types";
 import Loader from "@/app/components/ui/Loader";
 
 export default function ProjectsPage() {
@@ -14,7 +12,7 @@ export default function ProjectsPage() {
 
     const router = useRouter();
 
-    const [projects, setProjects] = useState<ProjectResponse[]>([]);
+    const [projects, setProjects] = useState<AddProjectResponse[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
 
@@ -47,9 +45,6 @@ export default function ProjectsPage() {
         fetchData();
     }, [businessId]);
 
-    // ------------------------------
-    // 🌀 LOADING
-    // ------------------------------
     if (loading) {
         return (
             <main className="flex items-center justify-center h-screen">
@@ -58,9 +53,6 @@ export default function ProjectsPage() {
         );
     }
 
-    // ------------------------------
-    // ❌ ERROR
-    // ------------------------------
     if (error) {
         return (
             <main className="flex items-center justify-center h-screen">
@@ -69,27 +61,6 @@ export default function ProjectsPage() {
         );
     }
 
-    // ------------------------------
-    // 📭 EMPTY LIST
-    // ------------------------------
-    // if (projects.length === 0) {
-    //     return (
-    //         <main className="flex flex-col items-center justify-center h-screen gap-4">
-    //             <h2 className="text-gray-600 text-xl">هیچ پروژه‌ای یافت نشد</h2>
-    //
-    //             <button
-    //                 onClick={handleAddProject}
-    //                 className="px-5 py-2 rounded-lg bg-blue-600 text-white shadow"
-    //             >
-    //                 افزودن پروژه جدید
-    //             </button>
-    //         </main>
-    //     );
-    // }
-
-    // ------------------------------
-    // ✔ MAIN PAGE
-    // ------------------------------
     return (
         <main className="!p-4 !pt-24">
 
@@ -105,11 +76,6 @@ export default function ProjectsPage() {
                 </div>
             </div>
 
-            {/* PROJECT LIST */}
-            {/*<div*/}
-            {/*    className="!px-3 !mt-4 grid grid-cols-1 gap-3 overflow-y-auto sm:grid-cols-2 !pb-4 lg:grid-cols-3 xl:grid-cols-4"*/}
-            {/*    style={{maxHeight: 'calc(100vh - 200px)'}}*/}
-            {/*>*/}
             {projects.length === 0 ? (
                     <div className="flex items-center justify-center text-gray-500 w-full h-[60vh]">
                         <div className="text-center text-xl">هیچ پروژه ای برای نمایش وجود ندارد</div>
@@ -121,58 +87,56 @@ export default function ProjectsPage() {
                         style={{maxHeight: 'calc(100vh - 200px)'}}
                     >
                         {projects.map(project => (
-                        <div
-                            key={project.id}
-                            onClick={() => handleOpenProject(project.id)}
-                            className="w-full bg-card !rounded-lg shadow-sm hover:shadow-md transition cursor-pointer overflow-hidden"
-                        >
-                            {/* CONTENT */}
-                            <div className="flex-1 !p-3">
-                                <div className="flex flex-col gap-4 !p-4">
+                            <div
+                                key={project.id}
+                                onClick={() => handleOpenProject(project.id)}
+                                className="w-full bg-card !rounded-lg shadow-sm hover:shadow-md transition cursor-pointer overflow-hidden"
+                            >
+                                {/* CONTENT */}
+                                <div className="flex-1 !p-3">
+                                    <div className="flex flex-col gap-4 !p-4">
 
-                                    <div className="flex gap-2 text-lg">
-                                        <h2>نام پروژه: </h2>
-                                        <span className="text-md">{project.name}</span>
-                                    </div>
+                                        <div className="flex gap-2 text-lg">
+                                            <h2>نام پروژه: </h2>
+                                            <span className="text-md">{project.name}</span>
+                                        </div>
 
-                                    <div className="flex gap-2 text-lg">
-                                        <h2>کارفرما: </h2>
-                                        <span>{project.client.fullname ?? "-"}</span>
-                                    </div>
+                                        <div className="flex gap-2 text-lg">
+                                            <h2>کارفرما: </h2>
+                                            <span>{project.client.fullname ?? "-"}</span>
+                                        </div>
 
-                                    <div className="flex items-center gap-2">
-                                        <h2>توضیحات:</h2>
-                                        <span
-                                            className="text-sm text-gray-600 truncate"
-                                            style={{
-                                                whiteSpace: 'nowrap',
-                                                overflow: 'hidden',
-                                                textOverflow: 'ellipsis',
-                                                flexGrow: 1,
-                                            }}
-                                        >
+                                        <div className="flex items-center gap-2">
+                                            <h2>توضیحات:</h2>
+                                            <span
+                                                className="text-sm text-gray-600 truncate"
+                                                style={{
+                                                    whiteSpace: 'nowrap',
+                                                    overflow: 'hidden',
+                                                    textOverflow: 'ellipsis',
+                                                    flexGrow: 1,
+                                                }}
+                                            >
                                     {project.description}
                                     </span>
-                                    </div>
-                                    {/* PROGRESS BAR */}
-                                    <div>
-                                        <div className="text-xs text-gray-500 !mb-1">
-                                            {project.progress}%
                                         </div>
-                                        <div className="w-full bg-gray-200 rounded-full h-2">
-                                            <div
-                                                className="bg-primary h-2 rounded-full"
-                                                style={{width: `${project.progress}%`}}
-                                            />
+                                        {/* PROGRESS BAR */}
+                                        <div>
+                                            <div className="text-xs text-gray-500 !mb-1">
+                                                {project.progress}%
+                                            </div>
+                                            <div className="w-full bg-gray-200 rounded-full h-2">
+                                                <div
+                                                    className="bg-primary h-2 rounded-full"
+                                                    style={{width: `${project.progress}%`}}
+                                                />
+                                            </div>
                                         </div>
-                                    </div>
 
+                                    </div>
                                 </div>
                             </div>
-                        </div>
                         ))}</div>)}
-                    {/*</div>*/}
-                </main>
-                );
-            }
-
+        </main>
+    );
+}

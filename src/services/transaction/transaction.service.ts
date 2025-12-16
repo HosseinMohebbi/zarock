@@ -96,7 +96,7 @@ export async function deleteCash(businessId: string, cashId: string): Promise<vo
 export async function getAllTransactions(params: { page: number; pageSize: number }, businessId): Promise<getTransactionResponse[]> {
     const { page, pageSize } = params;
     const { data } = await http.get<getTransactionResponse[]>(endpoints.transaction.getAll(businessId), {
-        params: { page, pageSize }, // axios به‌صورت ?page=..&pageSize=.. اضافه می‌کند
+        params: { page, pageSize },
     });
     return data;
 }
@@ -128,8 +128,7 @@ export async function getStaticFile(id: string): Promise<GetStaticFileResponse> 
     const response = await http.get(endpoints.business.getStatic(id), {
         responseType: "blob",
     });
-
-    // گرفتن نام فایل از هدر
+    
     const contentDisposition = response.headers["content-disposition"];
     let fileName = "download";
 
@@ -139,8 +138,7 @@ export async function getStaticFile(id: string): Promise<GetStaticFileResponse> 
             fileName = decodeURIComponent(match[1] || match[2]);
         }
     }
-
-    // ساخت لینک دانلود
+    
     const fileUrl = URL.createObjectURL(response.data);
 
     return {
