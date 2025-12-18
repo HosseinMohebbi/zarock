@@ -37,7 +37,7 @@ export default function RootLayout({
         >
         <UserProvider>
             <HeaderController/>
-            <div className="fixed left-6 z-50">
+            <div className="fixed left-6 top-2 z-50">
                 <ThemeToggle/>
             </div>
             <div className="">

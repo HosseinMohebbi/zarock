@@ -3,7 +3,17 @@ import {AddInvoicePayload} from "@/services/invoice/invoice.types";
 export function validate(form: AddInvoicePayload) {
     const e: Record<string, string> = {};
     if (!form.fromClient) e.fromClient = 'فروشنده را انتخاب کنید';
+    
     if (!form.toClient) e.toClient = 'خریدار را انتخاب کنید';
+
+    if (
+        form.fromClient &&
+        form.toClient &&
+        form.fromClient === form.toClient
+    ) {
+        e.toClient = 'فروشنده و خریدار نمی‌توانند یکسان باشند';
+    }
+    
     if (form.hint) {
         if (form.hint.length < 2) {
             e.hint = 'توضیح کوتاه در صورت وارد شدن باید حداقل 2 کاراکتر باشد.';

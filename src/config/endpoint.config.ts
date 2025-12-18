@@ -1,8 +1,9 @@
 export const endpoints = {
     auth: {
-        login: `/api/user/login`,
-        register: `/api/auth/register`,
-        refresh: `/api/auth/refresh`,
+        login: `/api/User/login`,
+        register: `/api/User/register`,
+        getUser: `/api/User/user`,
+        update: `/api/User/update`
     },
     business: {
         createBusiness: `/api/Business/addBusiness`,

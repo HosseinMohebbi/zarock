@@ -1,7 +1,7 @@
 'use client';
 import React, {useState} from 'react';
 import Link from 'next/link';
-import {MdMenu, MdClose, MdKeyboardArrowDown, MdLogout} from 'react-icons/md';
+import {MdMenu, MdClose, MdKeyboardArrowDown, MdPerson, MdLogout} from 'react-icons/md';
 import {useUser} from '@/context/UserContext';
 import {useParams, useRouter} from "next/navigation";
 
@@ -21,6 +21,10 @@ export default function HamburgerMenu() {
         setOpen(false);
 
         router.push("/login");
+    };
+
+    const handleEditUserButton = () => {
+        router.push("/edit-user");
     };
 
     return (
@@ -49,7 +53,7 @@ export default function HamburgerMenu() {
 
                     <div className="flex items-center justify-between">
                         <div className="text-lg font-semibold">
-                            {user ? `${user.username}` : 'منو'}
+                            {user ? `${user.fullname}` : 'منو'}
                         </div>
 
                         <button
@@ -127,6 +131,15 @@ export default function HamburgerMenu() {
                             </div>
                         </div>
                     }
+
+                    <div className="absolute bottom-16 mt-auto border-t border-zinc-200 dark:border-zinc-800 !pt-4">
+                        <button
+                            onClick={handleEditUserButton}
+                            className="w-full text-right !py-2 !px-3 rounded-md !text-primary cursor-pointer"
+                        >
+                            <MdPerson className='w-8 h-8'/>
+                        </button>
+                    </div>
 
                     <div className="absolute bottom-4 mt-auto border-t border-zinc-200 dark:border-zinc-800 !pt-4">
                         <button

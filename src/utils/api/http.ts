@@ -23,8 +23,9 @@ http.interceptors.response.use(
     (error) => {
         if (typeof window !== "undefined") {
             const status = error.response?.status;
+            const token = localStorage.getItem("auth_token");
 
-            if (status === 401) {
+            if (status === 401 && token) {
                 if (!isRedirecting) {
                     isRedirecting = true;
                     

@@ -8,6 +8,7 @@ type UserState = {
     loading: boolean;
     error: string | null;
     refresh: () => Promise<void>;
+    setUser: React.Dispatch<React.SetStateAction<GetUserResponse | null>>;
     signOut: () => void;
 };
 
@@ -63,7 +64,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
         refresh();
     }, [refresh]);
 
-    const value = useMemo<UserState>(() => ({ user, loading, error, refresh, signOut }), [user, loading, error, refresh, signOut]);
+    const value = useMemo<UserState>(() => ({ user, loading, error, refresh, setUser, signOut }), [user, loading, error, refresh, signOut]);
 
     return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }

@@ -186,7 +186,7 @@ export default function Client() {
                             customStyle="!bg-danger"
                         />
                         <Button
-                            label="افزودن"
+                            label="ذخیره"
                             type="submit"
                             customStyle="!bg-confirm"
                         />

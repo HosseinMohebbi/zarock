@@ -108,7 +108,7 @@ export default function SignupPage(): JSX.Element {
                 dir="rtl"
                 className="flex flex-col w-full min-h-screen items-center justify-center gap-4 font-sans bg-background text-foreground"
             >
-                <h2 className="!text-3xl !font-bold mb-4 text-center">ثبت‌نام</h2>
+                <h2 className="!text-2xl !font-bold mb-4 text-center">ثبت ‌نام</h2>
 
                 <Input
                     label="نام کاربری"

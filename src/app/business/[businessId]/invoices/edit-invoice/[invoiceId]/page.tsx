@@ -243,229 +243,278 @@ export default function EditInvoiceFormPage() {
     function handleCancelForm() {
         router.push(`/business/${businessId}/invoices`);
     }
-    
-    return (
-        <div className="w-full flex justify-center !px-4 !pt-24">
-            <div className="w-full max-w-lg mx-auto !p-6 bg-background text-foreground rounded-lg shadow">
-                <div className="relative w-full flex items-start">
-                    <div onClick={() => setShowDeleteModal(true)}
-                         className="absolute right-0 text-danger cursor-pointer">
-                        <MdDelete className='w-6 h-6'/>
-                    </div>
-                    {!form.isArchived ?
-                        <h2 className="!mx-auto text-xl font-semibold !mb-4 text-center">ویرایش فاکتور</h2> :
-                        <h2 className="!mx-auto !mb-4 text-center !px-3 !py-1 text-xl !rounded-md bg-yellow-100 text-yellow-700">بایگانی
-                            شده</h2>}
 
-                    {message && (
-                        <div className="!mb-4 text-sm text-center">
-                            <span
-                                className="inline-block !px-3 !py-1 bg-green-100 text-green-800 rounded">{message}</span>
+    return (
+        <div className="w-full flex justify-center !px-4 !pt-24 h-screen">
+            <div className="w-full max-w-lg mx-auto bg-background text-foreground rounded-lg shadow flex flex-col">
+
+                {/* Header (Fixed) */}
+                <div className="!p-6 border-b">
+                    <div className="relative w-full flex items-start">
+                        <div
+                            onClick={() => setShowDeleteModal(true)}
+                            className="absolute right-0 text-danger cursor-pointer"
+                        >
+                            <MdDelete className="w-6 h-6"/>
                         </div>
-                    )}
+
+                        {!form.isArchived ? (
+                            <h2 className="!mx-auto text-xl font-semibold !mb-4 text-center">
+                                ویرایش فاکتور
+                            </h2>
+                        ) : (
+                            <h2 className="!mx-auto !mb-4 text-center !px-3 !py-1 text-xl !rounded-md bg-yellow-100 text-yellow-700">
+                                بایگانی شده
+                            </h2>
+                        )}
+
+                        {message && (
+                            <div className="!mb-4 text-sm text-center">
+                            <span className="inline-block !px-3 !py-1 bg-green-100 text-green-800 rounded">
+                                {message}
+                            </span>
+                            </div>
+                        )}
+                    </div>
                 </div>
 
-                <form onSubmit={handleSubmit} className="flex flex-col gap-5">
-                    <Input
-                        disabled={form.isArchived}
-                        label="توضیح کوتاه"
-                        name="hint"
-                        value={form.hint}
-                        onChange={(e) => setForm(f => ({...f, hint: e.target.value}))}
-                        error={errors.hint}
-                    />
-                    
-                    <Select
-                        disabled={form.isArchived}
-                        label="فروشنده"
-                        value={form.fromClient}
-                        onChange={value => setForm(f => ({...f, fromClient: value}))}
-                        options={clients.map(c => ({value: c.id, label: c.fullname}))}
-                    />
-                    {errors.fromClient && <span className="text-red-500 text-sm">{errors.fromClient}</span>}
-                    
-                    <Select
-                        disabled={form.isArchived}
-                        label="خریدار"
-                        value={form.toClient}
-                        onChange={value => setForm(f => ({...f, toClient: value}))}
-                        options={clients.map(c => ({value: c.id, label: c.fullname}))}
-                    />
-                    {errors.toClient && <span className="text-red-500 text-sm">{errors.toClient}</span>}
+                {/* Scrollable Form */}
+                <div className="flex-1 overflow-y-auto !p-6">
+                    <form onSubmit={handleSubmit} className="flex flex-col gap-5">
 
-                    <div className="flex flex-col gap-2">
-                        <label className="text-lg font-medium">نوع</label>
-                        <div className="flex items-center gap-6">
-                            <label className="flex items-center gap-2 text-lg">
-                                <input
-                                    disabled={form.isArchived}
-                                    type="radio"
-                                    name="type"
-                                    value="PreInvoice"
-                                    checked={form.type === 'PreInvoice'}
-                                    onChange={() => setForm(f => ({...f, type: 'PreInvoice'}))}
-                                    className="accent-primary"
-                                />
-                                <span>پیش فاکتور</span>
-                            </label>
-                            <label className="flex items-center gap-2 text-lg">
-                                <input
-                                    disabled={form.isArchived}
-                                    type="radio"
-                                    name="type"
-                                    value="Invoice"
-                                    checked={form.type === 'Invoice'}
-                                    onChange={() => setForm(f => ({...f, type: 'Invoice'}))}
-                                    className="accent-primary"
-                                />
-                                <span>فاکتور</span>
-                            </label>
-                        </div>
-                    </div>
-
-                    <Input
-                        disabled={form.isArchived}
-                        label="مالیات"
-                        name="taxPercent"
-                        type="number"
-                        value={form.taxPercent}
-                        onChange={(e) => setForm(f => ({...f, taxPercent: e.target.value}))}
-                    />
-
-                    <Input
-                        disabled={form.isArchived}
-                        label="تخفیف"
-                        name="discountPercent"
-                        type="number"
-                        value={form.discountPercent}
-                        onChange={(e) => setForm(f => ({...f, discountPercent: e.target.value}))}
-                    />
-
-                    <div className="flex items-center gap-2">
-                        <label className="label">تاریخ فاکتور </label>
-                        <DatePicker
+                        <Input
                             disabled={form.isArchived}
-                            calendar={persian}
-                            locale={persian_fa}
-                            value={form.dateTime ? dayjs(form.dateTime).calendar("jalali").toDate() : new Date()}
-                            onChange={(date) =>
-                                setForm(f => ({
-                                    ...f,
-                                    dateTime: date ? dayjs(date).format('YYYY-MM-DDTHH:mm:ss') : ""
-                                }))
-                            }
-                            className="w-full border rounded-md !px-3 !py-2"
+                            label="توضیح کوتاه"
+                            name="hint"
+                            value={form.hint}
+                            onChange={(e) => setForm(f => ({...f, hint: e.target.value}))}
+                            error={errors.hint}
                         />
-                    </div>
 
-                    <Input
-                        disabled={form.isArchived}
-                        label="توضیحات"
-                        name="description"
-                        value={form.description}
-                        onChange={(e) => setForm(f => ({...f, description: e.target.value}))}
-                    />
+                        <Select
+                            disabled={form.isArchived}
+                            label="فروشنده"
+                            value={form.fromClient}
+                            onChange={value => setForm(f => ({...f, fromClient: value}))}
+                            options={clients.map(c => ({value: c.id, label: c.fullname}))}
+                        />
+                        {errors.fromClient && <span className="text-red-500 text-sm">{errors.fromClient}</span>}
 
-                    {form.showItemForm && form.invoiceItems.map((item, idx) => (
-                        <div
-                            key={idx}
-                            className="w-full !p-4 !mt-4 !rounded-lg shadow-md border bg-card  flex flex-col gap-4"
-                        >
-                            <div className="flex justify-between items-center !mb-2">
-                                <h3 className="text-lg font-medium">آیتم {idx + 1}</h3>
+                        <Select
+                            disabled={form.isArchived}
+                            label="خریدار"
+                            value={form.toClient}
+                            onChange={value => setForm(f => ({...f, toClient: value}))}
+                            options={clients.map(c => ({value: c.id, label: c.fullname}))}
+                        />
+                        {errors.toClient && <span className="text-red-500 text-sm">{errors.toClient}</span>}
+
+                        <div className="flex flex-col gap-2">
+                            <label className="text-lg font-medium">نوع</label>
+                            <div className="flex items-center gap-6">
+                                <label className="flex items-center gap-2 text-lg">
+                                    <input
+                                        disabled={form.isArchived}
+                                        type="radio"
+                                        name="type"
+                                        value="PreInvoice"
+                                        checked={form.type === 'PreInvoice'}
+                                        onChange={() => setForm(f => ({...f, type: 'PreInvoice'}))}
+                                        className="accent-primary"
+                                    />
+                                    <span>پیش فاکتور</span>
+                                </label>
+
+                                <label className="flex items-center gap-2 text-lg">
+                                    <input
+                                        disabled={form.isArchived}
+                                        type="radio"
+                                        name="type"
+                                        value="Invoice"
+                                        checked={form.type === 'Invoice'}
+                                        onChange={() => setForm(f => ({...f, type: 'Invoice'}))}
+                                        className="accent-primary"
+                                    />
+                                    <span>فاکتور</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <Input
+                            disabled={form.isArchived}
+                            label="مالیات"
+                            name="taxPercent"
+                            type="number"
+                            value={form.taxPercent}
+                            onChange={(e) => setForm(f => ({...f, taxPercent: e.target.value}))}
+                        />
+
+                        <Input
+                            disabled={form.isArchived}
+                            label="تخفیف"
+                            name="discountPercent"
+                            type="number"
+                            value={form.discountPercent}
+                            onChange={(e) => setForm(f => ({...f, discountPercent: e.target.value}))}
+                        />
+
+                        <div className="flex items-center gap-2">
+                            <label className="label">تاریخ فاکتور </label>
+                            <DatePicker
+                                disabled={form.isArchived}
+                                calendar={persian}
+                                locale={persian_fa}
+                                value={
+                                    form.dateTime
+                                        ? dayjs(form.dateTime).calendar("jalali").toDate()
+                                        : new Date()
+                                }
+                                onChange={(date) =>
+                                    setForm(f => ({
+                                        ...f,
+                                        dateTime: date
+                                            ? dayjs(date).format('YYYY-MM-DDTHH:mm:ss')
+                                            : ""
+                                    }))
+                                }
+                                className="w-full border rounded-md !px-3 !py-2"
+                            />
+                        </div>
+
+                        <Input
+                            disabled={form.isArchived}
+                            label="توضیحات"
+                            name="description"
+                            value={form.description}
+                            onChange={(e) => setForm(f => ({...f, description: e.target.value}))}
+                        />
+
+                        {form.showItemForm && form.invoiceItems.map((item, idx) => (
+                            <div
+                                key={idx}
+                                className="w-full !p-4 !mt-4 !rounded-lg shadow-md border bg-card flex flex-col gap-4"
+                            >
+                                <div className="flex justify-between items-center !mb-2">
+                                    <h3 className="text-lg font-medium">آیتم {idx + 1}</h3>
+                                    <button
+                                        disabled={form.isArchived}
+                                        type="button"
+                                        onClick={() => removeItem(idx)}
+                                        className="text-red-500 hover:text-red-700"
+                                    >
+                                        <MdMinimize className="w-6 h-6"/>
+                                    </button>
+                                </div>
+
+                                <Input
+                                    disabled={form.isArchived}
+                                    label="کالا یا خدمت"
+                                    name={`fullName-${idx}`}
+                                    value={item.fullName}
+                                    onChange={(e) => handleItemChange(idx, 'fullName', e.target.value)}
+                                />
+
+                                <Input
+                                    disabled={form.isArchived}
+                                    label="مقدار"
+                                    name={`quantity-${idx}`}
+                                    type="number"
+                                    value={item.quantity}
+                                    onChange={(e) => handleItemChange(idx, 'quantity', e.target.value)}
+                                />
+                                {errors[`item_${idx}_quantity`] && (
+                                    <span className="text-red-500 text-sm">
+                                    {errors[`item_${idx}_quantity`]}
+                                </span>
+                                )}
+
+                                <Input
+                                    disabled={form.isArchived}
+                                    label="واحد"
+                                    name={`quantityMetric-${idx}`}
+                                    value={item.quantityMetric}
+                                    onChange={(e) => handleItemChange(idx, 'quantityMetric', e.target.value)}
+                                />
+                                {errors[`item_${idx}_metric`] && (
+                                    <span className="text-red-500 text-sm">
+                                    {errors[`item_${idx}_metric`]}
+                                </span>
+                                )}
+
+                                <Input
+                                    disabled={form.isArchived}
+                                    label="قیمت"
+                                    name={`price-${idx}`}
+                                    type="number"
+                                    value={item.price}
+                                    onChange={(e) => handleItemChange(idx, 'price', e.target.value)}
+                                />
+                                {errors[`item_${idx}_price`] && (
+                                    <span className="text-red-500 text-sm">
+                                    {errors[`item_${idx}_price`]}
+                                </span>
+                                )}
+
+                                <Input
+                                    disabled={form.isArchived}
+                                    label="توضیحات آیتم"
+                                    name={`description-${idx}`}
+                                    value={item.description}
+                                    onChange={(e) => handleItemChange(idx, 'description', e.target.value)}
+                                />
+                            </div>
+                        ))}
+
+                        {!form.isArchived ? (
+                            <div className="flex justify-center items-center gap-3 !mt-3">
                                 <button
                                     disabled={form.isArchived}
                                     type="button"
-                                    onClick={() => removeItem(idx)}
-                                    className="text-red-500 hover:text-red-700"
+                                    className="w-8 h-8 flex justify-center items-center !rounded-full !bg-primary cursor-pointer"
+                                    onClick={addNewItem}
                                 >
-                                    <MdMinimize className="w-6 h-6"/>
+                                    <MdAdd className="w-5 h-5"/>
                                 </button>
                             </div>
-
-                            <Input
-                                disabled={form.isArchived}
-                                label="کالا یا خدمت"
-                                name={`fullName-${idx}`}
-                                value={item.fullName}
-                                onChange={(e) => handleItemChange(idx, 'fullName', e.target.value)}
-                            />
-
-                            <Input
-                                disabled={form.isArchived}
-                                label="مقدار"
-                                name={`quantity-${idx}`}
-                                type="number"
-                                value={item.quantity}
-                                onChange={(e) => handleItemChange(idx, 'quantity', e.target.value)}
-                            />
-                            {errors[`item_${idx}_quantity`] && (
-                                <span className="text-red-500 text-sm">{errors[`item_${idx}_quantity`]}</span>
-                            )}
-
-                            <Input
-                                disabled={form.isArchived}
-                                label="واحد"
-                                name={`quantityMetric-${idx}`}
-                                value={item.quantityMetric}
-                                onChange={(e) => handleItemChange(idx, 'quantityMetric', e.target.value)}
-                            />
-                            {errors[`item_${idx}_metric`] && (
-                                <span className="text-red-500 text-sm">{errors[`item_${idx}_metric`]}</span>
-                            )}
-
-                            <Input
-                                disabled={form.isArchived}
-                                label="قیمت"
-                                name={`price-${idx}`}
-                                type="number"
-                                value={item.price}
-                                onChange={(e) => handleItemChange(idx, 'price', e.target.value)}
-                            />
-                            {errors[`item_${idx}_price`] && (
-                                <span className="text-red-500 text-sm">{errors[`item_${idx}_price`]}</span>
-                            )}
-
-                            <Input
-                                disabled={form.isArchived}
-                                label="توضیحات آیتم"
-                                name={`description-${idx}`}
-                                value={item.description}
-                                onChange={(e) => handleItemChange(idx, 'description', e.target.value)}
-                            />
-                        </div>
-                    ))}
-
-                    {!form.isArchived ? <div className="flex justify-center items-center gap-3 !mt-3">
-                            <button
-                                disabled={form.isArchived}
+                        ) : (
+                            <Button
+                                label="بازگشت"
                                 type="button"
-                                className="w-8 h-8 flex justify-center items-center !rounded-full !bg-primary cursor-pointer"
-                                onClick={addNewItem}><MdAdd className="w-5 h-5"/>
-                            </button>
-                        </div>
-                        :
-                        <Button label="بازگشت" type="button" onClick={handleCancelForm} customStyle="!bg-confirm"/>
-                    }
+                                onClick={handleCancelForm}
+                                customStyle="!bg-confirm"
+                            />
+                        )}
 
-                    {!form.isArchived && (
-                        <div className="flex justify-between items-center gap-4 mt-6">
-                            <div>
-                                <Button
-                                    label="بایگانی فاکتور"
-                                    onClick={() => setShowArchiveModal(true)}
-                                    customStyle="!bg-confirm"
-                                />
+                        {!form.isArchived && (
+                            <div className="flex justify-between items-center gap-4 mt-6">
+                                <div>
+                                    <Button
+                                        label="بایگانی"
+                                        onClick={() => setShowArchiveModal(true)}
+                                        customStyle="!bg-confirm"
+                                    />
+                                </div>
+                                <div className="flex justify-end items-center gap-2">
+                                    <Button
+                                        label="لغو"
+                                        type="button"
+                                        onClick={handleCancelForm}
+                                        customStyle="!bg-danger"
+                                    />
+                                    <Button
+                                        label="ویرایش"
+                                        type="submit"
+                                        loading={loading}
+                                        customStyle="!bg-confirm"
+                                    />
+                                </div>
                             </div>
-                            <div className="flex justify-end items-center gap-2">
-                                <Button label="لغو" type="button" onClick={handleCancelForm} customStyle="!bg-danger"/>
-                                <Button label="ویرایش" type="submit" loading={loading}
-                                        customStyle="!bg-confirm"/>
-                            </div>
-                        </div>
-                    )}
-                </form>
+                        )}
+
+                    </form>
+                </div>
             </div>
+
             <ConfirmModal
                 isOpen={showArchiveModal}
                 title="بایگانی فاکتور"
@@ -475,6 +524,7 @@ export default function EditInvoiceFormPage() {
                 onCancel={() => setShowArchiveModal(false)}
                 onConfirm={handleArchive}
             />
+
             <ConfirmModal
                 isOpen={showDeleteModal}
                 title="حذف فاکتور"

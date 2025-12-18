@@ -55,7 +55,7 @@ export default function ProjectTransactionsPage() {
     const [linkedTransactions, setLinkedTransactions] = useState<any[]>([]);
     const [showConfirm, setShowConfirm] = useState(false);
     const [transactionToRemove, setTransactionToRemove] = useState<string | null>(null);
-    
+
     async function loadData() {
         setLoading(true);
         try {
@@ -69,7 +69,7 @@ export default function ProjectTransactionsPage() {
     useEffect(() => {
         loadData();
     }, []);
-    
+
     const handleAddTransaction = () => {
         router.push(
             `/business/${businessId}/transactions?selectMode=1&projectId=${projectId}`
@@ -106,9 +106,9 @@ export default function ProjectTransactionsPage() {
 
 
     return (
-        <div className="flex justify-center w-full !px-4 !pt-24">
-            <div className="w-full max-w-2xl mx-auto">
-                <div className="flex justify-between items-center !mb-6">
+        <div className="flex justify-center w-full !px-4 !pt-20 h-full">
+            <div className="w-full max-w-2xl mx-auto flex flex-col h-full">
+                <div className="flex justify-between items-center !mb-6 shrink-0">
                     <h2 className="!text-lg !font-semibold">تراکنش‌ های لینک‌ شده</h2>
                     <div
                         className="flex justify-center items-center w-12 h-10 !bg-primary !rounded border border-gray-300 cursor-pointer"
@@ -117,106 +117,108 @@ export default function ProjectTransactionsPage() {
                         <MdAdd className="w-6 h-6 text-background"/>
                     </div>
                 </div>
-                
-                {loading ? (
-                    <div className="text-center !py-10">در حال بارگذاری...</div>
-                ) : linkedTransactions.length === 0 ? (
-                    <div className="!p-4 text-center text-gray-500 border !rounded-lg">
-                        هیچ تراکنشی لینک نشده است.
-                    </div>
-                ) : (
-                    <div className="overflow-y-auto pr-2 flex flex-col items-center gap-4">
-                        {linkedTransactions.map((t) => (
-                            <div
-                                key={t.id}
-                                className="w-full max-w-sm bg-card !rounded-lg shadow-sm hover:shadow-md transition cursor-pointer overflow-hidden"
-                            >
-                                <div className="flex items-stretch">
-                                    <div className="flex flex-col items-center justify-center w-16 
+
+                <div className="flex-1 overflow-y-auto">
+                    {loading ? (
+                        <div className="text-center !py-10">در حال بارگذاری...</div>
+                    ) : linkedTransactions.length === 0 ? (
+                        <div className="!p-4 text-center text-gray-500 border !rounded-lg">
+                            هیچ تراکنشی لینک نشده است.
+                        </div>
+                    ) : (
+                        <div className="overflow-y-auto pr-2 flex flex-col items-center gap-4">
+                            {linkedTransactions.map((t) => (
+                                <div
+                                    key={t.id}
+                                    className="w-full max-w-sm bg-card !rounded-lg shadow-sm hover:shadow-md transition cursor-pointer overflow-hidden"
+                                >
+                                    <div className="flex items-stretch">
+                                        <div className="flex flex-col items-center justify-center w-16 
                                     bg-primary text-white p-2 self-stretch">
 
-                                        <div className="!mb-1 text-lg font-bold">
-                                            {getItemIcon(t.transactionType)}
+                                            <div className="!mb-1 text-lg font-bold">
+                                                {getItemIcon(t.transactionType)}
+                                            </div>
+
+                                            <div className="!mb-1 text-sm font-bold">
+                                                {getTransactionTypeFa(t.transactionType)}
+                                            </div>
                                         </div>
 
-                                        <div className="!mb-1 text-sm font-bold">
-                                            {getTransactionTypeFa(t.transactionType)}
-                                        </div>
-                                    </div>
-                                    
-                                    <div className="flex-1">
-                                        <div className="flex flex-col gap-4 !p-3">
+                                        <div className="flex-1">
+                                            <div className="flex flex-col gap-4 !p-3">
 
-                                            {/* مبلغ */}
-                                            <div className="flex justify-between items-center">
-                                                <div className="flex items-center gap-2 text-lg">
-                                                    <h2>مبلغ:</h2>
-                                                    <span className="text-base">
+                                                {/* مبلغ */}
+                                                <div className="flex justify-between items-center">
+                                                    <div className="flex items-center gap-2 text-lg">
+                                                        <h2>مبلغ:</h2>
+                                                        <span className="text-base">
                                                     {typeof t.amount === "number" ? t.amount.toLocaleString() + " تومان" : t.amount ?? "-"}
                                                 </span>
-                                                </div>
-
-                                                <button
-                                                    onClick={() => handleOpenConfirmModal(t.id)}
-                                                    className="cursor-pointer"
-                                                    title="حذف تراکنش"
-                                                >
-                                                    <MdDelete className='w-8 h-8 text-danger'/>
-                                                </button>
-                                            </div>
-
-                                            {t.fromClient?.fullname && (
-                                                <div className="flex items-center gap-2 text-lg">
-                                                    <h2>مبدا:</h2>
-                                                    <span>{t.fromClient.fullname}</span>
-                                                </div>
-                                            )}
-
-                                            {t.toClient?.fullname && (
-                                                <div className="flex items-center gap-2 text-lg">
-                                                    <h2>مقصد:</h2>
-                                                    <span>{t.toClient.fullname}</span>
-                                                </div>
-                                            )}
-
-                                            {t.transactionType === "Check" && t.state && (
-                                                <div className="flex items-center gap-2 text-lg">
-                                                    <h2>وضعیت:</h2>
-                                                    <span>{checkStateMap[t.state]}</span>
-                                                </div>
-                                            )}
-
-                                            {t.transactionType === "Check" ? (
-                                                <div className="flex flex-col gap-2 text-lg">
-                                                    <div className="flex items-center gap-2">
-                                                        <h2>دریافت:</h2>
-                                                        <span>{formatJalali(t.receiveDate)}</span>
                                                     </div>
 
-                                                    <div className="flex items-center gap-2">
-                                                        <h2>موعود:</h2>
-                                                        <span>{formatJalali(t.dueDate)}</span>
+                                                    <button
+                                                        onClick={() => handleOpenConfirmModal(t.id)}
+                                                        className="cursor-pointer"
+                                                        title="حذف تراکنش"
+                                                    >
+                                                        <MdDelete className='w-8 h-8 text-danger'/>
+                                                    </button>
+                                                </div>
+
+                                                {t.fromClient?.fullname && (
+                                                    <div className="flex items-center gap-2 text-lg">
+                                                        <h2>مبدا:</h2>
+                                                        <span>{t.fromClient.fullname}</span>
                                                     </div>
-                                                </div>
-                                            ) : (
+                                                )}
+
+                                                {t.toClient?.fullname && (
+                                                    <div className="flex items-center gap-2 text-lg">
+                                                        <h2>مقصد:</h2>
+                                                        <span>{t.toClient.fullname}</span>
+                                                    </div>
+                                                )}
+
+                                                {t.transactionType === "Check" && t.state && (
+                                                    <div className="flex items-center gap-2 text-lg">
+                                                        <h2>وضعیت:</h2>
+                                                        <span>{checkStateMap[t.state]}</span>
+                                                    </div>
+                                                )}
+
+                                                {t.transactionType === "Check" ? (
+                                                    <div className="flex flex-col gap-2 text-lg">
+                                                        <div className="flex items-center gap-2">
+                                                            <h2>دریافت:</h2>
+                                                            <span>{formatJalali(t.receiveDate)}</span>
+                                                        </div>
+
+                                                        <div className="flex items-center gap-2">
+                                                            <h2>موعود:</h2>
+                                                            <span>{formatJalali(t.dueDate)}</span>
+                                                        </div>
+                                                    </div>
+                                                ) : (
+                                                    <div className="flex items-center gap-2 text-lg">
+                                                        <h2>تاریخ:</h2>
+                                                        <span>{formatJalali(t.date)}</span>
+                                                    </div>
+                                                )}
+
                                                 <div className="flex items-center gap-2 text-lg">
-                                                    <h2>تاریخ:</h2>
-                                                    <span>{formatJalali(t.date)}</span>
+                                                    <h2>توضیح:</h2>
+                                                    <span>{t.description ?? "—"}</span>
                                                 </div>
-                                            )}
 
-                                            <div className="flex items-center gap-2 text-lg">
-                                                <h2>توضیح:</h2>
-                                                <span>{t.description ?? "—"}</span>
                                             </div>
-
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        ))}
-                    </div>
-                )}
+                            ))}
+                        </div>
+                    )}
+                </div>
             </div>
             <ConfirmModal
                 isOpen={showConfirm}

@@ -1,7 +1,7 @@
 'use client';
 import {useEffect, useState} from "react";
 import {useParams, useRouter, useSearchParams} from "next/navigation";
-import {MdAdd, MdMoney, MdCheck} from "react-icons/md";
+import {MdAdd, MdAttachMoney, MdReceiptLong} from "react-icons/md";
 import Loader from "@/app/components/ui/Loader";
 import {getAllTransactions} from "@/services/transaction/transaction.service";
 import {assignTransactionToProject} from "@/services/project/project.service";
@@ -28,8 +28,8 @@ function getTransactionTypeFa(type?: string): string {
 }
 
 const getItemIcon = (type?: string) => {
-    if (type === "Check") return <MdCheck size={22}/>;
-    if (type === "Cash") return <MdMoney size={22}/>;
+    if (type === "Check") return <MdReceiptLong size={22}/>;
+    if (type === "Cash") return <MdAttachMoney size={22}/>;
     return null;
 };
 

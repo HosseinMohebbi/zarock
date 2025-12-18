@@ -120,7 +120,7 @@ export default function CashForm({ clients, loadingClients }: CashFormProps) {
                     />
 
                     <Select
-                        label="از مشتری"
+                        label="مبدا"
                         value={form.fromClient}
                         onChange={(v) => update("fromClient", v)}
                         placeholder={loadingClients ? "در حال بارگذاری..." : "انتخاب کنید"}
@@ -129,7 +129,7 @@ export default function CashForm({ clients, loadingClients }: CashFormProps) {
                     />
 
                     <Select
-                        label="به مشتری"
+                        label="مقصد"
                         value={form.toClient}
                         onChange={(v) => update("toClient", v)}
                         placeholder={loadingClients ? "در حال بارگذاری..." : "انتخاب کنید"}

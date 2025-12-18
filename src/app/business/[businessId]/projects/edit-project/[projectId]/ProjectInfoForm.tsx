@@ -124,13 +124,13 @@ export default function EditProjectPage() {
     }
 
     return (
-        <div className="w-full flex justify-center !px-4 !pt-24">
+        <div className="w-full flex justify-center !px-4 !pt-20">
             <div className="w-full max-w-lg mx-auto !p-6 bg-background text-foreground rounded-lg shadow">
                 <div className="relative w-full flex items-start">
                     <div onClick={handleDelete} className="absolute right-0 text-danger cursor-pointer">
                         <MdDelete className='w-6 h-6'/>
                     </div>
-                    <h2 className="!mx-auto text-xl font-semibold !mb-4 text-center">ویرایش پروژه</h2>
+                    <h2 className="!mx-auto !text-lg !font-semibold !mb-4 text-center">ویرایش پروژه</h2>
                 </div>
 
                 <form className="flex flex-col gap-5" onSubmit={handleSubmit}>

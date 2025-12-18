@@ -5,11 +5,19 @@ export function cashValidate(form: AddCashPayload) {
     const e: Record<string, string> = {};
 
     if (!form.fromClient) {
-        e.fromClient = "خریدار انتخاب نشده است";
+        e.fromClient = "مبدا تراکنش انتخاب نشده است";
     }
 
     if (!form.toClient) {
-        e.toClient = "فروشنده انتخاب نشده است";
+        e.toClient = "مقصد تراکنش انتخاب نشده است";
+    }
+
+    if (
+        form.fromClient &&
+        form.toClient &&
+        form.fromClient === form.toClient
+    ) {
+        e.toClient = 'مبدا و مقصد تراکنش نمی ‌توانند یکسان باشند';
     }
 
     if (!form.amount || isNaN(Number(form.amount)) || Number(form.amount) <= 0) {
@@ -23,11 +31,19 @@ export function checkValidate(form: AddCheckPayload) {
     const e: Record<string, string> = {};
 
     if (!form.fromClient) {
-        e.fromClient = "خریدار انتخاب نشده است";
+        e.fromClient = "مبدا تراکنش انتخاب نشده است";
     }
 
     if (!form.toClient) {
-        e.toClient = "فروشنده انتخاب نشده است";
+        e.toClient = "مقصد تراکنش انتخاب نشده است";
+    }
+
+    if (
+        form.fromClient &&
+        form.toClient &&
+        form.fromClient === form.toClient
+    ) {
+        e.toClient = 'مبدا و مقصد تراکنش نمی ‌توانند یکسان باشند';
     }
 
     if (!form.checkNumber) {

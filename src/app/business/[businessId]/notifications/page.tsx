@@ -86,11 +86,11 @@ export default function NotificationsPage() {
                     {/* ---------------------------------------------------------- */}
                     {/* اعلان‌های یک بار */}
                     {/* ---------------------------------------------------------- */}
-                    <div className="w-full !p-5 border !rounded-xl bg-card shadow-sm flex flex-col justify-between">
+                    <div className="w-full !p-5 border !rounded-xl bg-background shadow-sm flex flex-col justify-between">
                         <div>
 
                             <div className="flex justify-between items-center !mb-3">
-                                <h3 className="!text-base !font-semibold">اعلان‌های یک‌بار</h3>
+                                <h3 className="!text-base !font-semibold">اعلان‌ های یک‌ بار</h3>
 
                                 <Button
                                     label={<MdAdd className="w-6 h-6"/>}
@@ -104,7 +104,7 @@ export default function NotificationsPage() {
                             {loadingOne ? (
                                 <p className="text-gray-500 text-center">در حال بارگذاری...</p>
                             ) : oneTimeNotifs.length === 0 ? (
-                                <p className="text-gray-500 text-center">هیچ اعلان یک‌بار ثبت نشده است</p>
+                                <p className="text-gray-500 text-center">هیچ اعلان یک‌ باری ثبت نشده است</p>
                             ) : (
                                 <ul className="flex gap-4 overflow-x-auto whitespace-nowrap !pb-2">
                                     {oneTimeNotifs.map((n) => (
@@ -137,10 +137,10 @@ export default function NotificationsPage() {
                     {/* ---------------------------------------------------------- */}
                     {/* اعلان‌های ماهانه */}
                     {/* ---------------------------------------------------------- */}
-                    <div className="w-full !p-5 border !rounded-xl bg-card shadow-sm flex flex-col justify-between">
+                    <div className="w-full !p-5 border !rounded-xl bg-background shadow-sm flex flex-col justify-between">
                         <div>
                             <div className="flex justify-between items-center !mb-3">
-                                <h3 className="!text-base !font-semibold">اعلان‌های ماهانه</h3>
+                                <h3 className="!text-base !font-semibold">اعلان ‌های ماهانه</h3>
 
                                 <Button
                                     label={<MdAdd className="w-6 h-6"/>}
@@ -189,10 +189,10 @@ export default function NotificationsPage() {
                     {/* ---------------------------------------------------------- */}
                     {/* اعلان‌های چک */}
                     {/* ---------------------------------------------------------- */}
-                    <div className="w-full !p-5 border !rounded-xl bg-card shadow-sm flex flex-col justify-between">
+                    <div className="w-full !p-5 border !rounded-xl bg-background shadow-sm flex flex-col justify-between">
                         <div>
                             <div className="flex justify-between items-center !mb-3">
-                                <h3 className="!text-base !font-semibold">اعلان‌های چک</h3>
+                                <h3 className="!text-base !font-semibold">اعلان ‌های چک</h3>
 
                                 <Button
                                     label={<MdAdd className="w-6 h-6"/>}

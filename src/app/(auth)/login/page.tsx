@@ -53,19 +53,24 @@ export default function LoginPage(): JSX.Element {
             }
             
             await refresh();
-            setForm({
-                userName: '',
-                password: '',
-            })
+
             router.push("/business");
             toast.success("با موفقیت وارد شدید");
         } catch (err: any) {
-            const msg =
-                err?.response?.data?.message ||
-                err?.response?.data?.error ||
-                err?.message ||
-                "خطا در ورود";
-            setErrors({server: msg});
+            const status = err?.response?.status;
+
+            if (status === 401) {
+                setErrors({
+                    server: "نام کاربری یا رمز عبور اشتباه است",
+                });
+            } else {
+                setErrors({
+                    server:
+                        err?.response?.data?.message ||
+                        err?.response?.data?.error ||
+                        "خطا در ورود",
+                });
+            }
         } finally {
             setLoading(false);
         }
@@ -79,7 +84,7 @@ export default function LoginPage(): JSX.Element {
         <div className="w-full h-screen flex justify-center items-center">
             <form onSubmit={onSubmit} dir="rtl"
                   className="w-full h-full flex flex-col justify-center items-center gap-4  font-sans bg-background text-foreground">
-                <h2 className="text-2xl font-semibold mb-4 text-center">ورود</h2>
+                <h2 className="!text-2xl !font-bold mb-4 text-center">ورود</h2>
                 
                 <Input
                     label="نام کاربری"
@@ -88,7 +93,6 @@ export default function LoginPage(): JSX.Element {
                     containerClass={cn('w-[90%] sm:w-[80%] md:w-[60%] max-w-lg mx-auto')}
                     inputClass={cn('w-full h-[40px]')}
                     onChange={(e) => update("userName", e.target.value)}
-                    // onChange={(e) => setUserName(e.target.value)}
                     error={errors.userName}
                 />
       
@@ -100,9 +104,13 @@ export default function LoginPage(): JSX.Element {
                     containerClass={cn('w-[90%] sm:w-[80%] md:w-[60%] max-w-lg mx-auto')}
                     inputClass={cn('w-full h-[40px]')}
                     onChange={(e) => update("password", e.target.value)}
-                    // onChange={(e) => setPassword(e.target.value)}
                     error={errors.password}
                 />
+                {errors.server && (
+                    <p className="text-sm text-red-600 mt-2 text-center">
+                        {errors.server}
+                    </p>
+                )}
 
                 <div className="w-[90%] sm:w-[80%] md:w-[60%] max-w-lg mx-auto">
                     <Button

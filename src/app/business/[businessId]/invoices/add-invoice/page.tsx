@@ -164,213 +164,236 @@ export default function AddInvoiceFormPage() {
     };
 
     return (
-        <div className="w-full flex justify-center !px-4 !pt-24">
-            <div className="w-full max-w-lg mx-auto !p-6 bg-background text-foreground rounded-lg shadow">
-                <h2 className="text-xl font-semibold !mb-4 text-center">ایجاد فاکتور جدید</h2>
+        <div className="w-full flex justify-center !px-4 !pt-24 h-screen">
+            <div className="w-full max-w-lg mx-auto bg-background text-foreground rounded-lg shadow flex flex-col">
 
-                {message && (
-                    <div className="!mb-4 text-sm text-center">
-                        <span className="inline-block !px-3 !py-1 bg-green-100 text-green-800 rounded">{message}</span>
-                    </div>
-                )}
+                {/* Title (Fixed) */}
+                <div className="!p-6 border-b">
+                    <h2 className="text-xl font-semibold !mb-4 text-center">
+                        ایجاد فاکتور جدید
+                    </h2>
 
-                <form onSubmit={handleSubmit} className="flex flex-col gap-5">
-
-                    <Input
-                        label="توضیح کوتاه"
-                        name="hint"
-                        value={form.hint}
-                        onChange={(e) => setForm((f) => ({...f, hint: e.target.value}))}
-                        error={errors.hint}
-                    />
-
-                    <Select
-                        label="فروشنده"
-                        value={form.fromClient}
-                        onChange={(value) => setForm((f) => ({...f, fromClient: value}))}
-                        options={clients.map((client) => ({
-                            value: client.id,
-                            label: client.fullname,
-                        }))}
-                    />
-                    {errors.fromClient && <span className="text-red-500 text-sm">{errors.fromClient}</span>}
-
-                    <Select
-                        label="خریدار"
-                        value={form.toClient}
-                        onChange={(value) => setForm((f) => ({...f, toClient: value}))}
-                        options={clients.map((client) => ({
-                            value: client.id,
-                            label: client.fullname,
-                        }))}
-                    />
-                    {errors.toClient && <span className="text-red-500 text-sm">{errors.toClient}</span>}
-
-                    <div className="flex flex-col gap-2">
-                        <label className="text-lg font-medium">نوع</label>
-
-                        <div className="flex items-center gap-6">
-                            <label className="flex items-center gap-2 text-lg">
-                                <input
-                                    type="radio"
-                                    name="type"
-                                    value="PreInvoice"
-                                    checked={form.type === 'PreInvoice'}
-                                    onChange={() => setForm(f => ({...f, type: 'PreInvoice'}))}
-                                    className="accent-primary"
-                                />
-                                <span>پیش فاکتور</span>
-                            </label>
-
-                            <label className="flex items-center gap-2">
-                                <input
-                                    type="radio"
-                                    name="type"
-                                    value="Invoice"
-                                    checked={form.type === 'Invoice'}
-                                    onChange={() => setForm(f => ({...f, type: 'Invoice'}))}
-                                    className="accent-primary"
-                                />
-                                <span>فاکتور</span>
-                            </label>
+                    {message && (
+                        <div className="!mb-4 text-sm text-center">
+                        <span className="inline-block !px-3 !py-1 bg-green-100 text-green-800 rounded">
+                            {message}
+                        </span>
                         </div>
-                    </div>
+                    )}
+                </div>
 
-                    <Input
-                        label="مالیات"
-                        name="taxPercent"
-                        type="number"
-                        value={form.taxPercent}
-                        onChange={(e) => setForm((f) => ({...f, taxPercent: e.target.value}))}
-                    />
+                {/* Scrollable Form */}
+                <div className="flex-1 overflow-y-auto !p-6">
+                    <form onSubmit={handleSubmit} className="flex flex-col gap-5">
 
-                    <Input
-                        label="تخفیف"
-                        name="discountPercent"
-                        type="number"
-                        value={form.discountPercent}
-                        onChange={(e) => setForm((f) => ({...f, discountPercent: e.target.value}))}
-                    />
-
-                    <div className="flex items-center gap-2">
-                        <label className="label">تاریخ فاکتور </label>
-                        <DatePicker
-                            calendar={persian}
-                            locale={persian_fa}
-                            value={
-                                form.dateTime
-                                    ? dayjs(form.dateTime).toDate()
-                                    : new Date()
-                            }
-                            onChange={(date) =>
-                                setForm((f) => ({
-                                    ...f,
-                                    dateTime: date ? date.toDate().toISOString() : ""
-                                }))
-                            }
-                            className="w-full border rounded-md px-3 py-2"
+                        <Input
+                            label="توضیح کوتاه"
+                            name="hint"
+                            value={form.hint}
+                            onChange={(e) => setForm((f) => ({...f, hint: e.target.value}))}
+                            error={errors.hint}
                         />
-                    </div>
 
-                    <Input
-                        label="توضیحات"
-                        name="description"
-                        value={form.description}
-                        onChange={(e) => setForm((f) => ({...f, description: e.target.value}))}
-                    />
+                        <Select
+                            label="فروشنده"
+                            value={form.fromClient}
+                            onChange={(value) => setForm((f) => ({...f, fromClient: value}))}
+                            options={clients.map((client) => ({
+                                value: client.id,
+                                label: client.fullname,
+                            }))}
+                        />
+                        {errors.fromClient && <span className="text-red-500 text-sm">{errors.fromClient}</span>}
 
-                    {form.invoiceItems.map((item, index) => (
-                        <div
-                            key={index}
-                            className="w-full !p-4 !mt-4 rounded-lg shadow-md border border-gray-300 bg-card flex flex-col gap-4"
-                        >
-                            <div className="flex justify-between items-center mb-2">
-                                <h3 className="text-lg font-medium">افزودن آیتم {index + 1}</h3>
+                        <Select
+                            label="خریدار"
+                            value={form.toClient}
+                            onChange={(value) => setForm((f) => ({...f, toClient: value}))}
+                            options={clients.map((client) => ({
+                                value: client.id,
+                                label: client.fullname,
+                            }))}
+                        />
+                        {errors.toClient && <span className="text-red-500 text-sm">{errors.toClient}</span>}
 
-                                <button
-                                    type="button"
-                                    className="text-red-500 hover:text-red-700"
-                                    onClick={() =>
-                                        setForm(f => ({
-                                            ...f,
-                                            invoiceItems: f.invoiceItems.filter((_, i) => i !== index)
-                                        }))
-                                    }
-                                >
-                                    <MdMinimize className="w-6 h-6"/>
-                                </button>
+                        <div className="flex flex-col gap-2">
+                            <label className="text-lg font-medium">نوع</label>
+
+                            <div className="flex items-center gap-6">
+                                <label className="flex items-center gap-2 text-lg">
+                                    <input
+                                        type="radio"
+                                        name="type"
+                                        value="PreInvoice"
+                                        checked={form.type === 'PreInvoice'}
+                                        onChange={() => setForm(f => ({...f, type: 'PreInvoice'}))}
+                                        className="accent-primary"
+                                    />
+                                    <span>پیش فاکتور</span>
+                                </label>
+
+                                <label className="flex items-center gap-2">
+                                    <input
+                                        type="radio"
+                                        name="type"
+                                        value="Invoice"
+                                        checked={form.type === 'Invoice'}
+                                        onChange={() => setForm(f => ({...f, type: 'Invoice'}))}
+                                        className="accent-primary"
+                                    />
+                                    <span>فاکتور</span>
+                                </label>
                             </div>
+                        </div>
 
-                            <Input
-                                label="کالا یا خدمت"
-                                name="fullName"
-                                value={item.fullName}
-                                onChange={(e) => handleItemChange(index, 'fullName', e.target.value)}
-                            />
+                        <Input
+                            label="مالیات"
+                            name="taxPercent"
+                            type="number"
+                            value={form.taxPercent}
+                            onChange={(e) => setForm((f) => ({...f, taxPercent: e.target.value}))}
+                        />
 
-                            <Input
-                                label="مقدار"
-                                name="quantity"
-                                type="number"
-                                value={item.quantity}
-                                onChange={(e) => handleItemChange(index, 'quantity', e.target.value)}
-                            />
-                            {errors[`item_${index}_quantity`] && (
-                                <span className="text-red-500 text-sm">{errors[`item_${index}_quantity`]}</span>
-                            )}
+                        <Input
+                            label="تخفیف"
+                            name="discountPercent"
+                            type="number"
+                            value={form.discountPercent}
+                            onChange={(e) => setForm((f) => ({...f, discountPercent: e.target.value}))}
+                        />
 
-                            <Input
-                                label="واحد"
-                                name="quantityMetric"
-                                value={item.quantityMetric}
-                                onChange={(e) => handleItemChange(index, 'quantityMetric', e.target.value)}
-                            />
-                            {errors[`item_${index}_metric`] && (
-                                <span className="text-red-500 text-sm">{errors[`item_${index}_metric`]}</span>
-                            )}
-
-                            <Input
-                                label="قیمت"
-                                name="price"
-                                type="number"
-                                value={item.price}
-                                onChange={(e) => handleItemChange(index, 'price', e.target.value)}
-                            />
-                            {errors[`item_${index}_price`] && (
-                                <span className="text-red-500 text-sm">{errors[`item_${index}_price`]}</span>
-                            )}
-
-
-                            <Input
-                                label="توضیحات"
-                                name="itemDescription"
-                                value={item.description}
-                                onChange={(e) => handleItemChange(index, 'description', e.target.value)}
+                        <div className="flex items-center gap-2">
+                            <label className="label">تاریخ فاکتور </label>
+                            <DatePicker
+                                calendar={persian}
+                                locale={persian_fa}
+                                value={
+                                    form.dateTime
+                                        ? dayjs(form.dateTime).toDate()
+                                        : new Date()
+                                }
+                                onChange={(date) =>
+                                    setForm((f) => ({
+                                        ...f,
+                                        dateTime: date ? date.toDate().toISOString() : ""
+                                    }))
+                                }
+                                className="w-full border rounded-md px-3 py-2"
                             />
                         </div>
-                    ))}
 
-                    <div className="flex justify-center items-center gap-3 !mt-3">
-                        <button
-                            type="button"
-                            className="w-8 h-8 flex justify-center items-center !rounded-full !bg-primary cursor-pointer"
-                            onClick={addNewItem}><MdAdd className="w-5 h-5"/></button>
-                    </div>
+                        <Input
+                            label="توضیحات"
+                            name="description"
+                            value={form.description}
+                            onChange={(e) => setForm((f) => ({...f, description: e.target.value}))}
+                        />
 
-                    <div className="flex justify-end items-center gap-3 !mt-3">
-                        <Button
-                            label="لغو"
-                            type="button"
-                            onClick={handleCancel}
-                            customStyle="!bg-danger"
-                        />
-                        <Button
-                            label="افزودن"
-                            type="submit"
-                            customStyle="!bg-confirm"
-                        />
-                    </div>
-                </form>
+                        {form.invoiceItems.map((item, index) => (
+                            <div
+                                key={index}
+                                className="w-full !p-4 !mt-4 rounded-lg shadow-md border border-gray-300 bg-card flex flex-col gap-4"
+                            >
+                                <div className="flex justify-between items-center mb-2">
+                                    <h3 className="text-lg font-medium">
+                                        افزودن آیتم {index + 1}
+                                    </h3>
+
+                                    <button
+                                        type="button"
+                                        className="text-red-500 hover:text-red-700"
+                                        onClick={() =>
+                                            setForm(f => ({
+                                                ...f,
+                                                invoiceItems: f.invoiceItems.filter((_, i) => i !== index)
+                                            }))
+                                        }
+                                    >
+                                        <MdMinimize className="w-6 h-6"/>
+                                    </button>
+                                </div>
+
+                                <Input
+                                    label="کالا یا خدمت"
+                                    name="fullName"
+                                    value={item.fullName}
+                                    onChange={(e) => handleItemChange(index, 'fullName', e.target.value)}
+                                />
+
+                                <Input
+                                    label="مقدار"
+                                    name="quantity"
+                                    type="number"
+                                    value={item.quantity}
+                                    onChange={(e) => handleItemChange(index, 'quantity', e.target.value)}
+                                />
+                                {errors[`item_${index}_quantity`] && (
+                                    <span className="text-red-500 text-sm">
+                                    {errors[`item_${index}_quantity`]}
+                                </span>
+                                )}
+
+                                <Input
+                                    label="واحد"
+                                    name="quantityMetric"
+                                    value={item.quantityMetric}
+                                    onChange={(e) => handleItemChange(index, 'quantityMetric', e.target.value)}
+                                />
+                                {errors[`item_${index}_metric`] && (
+                                    <span className="text-red-500 text-sm">
+                                    {errors[`item_${index}_metric`]}
+                                </span>
+                                )}
+
+                                <Input
+                                    label="قیمت"
+                                    name="price"
+                                    type="number"
+                                    value={item.price}
+                                    onChange={(e) => handleItemChange(index, 'price', e.target.value)}
+                                />
+                                {errors[`item_${index}_price`] && (
+                                    <span className="text-red-500 text-sm">
+                                    {errors[`item_${index}_price`]}
+                                </span>
+                                )}
+
+                                <Input
+                                    label="توضیحات"
+                                    name="itemDescription"
+                                    value={item.description}
+                                    onChange={(e) => handleItemChange(index, 'description', e.target.value)}
+                                />
+                            </div>
+                        ))}
+
+                        <div className="flex justify-center items-center gap-3 !mt-3">
+                            <button
+                                type="button"
+                                className="w-8 h-8 flex justify-center items-center !rounded-full !bg-primary cursor-pointer"
+                                onClick={addNewItem}
+                            >
+                                <MdAdd className="w-5 h-5"/>
+                            </button>
+                        </div>
+
+                        <div className="flex justify-end items-center gap-3 !mt-3">
+                            <Button
+                                label="لغو"
+                                type="button"
+                                onClick={handleCancel}
+                                customStyle="!bg-danger"
+                            />
+                            <Button
+                                label="ذخیره"
+                                type="submit"
+                                customStyle="!bg-confirm"
+                            />
+                        </div>
+
+                    </form>
+                </div>
+
             </div>
         </div>
     );

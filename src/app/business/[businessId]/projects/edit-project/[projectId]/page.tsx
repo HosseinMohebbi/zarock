@@ -1,22 +1,20 @@
 'use client';
 import { useState } from "react";
-import { useParams } from "next/navigation";
 import DocumentsForm from "./DocumentsForm";
 import TransactionForm from "./TransactionForm";
 import InvoicesForm from "./InvoicesForm";
 import ProjectInfoForm from "./ProjectInfoForm";
 import Button from "@/app/components/ui/Button";
 
-export default function ClientDetailsPage() {
-    const params = useParams() as { businessId?: string; clientId?: string };
-
+export default function EditProjectWrapper() {
+    
     const [activeTab, setActiveTab] = useState<'info' | 'transactions' | 'invoices' | 'documents'>('info');
 
     return (
-        <div className="w-full flex flex-col items-center !px-4 !pb-6 !pt-24">
-            <div className="w-full max-w-4xl mx-auto">
+        <div className="w-full flex flex-col items-center !px-4 !pb-6 !pt-24 h-screen overflow-hidden">
+            <div className="w-full max-w-4xl mx-auto flex flex-col h-full">
                 
-                <div className="flex justify-center gap-3 !mb-6 flex-wrap">
+                <div className="flex justify-center gap-3 !mb-6 flex-wrap shrink-0">
                     <Button
                         type="button"
                         label="اطلاعات"
@@ -57,21 +55,21 @@ export default function ClientDetailsPage() {
                             : '!bg-muted !text-muted-foreground'}`}
                     />
                 </div>
-                
-                <div className="w-full">
-                    <div className={activeTab === 'info' ? 'block' : 'hidden'}>
+
+                <div className="w-full flex-1 overflow-hidden">
+                    <div className={activeTab === 'info' ? 'block h-full' : 'hidden'}>
                         <ProjectInfoForm/>
                     </div>
 
-                    <div className={activeTab === 'transactions' ? 'block' : 'hidden'}>
+                    <div className={activeTab === 'transactions' ? 'block h-full' : 'hidden'}>
                         <TransactionForm/>
                     </div>
 
-                    <div className={activeTab === 'invoices' ? 'block' : 'hidden'}>
+                    <div className={activeTab === 'invoices' ? 'block h-full' : 'hidden'}>
                         <InvoicesForm/>
                     </div>
 
-                    <div className={activeTab === 'documents' ? 'block' : 'hidden'}>
+                    <div className={activeTab === 'documents' ? 'block h-full' : 'hidden'}>
                         <DocumentsForm/>
                     </div>
                 </div>

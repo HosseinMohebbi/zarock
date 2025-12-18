@@ -82,7 +82,7 @@ export default function OneTimeNotifCreatePage() {
 
                 <div className="flex items-center justify-between !mb-4">
                     <h1 className="text-xl font-semibold text-center w-full">
-                        ایجاد اعلان یک‌بار
+                        ایجاد اعلان یک ‌بار
                     </h1>
                 </div>
 
@@ -153,7 +153,7 @@ export default function OneTimeNotifCreatePage() {
                         />
 
                         <Button
-                            label="افزودن"
+                            label="ذخیره"
                             type="submit"
                             customStyle="!bg-confirm"
                         />
