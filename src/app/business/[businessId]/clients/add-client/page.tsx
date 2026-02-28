@@ -10,10 +10,10 @@ import {toast} from "react-toastify";
 export default function Client() {
     const [fullName, setFullName] = useState('');
     const [nationalCode, setNationalCode] = useState('');
+    const [phoneNumber, setPhoneNumber] = useState('');
     const [address, setAddress] = useState('');
     const [invoiceDescription, setInvoiceDescription] = useState('');
     const [isJuridicalPerson, setIsJuridicalPerson] = useState(false);
-    const [isOwnerMember, setIsOwnerMember] = useState(false);
     const [tags, setTags] = useState<string[]>([]);
     const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
     const params = useParams() as { businessId?: string };
@@ -34,6 +34,7 @@ export default function Client() {
         const fieldErrs: FieldErrors = validateClient({
             fullName,
             nationalCode,
+            phoneNumber,
             address
         });
         setFieldErrors(fieldErrs);
@@ -46,9 +47,9 @@ export default function Client() {
         const payload = {
             fullName: fullName.trim(),
             nationalCode: nationalCode.trim(),
+            phoneNumber: phoneNumber.trim(),
             constantDescriptionInvoice: invoiceDescription.trim(),
             isJuridicalPerson,
-            isOwnerMember,
             address: address.trim(),
             tags
         };
@@ -75,9 +76,9 @@ export default function Client() {
 
     return (
         <div className="w-full flex justify-center !px-4 !pt-24">
-            <div className="w-full max-w-lg mx-auto !p-6 bg-background text-foreground rounded-lg shadow">
-                <div className="flex items-center justify-between mb-4">
-                    <h1 className="text-xl font-semibold text-center w-full">
+            <div className="w-full max-w-lg md:max-w-4xl mx-auto !p-6 bg-background text-foreground">
+                <div className="flex items-center justify-between !mb-4">
+                    <h1 className="!text-xl !font-semibold text-center w-full">
                         شخص جدید
                     </h1>
                 </div>
@@ -99,7 +100,7 @@ export default function Client() {
                     </div>
                 )}
 
-                <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+                <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-5">
                     {/* نام کامل */}
                     <Input
                         label="نام کامل"
@@ -116,6 +117,15 @@ export default function Client() {
                         value={nationalCode}
                         onChange={(e) => setNationalCode(e.target.value)}
                         error={fieldErrors.nationalCode}
+                    />
+
+                    {/* شماره تلفن */}
+                    <Input
+                        label="شماره تلفن"
+                        name="phoneNumber"
+                        value={phoneNumber}
+                        onChange={(e) => setPhoneNumber(e.target.value)}
+                        error={fieldErrors.phoneNumber}
                     />
 
                     {/* آدرس */}
@@ -135,50 +145,34 @@ export default function Client() {
                         onChange={(e) => setInvoiceDescription(e.target.value)}
                     />
 
-                    <div className="flex flex-col gap-2">
+                    <div className="flex flex-col gap-2 md:col-span-2">
                         <label className="text-lg font-medium">نوع شخص</label>
 
-                        {/* رادیوهای حقیقی/حقوقی */}
-                        <div className="flex gap-6">
-                            <label className="flex items-center gap-2">
-                                <input
-                                    type="radio"
-                                    name="personType"
-                                    value="real"
-                                    checked={!isJuridicalPerson}
-                                    onChange={() => setIsJuridicalPerson(false)}
-                                    className="w-4 h-4 accent-primary"
-                                />
-                                <span>شخص حقیقی</span>
-                            </label>
-
-                            <label className="flex items-center gap-2">
-                                <input
-                                    type="radio"
-                                    name="personType"
-                                    value="legal"
-                                    checked={isJuridicalPerson}
-                                    onChange={() => setIsJuridicalPerson(true)}
-                                    className="w-4 h-4 accent-primary"
-                                />
-                                <span>شخص حقوقی</span>
-                            </label>
+                        {/* Toggle buttons for حقیقی/حقوقی */}
+                        <div className="flex">
+                            <button
+                                type="button"
+                                className={`!px-6 !py-2 !border !border-gray-300 !rounded-r-md !cursor-pointer ${
+                                    !isJuridicalPerson ? '!bg-green-500 text-white' : '!bg-background text-black'
+                                }`}
+                                onClick={() => setIsJuridicalPerson(false)}
+                            >
+                                حقیقی
+                            </button>
+                            <button
+                                type="button"
+                                className={`!px-6 !py-2 !border !border-gray-300 !rounded-l-md !cursor-pointer ${
+                                    isJuridicalPerson ? '!bg-green-500 text-white' : '!bg-background text-black'
+                                }`}
+                                onClick={() => setIsJuridicalPerson(true)}
+                            >
+                                حقوقی
+                            </button>
                         </div>
-
-                        {/* چک باکس عضو مالک */}
-                        <label className="flex items-center gap-2 mt-2">
-                            <input
-                                type="checkbox"
-                                checked={isOwnerMember}
-                                onChange={(e) => setIsOwnerMember(e.target.checked)}
-                                className="w-4 h-4 accent-primary"
-                            />
-                            <span>عضو مالک هست؟</span>
-                        </label>
                     </div>
 
                     {/* دکمه‌ها */}
-                    <div className="flex justify-end items-center gap-3 !mt-3">
+                    <div className="flex justify-end items-center gap-3 !mt-3 md:col-span-2">
                         <Button
                             label="لغو"
                             type="button"

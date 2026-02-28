@@ -3,14 +3,16 @@ import { AddClientPayload } from './client.types';
 export type FieldErrors = {
     fullName?: string;
     nationalCode?: string;
+    phoneNumber?: string;
     address?: string;
 };
 
-export function validateClient(data: Pick<AddClientPayload, 'fullName' | 'nationalCode' | 'address'>): FieldErrors {
+export function validateClient(data: Pick<AddClientPayload, 'fullName' | 'nationalCode' | 'phoneNumber' | 'address'>): FieldErrors {
     const errors: FieldErrors = {};
 
     const name = data.fullName.trim();
     const nc = data.nationalCode.trim();
+    const phone = data.phoneNumber.trim();
     const addr = data.address.trim();
 
     const persianNameRegex = /^[\u0600-\u06FF\s]+$/;
@@ -24,6 +26,12 @@ export function validateClient(data: Pick<AddClientPayload, 'fullName' | 'nation
     if (nc) {
         if (!/^\d{10}$/.test(nc)) {
             errors.nationalCode = 'کد ملی باید یک عدد ۱۰ رقمی باشد.';
+        }
+    }
+
+    if (phone) {
+        if (!/^09\d{9}$/.test(phone)) {
+            errors.phoneNumber = 'شماره تلفن باید ۱۱ رقم و با ۰۹ شروع شود.';
         }
     }
 

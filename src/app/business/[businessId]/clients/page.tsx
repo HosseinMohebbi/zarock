@@ -1,6 +1,5 @@
 'use client';
 import {useEffect, useState} from "react";
-import Card from "@/app/components/ui/Card";
 import Input from "@/app/components/ui/Input";
 import {useParams, useRouter} from "next/navigation";
 import {MdAdd} from "react-icons/md";
@@ -11,7 +10,6 @@ import {useDispatch, useSelector} from "react-redux";
 import {
     fetchClients,
     selectClients,
-    selectClientsLoading,
     selectClientsError,
 } from "@/app/store/clientsSlice";
 
@@ -22,7 +20,6 @@ export default function ClientsPage() {
 
     const dispatch = useDispatch<any>();
     const clients = useSelector(selectClients);
-    const loading = useSelector(selectClientsLoading);
     const error = useSelector(selectClientsError);
     const [isFetching, setIsFetching] = useState(true);
 
@@ -103,53 +100,42 @@ export default function ClientsPage() {
                     <div className="text-center text-xl">هیچ شخصی برای نمایش وجود ندارد</div>
                 </div>
             ) : (
-                <div
-                    className="overflow-y-auto !px-3 !py-3 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
-                    style={{maxHeight: 'calc(100vh - 250px)'}}
-                >
-                    {clients.map((client: Client) => (
-                        <Card
-                            key={client.id}
-                            customStyle="w-full max-w-xl border !rounded-md !p-4 bg-card cursor-pointer"
-                            onClick={() => handelEditClient(client.id)}
-                        >
-                            <div className="flex flex-col gap-3">
-                                <div className="flex items-center gap-2">
-                                    <h2 className="!text-lg">نام:</h2>
-                                    <div className="flex items-center gap-2">
-                                        <span className="text-base">{client.fullname}</span>
-                                        <span>{client.isJuridicalPerson ? "(حقوقی)" : "(حقیقی)"}</span>
-                                    </div>
-                                </div>
-
-                                <div className="flex items-center gap-2">
-                                    <h2 className="!text-lg">آدرس:</h2>
-                                    <span
-                                        className="text-sm text-gray-600 truncate"
-                                        style={{
-                                            whiteSpace: 'nowrap',
-                                            overflow: 'hidden',
-                                            textOverflow: 'ellipsis',
-                                            flexGrow: 1,
-                                        }}
-                                    >
-                                    {client.address}
-                                </span>
-                                </div>
-
-                                <div className="flex items-center gap-2">
-                                    <h2 className="!text-lg">حساب:</h2>
-                                    <span className="text-lg text-gray-600">
-                                    {(client.credits ?? 0).toLocaleString()} تومان
-                                </span>
-                                </div>
-                            </div>
-                        </Card>
-                    ))}
+                <div className="overflow-x-auto !px-3 !py-3" style={{maxHeight: 'calc(100vh - 250px)'}}>
+                    <table className="w-full table-fixed !border-collapse !border !border-gray-300 bg-white shadow-md !rounded-lg">
+                        <thead className="bg-gray-100">
+                            <tr>
+                                <th className="!border !border-gray-300 !px-6 !py-3 text-right font-semibold text-gray-700 w-4/12">نام</th>
+                                <th className="!border !border-gray-300 !px-6 !py-3 text-right font-semibold text-gray-700 w-2/12">شماره تلفن</th>
+                                <th className="!border !border-gray-300 !px-6 !py-3 text-right font-semibold text-gray-700 w-6/12">آدرس</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {clients.map((client: Client) => (
+                                <tr
+                                    key={client.id}
+                                    className="!cursor-pointer hover:bg-gray-50 transition-colors !duration-200 !border-b !border-gray-200"
+                                    onClick={() => handelEditClient(client.id)}
+                                >
+                                    <td className="!border !border-gray-300 !px-6 !py-4 text-gray-800">
+                                        <div className="flex justify-between items-center">
+                                            <span>{client.fullname}</span>
+                                            <span className="bg-green-500 text-white !px-2 !py-1 rounded text-sm">
+                                                {client.isJuridicalPerson ? 'حقوقی' : 'حقیقی'}
+                                            </span>
+                                        </div>
+                                    </td>
+                                    <td className="!border !border-gray-300 !px-6 !py-4 text-right text-gray-800">
+                                        {client.phoneNumber || '-'}
+                                    </td>
+                                    <td className="!border !border-gray-300 !px-6 !py-4 text-right text-gray-800 truncate">
+                                        {client.address}
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
                 </div>
             )}
         </div>
     );
 }
-
-

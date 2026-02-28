@@ -1,9 +1,9 @@
 export interface AddClientPayload {
     fullName: string;
     nationalCode: string;
+    phoneNumber: string;
     constantDescriptionInvoice: string;
     isJuridicalPerson: boolean;
-    isOwnerMember: boolean;
     address: string;
     tags: string[];
 }
@@ -14,11 +14,13 @@ export interface AddClientResponse {
     id: string;
     fullname: string;
     nationalCode: string;
+    phoneNumber: string;
     address: string;
     credits: number;
     isJuridicalPerson: boolean;
     isOwnerClient: boolean;
     constantDescriptionInvoice: string;
+    tags: string[];
 }
 
 export interface Client {
@@ -27,11 +29,13 @@ export interface Client {
     id: string;
     fullname: string;
     nationalCode: string;
+    phoneNumber: string;
     address: string;
     credits: number;
     isJuridicalPerson: boolean;
     isOwnerClient: boolean;
     constantDescriptionInvoice: string;
+    tags: string[];
 }
 
 export interface BankLogo {

@@ -31,7 +31,7 @@ export default function AddItemFormPage() {
         name: '',
         group: '',
         unit: '',
-        defaultUnitPrice: '',
+        defaultUnitPrice: '0',
         type: 'Merchandise',
         tags: [],
         tagInput: '',
@@ -45,7 +45,16 @@ export default function AddItemFormPage() {
     async function handleSubmit(ev?: React.FormEvent) {
         ev?.preventDefault()
         setMessage(null)
-        const v = validate(form)
+        const payload = {
+            name: form.name.trim(),
+            group: form.group.trim(),
+            type: form.type,
+            tags: form.tags,
+            defaultUnitPrice: Number(form.defaultUnitPrice) || 0,
+            unit: form.unit.trim(),
+            description: form.description.trim(),
+        }
+        const v = validate(payload)
         if (Object.keys(v).length) {
             setErrors(v)
             return
@@ -58,15 +67,6 @@ export default function AddItemFormPage() {
         setLoading(true)
         setErrors({})
         try {
-            const payload = {
-                name: form.name.trim(),
-                group: form.group.trim(),
-                type: form.type,
-                tags: form.tags,
-                defaultUnitPrice: Number(form.defaultUnitPrice) || 0,
-                unit: form.unit.trim(),
-                description: form.description.trim(),
-            }
             await createItem(businessId, payload);
             dispatch(clearItems());
             toast.success("کالا با موفقیت اضافه شد");
@@ -77,7 +77,7 @@ export default function AddItemFormPage() {
                 name: '',
                 group: '',
                 unit: '',
-                defaultUnitPrice: '',
+                defaultUnitPrice: '0',
                 type: 'Merchandise',
                 tags: [],
                 tagInput: '',
@@ -98,8 +98,8 @@ export default function AddItemFormPage() {
 
     return (
         <div className="w-full flex justify-center !px-4 !pt-24">
-            <div className="w-full max-w-lg mx-auto !p-6 bg-background text-foreground rounded-lg shadow">
-                <h2 className="text-xl font-semibold !mb-4 text-center">ایجاد کالا / خدمت جدید</h2>
+            <div className="w-full max-w-lg md:max-w-4xl mx-auto !p-6 bg-background text-foreground rounded-lg shadow">
+                <h2 className="!text-xl !font-semibold !mb-4 text-center">ایجاد کالا / خدمت جدید</h2>
 
                 {message && (
                     <div className="!mb-4 text-sm text-center">
@@ -109,7 +109,7 @@ export default function AddItemFormPage() {
                     </div>
                 )}
 
-                <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+                <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-5">
 
                     <Input
                         label="گروه"
@@ -143,33 +143,29 @@ export default function AddItemFormPage() {
                         error={errors.defaultUnitPrice}
                     />
                     
-                    <div className="flex flex-col gap-2">
+                    <div className="flex flex-col gap-2 md:col-span-2">
                         <label className="text-lg font-medium">نوع</label>
 
-                        <div className="flex items-center gap-6">
-                            <label className="flex items-center gap-2 text-lg">
-                                <input
-                                    type="radio"
-                                    name="type"
-                                    value="Merchandise"
-                                    checked={form.type === 'Merchandise'}
-                                    onChange={() => setForm(f => ({...f, type: 'Merchandise'}))}
-                                    className="accent-primary"
-                                />
-                                <span>کالا</span>
-                            </label>
-
-                            <label className="flex items-center gap-2">
-                                <input
-                                    type="radio"
-                                    name="type"
-                                    value="Service"
-                                    checked={form.type === 'Service'}
-                                    onChange={() => setForm(f => ({...f, type: 'Service'}))}
-                                    className="accent-primary"
-                                />
-                                <span>خدمت</span>
-                            </label>
+                        {/* Toggle buttons for کالا/خدمت */}
+                        <div className="flex">
+                            <button
+                                type="button"
+                                className={`flex-1 !px-6 !py-2 !border !border-gray-300 !rounded-r-md !cursor-pointer ${
+                                    form.type === 'Merchandise' ? '!bg-green-500 text-white' : '!bg-background text-black'
+                                }`}
+                                onClick={() => setForm(f => ({...f, type: 'Merchandise'}))}
+                            >
+                                کالا
+                            </button>
+                            <button
+                                type="button"
+                                className={`flex-1 !px-6 !py-2 !border !border-gray-300 !rounded-l-md !cursor-pointer ${
+                                    form.type === 'Service' ? '!bg-green-500 text-white' : '!bg-background text-black'
+                                }`}
+                                onClick={() => setForm(f => ({...f, type: 'Service'}))}
+                            >
+                                خدمت
+                            </button>
                         </div>
                     </div>
                     
@@ -181,7 +177,7 @@ export default function AddItemFormPage() {
                         onChange={e => setForm(f => ({...f, description: e.target.value}))}
                     />
                     
-                    <div className="flex justify-end items-center gap-3 !mt-3">
+                    <div className="flex justify-end items-center gap-3 !mt-3 md:col-span-2">
                         <Button label="لغو" type="button" onClick={handleCancelForm} customStyle="!bg-danger"/>
                         <Button label="ذخیره" type="submit" customStyle="!bg-confirm"/>
                     </div>

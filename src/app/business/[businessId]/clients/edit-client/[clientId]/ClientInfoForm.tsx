@@ -32,13 +32,13 @@ export default function ClientInfoForm({ businessId, clientId }: Props) {
     // -----------------------------
     const [fullName, setFullName] = useState('');
     const [nationalCode, setNationalCode] = useState('');
+    const [phoneNumber, setPhoneNumber] = useState('');
     const [address, setAddress] = useState('');
     const [invoiceDesc, setInvoiceDesc] = useState('');
     const [isJuridicalPerson, setIsJuridicalPerson] = useState(true);
-    const [isOwnerClient, setIsOwnerClient] = useState(false);
+    const [tags, setTags] = useState<string[]>([]);
 
     const [loading, setLoading] = useState(true);
-    const [saving, setSaving] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
     const [success, setSuccess] = useState<string | null>(null);
@@ -69,10 +69,11 @@ export default function ClientInfoForm({ businessId, clientId }: Props) {
 
         setFullName(client.fullname);
         setNationalCode(client.nationalCode);
+        setPhoneNumber(client.phoneNumber);
         setAddress(client.address);
         setInvoiceDesc(client.constantDescriptionInvoice);
         setIsJuridicalPerson(client.isJuridicalPerson);
-        setIsOwnerClient(client.isOwnerClient);
+        setTags(client.tags || []);
     }, [client]);
 
     // -----------------------------
@@ -80,13 +81,13 @@ export default function ClientInfoForm({ businessId, clientId }: Props) {
     // -----------------------------
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        setSaving(true);
         setError(null);
         setSuccess(null);
 
         const fieldErrs: FieldErrors = validateClient({
             fullName,
             nationalCode,
+            phoneNumber,
             address
         });
         setFieldErrors(fieldErrs);
@@ -103,10 +104,11 @@ export default function ClientInfoForm({ businessId, clientId }: Props) {
                 payload: {
                     fullname: fullName,
                     nationalCode,
+                    phoneNumber,
                     address,
                     constantDescriptionInvoice: invoiceDesc,
                     isJuridicalPerson,
-                    isOwnerClient,
+                    tags,
                 }
             })).unwrap();
 
@@ -116,8 +118,6 @@ export default function ClientInfoForm({ businessId, clientId }: Props) {
         } catch (err: any) {
             toast.error('خطا در ویرایش اطلاعات شخص!')
             setError(err?.message ?? "خطا در به‌روزرسانی اطلاعات مشتری");
-        } finally {
-            setSaving(false);
         }
     };
 
@@ -153,89 +153,95 @@ export default function ClientInfoForm({ businessId, clientId }: Props) {
     // UI Rendering
     // -----------------------------
     return (
-        <div className="w-full max-w-lg !mx-auto !p-6 bg-background text-foreground rounded-lg shadow">
-            <div className="relative w-full flex items-start">
-                <div onClick={handleDelete} className="absolute right-0 text-danger cursor-pointer">
-                    <MdDelete className='w-6 h-6' />
+        <div className="w-full flex justify-center !px-4">
+            <div className="w-full max-w-lg md:max-w-4xl mx-auto !p-6 bg-background text-foreground">
+                <div className="relative w-full flex items-start">
+                    <div onClick={handleDelete} className="absolute right-0 text-danger cursor-pointer">
+                        <MdDelete className='w-6 h-6' />
+                    </div>
+                    <h2 className="!mx-auto !text-xl !font-semibold !mb-6 text-center">
+                        ویرایش اطلاعات مشتری
+                    </h2>
                 </div>
-                <h2 className="!mx-auto text-xl font-semibold !mb-4 text-center">
-                    ویرایش اطلاعات مشتری
-                </h2>
-            </div>
 
-            {success && (
-                <div className="!mb-4 text-sm text-center">
-                    <span className="inline-block !px-3 !py-1 bg-green-100 text-green-800 rounded">
-                        {success}
-                    </span>
-                </div>
-            )}
+                {success && (
+                    <div className="!mb-4 text-sm text-center">
+                        <span className="inline-block !px-3 !py-1 bg-green-100 text-green-800 rounded">
+                            {success}
+                        </span>
+                    </div>
+                )}
 
-            {error && (
-                <div className="!mb-4 text-sm text-center">
-                    <span className="inline-block !px-3 !py-1 bg-red-100 text-red-800 rounded">
-                        {error}
-                    </span>
-                </div>
-            )}
+                {error && (
+                    <div className="!mb-4 text-sm text-center">
+                        <span className="inline-block !px-3 !py-1 bg-red-100 text-red-800 rounded">
+                            {error}
+                        </span>
+                    </div>
+                )}
 
-            <form onSubmit={handleSubmit} className="flex flex-col gap-5">
-                <Input name="fullName" label="نام کامل" value={fullName} onChange={e => setFullName(e.target.value)} error={fieldErrors.fullName}/>
-                <Input name="nationalCode" label="کد ملی" value={nationalCode} onChange={e => setNationalCode(e.target.value)} error={fieldErrors.nationalCode}/>
-                <Input name="address" label="آدرس" value={address} onChange={e => setAddress(e.target.value)} error={fieldErrors.address}/>
-                <Input name="description" label="توضیحات فاکتور" value={invoiceDesc} onChange={e => setInvoiceDesc(e.target.value)} />
+                <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <Input name="fullName" label="نام کامل" value={fullName} onChange={e => setFullName(e.target.value)} error={fieldErrors.fullName}/>
+                    <Input name="nationalCode" label="کد ملی" value={nationalCode} onChange={e => setNationalCode(e.target.value)} error={fieldErrors.nationalCode}/>
+                    <Input name="phoneNumber" label="شماره تلفن" value={phoneNumber} onChange={e => setPhoneNumber(e.target.value)} error={fieldErrors.phoneNumber}/>
+                    <Input name="address" label="آدرس" value={address} onChange={e => setAddress(e.target.value)} error={fieldErrors.address}/>
+                    <Input name="description" label="توضیحات فاکتور" value={invoiceDesc} onChange={e => setInvoiceDesc(e.target.value)} />
 
-                <div className="flex flex-col gap-2">
-                    <label className="text-lg font-medium">نوع شخص</label>
-                    <div className="flex items-center gap-6">
-                        <label className="flex items-center gap-2">
-                            <input
-                                type="radio"
-                                name="clientType"
-                                checked={isJuridicalPerson}
-                                onChange={() => setIsJuridicalPerson(true)}
-                                className="w-4 h-4 accent-primary"
-                            />
-                            <span>شخص حقوقی</span>
-                        </label>
+                    <div className="flex flex-col gap-2 md:col-span-2">
+                        <label className="text-lg font-medium">نوع شخص</label>
 
-                        <label className="flex items-center gap-2">
-                            <input
-                                type="radio"
-                                name="clientType"
-                                checked={!isJuridicalPerson}
-                                onChange={() => setIsJuridicalPerson(false)}
-                                className="w-4 h-4 accent-primary"
-                            />
-                            <span>شخص حقیقی</span>
-                        </label>
+                        {/* Toggle buttons for حقیقی/حقوقی */}
+                        <div className="flex">
+                            <button
+                                type="button"
+                                className={`!px-6 !py-2 !border !border-gray-300 !rounded-r-md !cursor-pointer ${
+                                    !isJuridicalPerson ? '!bg-green-500 text-white' : '!bg-background text-black'
+                                }`}
+                                onClick={() => setIsJuridicalPerson(false)}
+                            >
+                                حقیقی
+                            </button>
+                            <button
+                                type="button"
+                                className={`!px-6 !py-2 !border !border-gray-300 !rounded-l-md !cursor-pointer ${
+                                    isJuridicalPerson ? '!bg-green-500 text-white' : '!bg-background text-black'
+                                }`}
+                                onClick={() => setIsJuridicalPerson(true)}
+                            >
+                                حقوقی
+                            </button>
+                        </div>
+
+                        <div className="flex flex-wrap gap-2">
+                            {tags.map((tag, index) => (
+                                <span key={index} className="inline-flex items-center gap-1 px-3 py-1 text-sm font-medium bg-muted text-muted-foreground rounded-full">
+                                    {tag}
+                                    <button
+                                        type="button"
+                                        onClick={() => setTags(tags.filter((_, i) => i !== index))}
+                                        className="text-danger"
+                                    >
+                                        &times;
+                                    </button>
+                                </span>
+                            ))}
+                        </div>
                     </div>
 
-                    <label className="flex items-center gap-2 mt-2">
-                        <input
-                            type="checkbox"
-                            checked={isOwnerClient}
-                            onChange={(e) => setIsOwnerClient(e.target.checked)}
-                            className="w-4 h-4 accent-primary"
-                        />
-                        <span>اعضای کسب و کار</span>
-                    </label>
-                </div>
+                    <div className="flex justify-end items-center gap-3 !mt-3 md:col-span-2">
+                        <Button type="button" onClick={handleCancel} label="لغو" customStyle="!bg-danger"/>
+                        <Button type="submit" label="ذخیره" customStyle="!bg-confirm"/>
+                    </div>
+                </form>
 
-                <div className="flex justify-end items-center gap-3 !mt-3">
-                    <Button type="button" onClick={handleCancel} label="لغو" customStyle="!bg-danger"/>
-                    <Button type="submit" label="ذخیره" customStyle="!bg-confirm"/>
-                </div>
-            </form>
-
-            <ConfirmModal
-                title="حذف مشتری"
-                isOpen={showConfirm}
-                message="آیا از حذف این شخص مطمئن هستید؟ این عملیات غیر قابل بازگشت است."
-                onConfirm={confirmDelete}
-                onCancel={() => setShowConfirm(false)}
-            />
+                <ConfirmModal
+                    title="حذف مشتری"
+                    isOpen={showConfirm}
+                    message="آیا از حذف این شخص مطمئن هستید؟ این عملیات غیر قابل بازگشت است."
+                    onConfirm={confirmDelete}
+                    onCancel={() => setShowConfirm(false)}
+                />
+            </div>
         </div>
     );
 }
-

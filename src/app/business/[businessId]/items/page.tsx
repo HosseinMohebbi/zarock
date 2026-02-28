@@ -24,12 +24,12 @@ function getItemTypeFa(type?: string): string {
 }
 
 const getItemIcon = (type?: string) => {
-    if (type === "Merchandise") return <MdInventory size={22}/>;
-    if (type === "Service") return <MdBuild size={22}/>;
+    if (type === "Merchandise") return <MdInventory size={22} className="text-primary"/>;
+    if (type === "Service") return <MdBuild size={22} className="text-primary"/>;
     return null;
 };
 
-export default function ItemsPage(): JSX.Element {
+export default function ItemsPage() {
     const dispatch = useDispatch<AppDispatch>();
     const items = useSelector(selectItems);
     const [loading, setLoading] = useState(false);
@@ -154,48 +154,40 @@ export default function ItemsPage(): JSX.Element {
                     هیچ کالا یا خدمتی برای نمایش وجود ندارد
                 </div>
             ) : (
-                <div
-                    className="!px-3 !mt-4 grid grid-cols-1 gap-3 overflow-y-auto sm:grid-cols-2 !pb-4 lg:grid-cols-3 xl:grid-cols-4"
-                    style={{maxHeight: 'calc(100vh - 200px)'}}>
-                    {filteredItems?.map((item: getItemResponse) => (
-                        <div
-                            key={item.id}
-                            onClick={() => handleOpenItem(item.id)}
-                            className="w-full bg-card !rounded-lg shadow-sm hover:shadow-md transition cursor-pointer overflow-hidden"
-                        >
-                            <div className="flex items-stretch">
-                                <div
-                                    className="flex flex-col items-center justify-center w-16 bg-primary text-white !p-2 rounded-r-lg">
-                                    <div className="!mb-1">
-                                        {getItemIcon(item.itemType)}
-                                    </div>
-                                    <span className="text-lg font-semibold">
-                                    {getItemTypeFa(item.itemType)}
-                                </span>
-                                </div>
-
-                                <div className="flex-1 !p-3">
-                                    <div className="flex flex-col gap-4 !p-4">
-                                        <div className="flex gap-2 text-lg">
-                                            <h2>گروه: </h2>
-                                            <span className="text-md">{item.group ?? "-"}</span>
+                <div className="overflow-x-auto !px-3 !py-3" style={{maxHeight: 'calc(100vh - 250px)'}}>
+                    <table className="w-full table-fixed !border-collapse !border !border-gray-300 bg-white shadow-md !rounded-lg">
+                        <thead className="bg-gray-100">
+                            <tr>
+                                <th className="!border !border-gray-300 !px-6 !py-3 text-right font-semibold text-gray-700 w-4/12">گروه</th>
+                                <th className="!border !border-gray-300 !px-6 !py-3 text-right font-semibold text-gray-700 w-4/12">زیرگروه</th>
+                                <th className="!border !border-gray-300 !px-6 !py-3 text-right font-semibold text-gray-700 w-4/12">قیمت واحد</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {filteredItems.map((item: getItemResponse) => (
+                                <tr
+                                    key={item.id}
+                                    className="!cursor-pointer hover:bg-gray-50 transition-colors !duration-200 !border-b !border-gray-200"
+                                    onClick={() => handleOpenItem(item.id)}
+                                >
+                                    <td className="!border !border-gray-300 !px-6 !py-4 text-gray-800">
+                                        <div className="flex items-center gap-2">
+                                            {getItemIcon(item.itemType)}
+                                            <span>{item.group ?? "-"}</span>
                                         </div>
-                                        <div className="flex gap-2 text-lg">
-                                            <h2>زیر گروه: </h2>
-                                            <span>{item.name ?? "-"}</span>
-                                        </div>
-                                        <div className="flex gap-2 text-lg">
-                                            <h2>قیمت واحد: </h2>
-                                            <span>
-                                            {item.defaultUnitPrice.toLocaleString()} تومان
-                                        </span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    ))}</div>)}
+                                    </td>
+                                    <td className="!border !border-gray-300 !px-6 !py-4 text-right text-gray-800">
+                                        {item.name ?? "-"}
+                                    </td>
+                                    <td className="!border !border-gray-300 !px-6 !py-4 text-right text-gray-800">
+                                        {item.defaultUnitPrice.toLocaleString()} تومان
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+            )}
         </main>
     );
 }
-

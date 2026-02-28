@@ -119,15 +119,15 @@ export default function EditItemFormPage() {
 
     return (
         <div className="w-full flex justify-center !px-4 !pt-24">
-            <div className="w-full max-w-lg mx-auto !p-6 bg-background text-foreground rounded-lg shadow">
+            <div className="w-full max-w-lg md:max-w-4xl mx-auto !p-6 bg-background text-foreground rounded-lg shadow">
                 <div className="relative w-full flex items-start">
-                    <div onClick={handleDelete} className="absolute right-0 text-danger cursor-pointer">
+                    <div onClick={handleDelete} className="absolute right-0 text-danger !cursor-pointer">
                         <MdDelete className='w-6 h-6'/>
                     </div>
-                    <h2 className="!mx-auto text-xl font-semibold !mb-4 text-center">ویرایش کالا / خدمت</h2>
+                    <h2 className="!mx-auto !text-xl !font-semibold !mb-4 text-center">ویرایش کالا / خدمت</h2>
                 </div>
 
-                <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+                <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-5">
                     <Input label="گروه" name="group" value={form.group}
                            onChange={e => setForm(f => ({...f, group: e.target.value}))} error={errors.group}/>
                     <Input label="زیرگروه" name="name" value={form.name}
@@ -138,29 +138,36 @@ export default function EditItemFormPage() {
                            onChange={e => setForm(f => ({...f, defaultUnitPrice: e.target.value}))}
                            error={errors.defaultUnitPrice}/>
 
-                    <div className="flex flex-col gap-2">
+                    <div className="flex flex-col gap-2 md:col-span-2">
                         <label className="text-lg font-medium">نوع</label>
-                        <div className="flex items-center gap-6">
-                            <label className="flex items-center gap-2 text-lg">
-                                <input type="radio" name="type" value="Merchandise"
-                                       checked={form.type === 'Merchandise'}
-                                       onChange={() => setForm(f => ({...f, type: 'Merchandise'}))}
-                                       className="accent-primary"/>
-                                <span>کالا</span>
-                            </label>
-                            <label className="flex items-center gap-2">
-                                <input type="radio" name="type" value="Service" checked={form.type === 'Service'}
-                                       onChange={() => setForm(f => ({...f, type: 'Service'}))}
-                                       className="accent-primary"/>
-                                <span>خدمت</span>
-                            </label>
+
+                        {/* Toggle buttons for کالا/خدمت */}
+                        <div className="flex">
+                            <button
+                                type="button"
+                                className={`flex-1 !px-6 !py-2 !border !border-gray-300 !rounded-r-md !cursor-pointer ${
+                                    form.type === 'Merchandise' ? '!bg-green-500 text-white' : '!bg-background text-black'
+                                }`}
+                                onClick={() => setForm(f => ({...f, type: 'Merchandise'}))}
+                            >
+                                کالا
+                            </button>
+                            <button
+                                type="button"
+                                className={`flex-1 !px-6 !py-2 !border !border-gray-300 !rounded-l-md !cursor-pointer ${
+                                    form.type === 'Service' ? '!bg-green-500 text-white' : '!bg-background text-black'
+                                }`}
+                                onClick={() => setForm(f => ({...f, type: 'Service'}))}
+                            >
+                                خدمت
+                            </button>
                         </div>
                     </div>
 
                     <Input label="توضیحات" name="description" type="text" value={form.description}
                            onChange={e => setForm(f => ({...f, description: e.target.value}))}/>
 
-                    <div className="flex justify-end items-center gap-3 mt-3">
+                    <div className="flex justify-end items-center gap-3 !mt-3 md:col-span-2">
                         <Button label="لغو" type="button" onClick={handleCancelForm} customStyle="!bg-danger"/>
                         <Button label="ذخیره" type="submit" customStyle="!bg-confirm"/>
                     </div>
